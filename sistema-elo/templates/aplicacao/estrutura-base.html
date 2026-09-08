@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo_pagina %}ELO{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'aplicacao/css/area-professor.css' %}">
+</head>
+<body>
+    <div class="estrutura-pagina">
+        <aside class="menu-lateral">
+            <div class="logo-menu">
+                <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
+                <small>Área do professor</small>
+            </div>
+            <nav class="menu-navegacao">
+                <p>Cadastros</p>
+                <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
+                <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
+            </nav>
+            <div class="rodape-menu"><span>↪</span><b>Sair</b></div>
+        </aside>
+        <button id="alternar-menu" class="alternar-menu" type="button" aria-label="Minimizar menu">‹</button>
+        <main class="conteudo">
+            {% if messages %}
+                <div class="mensagens">{% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}</div>
+            {% endif %}
+            {% block conteudo %}{% endblock %}
+        </main>
+    </div>
+    <script src="{% static 'aplicacao/js/menu-lateral.js' %}"></script>
+</body>
+</html>
