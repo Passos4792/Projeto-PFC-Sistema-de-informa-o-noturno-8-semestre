@@ -13,6 +13,7 @@
 </header>
 <section class="indicadores">
     <article><span>Total de professores</span><strong>{{ total_professores }}</strong></article>
+    <article><span>Alunos cadastrados</span><strong>{{ total_alunos }}</strong></article>
     <article><span>Professores ativos</span><strong>{{ professores_ativos }}</strong></article>
 </section>
 <section class="painel">
@@ -22,16 +23,17 @@
     </div>
     <div class="tabela-responsiva">
         <table>
-            <thead><tr><th>Professor</th><th>Usuário</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Professor</th><th>Usuário</th><th>Alunos</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody>
                 {% for professor in professores %}
                 <tr>
                     <td><span class="avatar">{{ professor.nome|first }}{{ professor.sobrenome|first }}</span>{{ professor.nome_completo }}</td>
                     <td>{{ professor.usuario }}</td>
+                    <td>{{ professor.quantidade_alunos }} aluno{{ professor.quantidade_alunos|pluralize }}</td>
                     <td><span class="situacao {% if not professor.ativo %}inativo{% endif %}">{% if professor.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
                     <td class="acoes"><a class="botao-editar" href="{% url 'professor-editar' professor.pk %}">Editar</a><a class="botao-excluir" href="{% url 'professor-excluir' professor.pk %}">Excluir</a></td>
                 </tr>
-                {% empty %}<tr><td colspan="4" class="sem-dados">Nenhum professor cadastrado.</td></tr>{% endfor %}
+                {% empty %}<tr><td colspan="5" class="sem-dados">Nenhum professor cadastrado.</td></tr>{% endfor %}
             </tbody>
         </table>
     </div>

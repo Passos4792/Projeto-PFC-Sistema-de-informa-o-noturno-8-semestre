@@ -34,3 +34,30 @@ class Responsavel(PessoaBase):
         ordering = ["nome", "sobrenome"]
         verbose_name = "responsável"
         verbose_name_plural = "responsáveis"
+
+
+class Aluno(PessoaBase):
+    data_nascimento = models.DateField(blank=True, null=True)
+
+    class Meta:
+        db_table = "aluno"
+        ordering = ["nome", "sobrenome"]
+        verbose_name = "aluno"
+        verbose_name_plural = "alunos"
+
+
+class Vinculo(models.Model):
+    aluno = models.OneToOneField(Aluno, on_delete=models.PROTECT, related_name="vinculo")
+    professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="vinculos")
+    responsavel = models.ForeignKey(Responsavel, on_delete=models.PROTECT, related_name="vinculos")
+    data_vinculo = models.DateField()
+    ativo = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "vinculo"
+        ordering = ["aluno__nome"]
+        verbose_name = "vínculo"
+        verbose_name_plural = "vínculos"
+
+    def __str__(self):
+        return f"{self.aluno} - {self.professor}"

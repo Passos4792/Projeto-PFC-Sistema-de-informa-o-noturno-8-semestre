@@ -15,9 +15,11 @@
                 <small>Área do professor</small>
             </div>
             <nav class="menu-navegacao">
-                <p>Cadastros</p>
+                <p>Cadastros e vínculos</p>
+                <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}"><span>🎓</span><b>Alunos</b></a>
                 <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
                 <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
+                <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}"><span>🔗</span><b>Vínculos</b></a>
             </nav>
             <div class="rodape-menu"><span>↪</span><b>Sair</b></div>
         </aside>
