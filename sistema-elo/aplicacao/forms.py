@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Professor, Responsavel
+from .models import Aluno, Professor, Responsavel, Vinculo
 
 
 class FormularioBase(forms.ModelForm):
@@ -20,3 +20,17 @@ class FormularioResponsavel(FormularioBase):
     class Meta:
         model = Responsavel
         fields = ["nome", "sobrenome", "usuario", "ativo"]
+
+
+class FormularioAluno(FormularioBase):
+    class Meta:
+        model = Aluno
+        fields = ["nome", "sobrenome", "usuario", "data_nascimento", "ativo"]
+        widgets = {"data_nascimento": forms.DateInput(attrs={"type": "date"})}
+
+
+class FormularioVinculo(FormularioBase):
+    class Meta:
+        model = Vinculo
+        fields = ["aluno", "professor", "responsavel", "data_vinculo", "ativo"]
+        widgets = {"data_vinculo": forms.DateInput(attrs={"type": "date"})}

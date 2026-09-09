@@ -1,15 +1,19 @@
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .forms import FormularioProfessor, FormularioResponsavel
-from .models import Professor, Responsavel
+from .forms import FormularioAluno, FormularioProfessor, FormularioResponsavel, FormularioVinculo
+from .models import Aluno, Professor, Responsavel, Vinculo
 
 
 def _texto_ativo(valor):
     return "Ativo" if valor else "Inativo"
+
+
+def _data(valor):
+    return valor.strftime("%d/%m/%Y") if valor else "—"
 
 
 def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas, rota_novo):
@@ -48,12 +52,21 @@ def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso):
 
 def professores(request):
     termo = request.GET.get("busca", "").strip()
-    lista = Professor.objects.all()
+    lista = Professor.objects.annotate(
+        quantidade_alunos=Count("vinculos", filter=Q(vinculos__ativo=True))
+    )
     if termo:
-        lista = lista.filter(Q(nome__icontains=termo) | Q(sobrenome__icontains=termo) | Q(usuario__icontains=termo))
+        lista = lista.filter(
+            Q(nome__icontains=termo)
+            | Q(sobrenome__icontains=termo)
+            | Q(usuario__icontains=termo)
+        )
     return render(request, "aplicacao/tela-professores.html", {
-        "pagina_ativa": "professores", "professores": lista, "busca": termo,
+        "pagina_ativa": "professores",
+        "professores": lista,
+        "busca": termo,
         "total_professores": Professor.objects.count(),
+        "total_alunos": Aluno.objects.count(),
         "professores_ativos": Professor.objects.filter(ativo=True).count(),
     })
 
@@ -69,6 +82,29 @@ def professor_editar(request, pk):
 
 def professor_excluir(request, pk):
     return _excluir(request, Professor, pk, "Excluir professor", "professores", "professor-listar")
+
+
+def alunos(request):
+    linhas = [{
+        "valores": [aluno.nome_completo, aluno.usuario, _data(aluno.data_nascimento), _texto_ativo(aluno.ativo)],
+        "url_editar": reverse("aluno-editar", args=[aluno.pk]),
+        "url_excluir": reverse("aluno-excluir", args=[aluno.pk]),
+    } for aluno in Aluno.objects.all()]
+    return _mostrar_lista(request, "Alunos", "Cadastre e consulte os alunos acompanhados.",
+                          "alunos", ["Aluno", "Usuário", "Nascimento", "Situação"], linhas, "aluno-criar")
+
+
+def aluno_criar(request):
+    return _salvar(request, FormularioAluno, "Novo aluno", "alunos", "aluno-listar")
+
+
+def aluno_editar(request, pk):
+    aluno = get_object_or_404(Aluno, pk=pk)
+    return _salvar(request, FormularioAluno, "Editar aluno", "alunos", "aluno-listar", aluno)
+
+
+def aluno_excluir(request, pk):
+    return _excluir(request, Aluno, pk, "Excluir aluno", "alunos", "aluno-listar")
 
 
 def responsaveis(request):
@@ -92,3 +128,33 @@ def responsavel_editar(request, pk):
 
 def responsavel_excluir(request, pk):
     return _excluir(request, Responsavel, pk, "Excluir responsável", "responsaveis", "responsavel-listar")
+
+
+def vinculos(request):
+    objetos = Vinculo.objects.select_related("aluno", "professor", "responsavel")
+    linhas = [{
+        "valores": [
+            vinculo.aluno.nome_completo,
+            vinculo.professor.nome_completo,
+            vinculo.responsavel.nome_completo,
+            _data(vinculo.data_vinculo),
+            _texto_ativo(vinculo.ativo),
+        ],
+        "url_editar": reverse("vinculo-editar", args=[vinculo.pk]),
+        "url_excluir": reverse("vinculo-excluir", args=[vinculo.pk]),
+    } for vinculo in objetos]
+    return _mostrar_lista(request, "Vínculos", "Relacione cada aluno ao professor e ao responsável.",
+                          "vinculos", ["Aluno", "Professor", "Responsável", "Data", "Situação"], linhas, "vinculo-criar")
+
+
+def vinculo_criar(request):
+    return _salvar(request, FormularioVinculo, "Novo vínculo", "vinculos", "vinculo-listar")
+
+
+def vinculo_editar(request, pk):
+    vinculo = get_object_or_404(Vinculo, pk=pk)
+    return _salvar(request, FormularioVinculo, "Editar vínculo", "vinculos", "vinculo-listar", vinculo)
+
+
+def vinculo_excluir(request, pk):
+    return _excluir(request, Vinculo, pk, "Excluir vínculo", "vinculos", "vinculo-listar")
