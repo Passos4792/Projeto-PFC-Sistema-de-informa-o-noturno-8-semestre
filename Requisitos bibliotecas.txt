@@ -1,0 +1,3 @@
+pip install Django
+pip install pyMySql
+pip install python-dotenv
