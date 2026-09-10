@@ -1,16 +1,21 @@
-Projeto-PFC-Sistema-de-informa-o-noturno-8-semestre
-Projeto final do curso de sistema de informação noturno realizado na Universidade Mogi das Cruzes no segundo semestre do ano de 2026.
+# ELO
 
-Auxiliador de acompanhamento de crianças atípicas para escola e responsável.
+O ELO é um sistema web desenvolvido como Projeto Final de Curso (PFC).
 
-Tecnologias utilizadas
-Python
-Django
-MySQL
-HTML
-CSS
-JavaScript
-Estrutura do projeto
+O objetivo do projeto é auxiliar no acompanhamento da rotina acadêmica de estudantes, facilitando a organização entre aluno, professor e responsável.
+
+## Tecnologias utilizadas
+
+- Python
+- Django
+- MySQL
+- HTML
+- CSS
+- JavaScript
+
+## Estrutura do projeto
+
+```text
 Projeto-PFC
 │
 ├── banco-de-dados-projeto/
@@ -43,4 +48,5 @@ Projeto-PFC
 │
 ├── .env.example
 ├── .gitignore
-└── README.md
+├── README.md
+```
