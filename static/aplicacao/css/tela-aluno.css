@@ -1,0 +1,39 @@
+:root { --azul:#79a1ea; --verde:#94d6a2; --amarelo:#f5c845; --salmao:#efa089; --lilas:#cdbcf5; --fundo:#f4f1eb; }
+* { box-sizing: border-box; }
+body { min-width:320px; min-height:100vh; margin:0; background:var(--fundo); color:#111; font-family:Arial, Helvetica, sans-serif; }
+.cabecalho-aluno { display:flex; min-height:92px; padding:12px 24px 10px 20px; align-items:center; justify-content:space-between; border:1px solid #f1dda8; background:#fffdfb; }
+.cabecalho-aluno img { width:128px; }
+.cabecalho-aluno a { color:#555; font-size:29px; text-decoration:none; }
+.estrutura-aluno { display:grid; grid-template-columns:228px minmax(0,1fr); min-height:calc(100vh - 92px); }
+.menu-aluno { padding-top:8px; border-right:1px solid #ece9e3; background:#fffdfb; }
+.menu-aluno a { display:flex; min-height:55px; padding:0 14px; align-items:center; gap:12px; border-left:3px solid #e3ddfb; border-radius:0 7px 7px 0; color:#303030; font-size:20px; text-decoration:none; }
+.menu-aluno a.ativo { border-color:var(--azul); background:#e1e9f7; }
+.inicio-aluno { position:relative; min-height:calc(100vh - 92px); padding:18px 38px; overflow:hidden; }
+.onda-aluno { position:absolute; right:0; bottom:0; width:min(64vw,720px); pointer-events:none; }
+.frente-aluno { position:relative; z-index:1; width:min(94%,1280px); margin:0 auto; }
+.frente-aluno header h1 { margin:0 0 5px; font-size:40px; font-weight:400; }
+.frente-aluno header p { margin:0; font-size:19px; }
+.resumo-aluno { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:15px; }
+.progresso, .metas-resumo article, .atividades-aluno article { background:rgba(255,253,251,.92); }
+.progresso { min-height:255px; padding:22px; border:2px solid #bfd5ff; border-radius:16px; text-align:center; }
+.progresso h2 { margin:0; font-size:20px; font-weight:400; }
+.progresso strong { color:var(--azul); font-size:125px; font-weight:500; line-height:1; }
+.progresso > span { color:var(--azul); font-size:31px; }
+.progresso p { margin:0; font-size:18px; }
+.metas-resumo { display:grid; gap:12px; }
+.metas-resumo article { display:flex; min-height:121px; padding:15px 30px; align-items:center; gap:18px; border:2px solid; border-radius:16px; }
+.metas-resumo strong { font-size:90px; line-height:1; }
+.metas-resumo span { font-size:25px; }
+.metas-resumo .andamento { border-color:#b8dfbb; color:var(--verde); }
+.metas-resumo .concluidas { border-color:#f2d27a; color:var(--amarelo); }
+.atividades-aluno { margin-top:38px; }
+.atividades-aluno h2 { margin:0 0 12px; font-size:29px; font-weight:400; }
+.atividades-aluno > div { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; }
+.atividades-aluno article { min-height:149px; padding:18px; border:2px solid #c8d9fb; border-radius:16px; text-align:center; }
+.atividades-aluno article:nth-child(2) { border-color:#f2b5a5; }
+.atividades-aluno article:nth-child(3) { border-color:var(--lilas); }
+.atividades-aluno .icone { float:left; color:var(--lilas); font-size:60px; }
+.atividades-aluno h3 { margin:5px 0; }
+.atividades-aluno p { margin:0; line-height:1.4; }
+@media(max-width:850px){.resumo-aluno,.atividades-aluno>div{grid-template-columns:1fr}.estrutura-aluno{grid-template-columns:180px minmax(0,1fr)}}
+@media(max-width:650px){.estrutura-aluno{display:block}.menu-aluno{display:flex}.menu-aluno a{flex:1;font-size:15px}.inicio-aluno{padding:24px 18px}.resumo-aluno{grid-template-columns:1fr}}
