@@ -1,0 +1,35 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Cadastro</p>
+        <h1>{{ titulo }}</h1>
+        <p class="subtitulo">Preencha os campos abaixo e salve o registro.</p>
+    </div>
+</header>
+
+<section class="painel painel-formulario">
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for campo in formulario %}
+            <div class="grupo-campo {% if campo.field.widget.input_type == 'checkbox' %}grupo-checkbox{% endif %}">
+                {{ campo.label_tag }}
+                {{ campo }}
+                {% if campo.help_text %}<small>{{ campo.help_text }}</small>{% endif %}
+                {% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+
+        {% for erro in formulario.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+
+        <div class="acoes-formulario">
+            <a class="botao-secundario" href="{{ url_voltar }}">Cancelar</a>
+            <button class="botao-principal" type="submit">Salvar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

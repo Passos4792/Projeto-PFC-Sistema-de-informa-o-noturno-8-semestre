@@ -1,0 +1,17 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<section class="painel painel-confirmacao">
+    <h1>{{ titulo }}</h1>
+    <p>Tem certeza de que deseja excluir <strong>{{ objeto }}</strong>?</p>
+    <p class="aviso">Esta ação não poderá ser desfeita.</p>
+
+    <form method="post" class="acoes-formulario">
+        {% csrf_token %}
+        <a class="botao-secundario" href="{{ url_voltar }}">Cancelar</a>
+        <button class="botao-perigo" type="submit">Confirmar exclusão</button>
+    </form>
+</section>
+{% endblock %}
