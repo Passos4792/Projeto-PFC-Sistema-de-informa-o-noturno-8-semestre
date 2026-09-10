@@ -1,20 +1,16 @@
-# Projeto-PFC-Sistema-de-informa-o-noturno-8-semestre
+Projeto-PFC-Sistema-de-informa-o-noturno-8-semestre
 Projeto final do curso de sistema de informação noturno realizado na Universidade Mogi das Cruzes no segundo semestre do ano de 2026.
 
 Auxiliador de acompanhamento de crianças atípicas para escola e responsável.
 
-## Tecnologias utilizadas
-
-- Python
-- Django
-- MySQL
-- HTML
-- CSS
-- JavaScript
-
-## Estrutura do projeto
-
-```text
+Tecnologias utilizadas
+Python
+Django
+MySQL
+HTML
+CSS
+JavaScript
+Estrutura do projeto
 Projeto-PFC
 │
 ├── banco-de-dados-projeto/
