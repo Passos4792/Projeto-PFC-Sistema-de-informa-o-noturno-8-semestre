@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo_pagina %}ELO{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'aplicacao/css/area-professor.css' %}">
+</head>
+<body>
+    <div class="estrutura-pagina">
+        <!-- O menu é um template compartilhado por todas as telas do professor. -->
+        <aside class="menu-lateral">
+            <div class="logo-menu">
+                <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
+                <small>Área do professor</small>
+            </div>
+
+            <nav class="menu-navegacao">
+                <p>Cadastros e vínculos</p>
+                <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}"><span>🎓</span><b>Alunos</b></a>
+                <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
+                <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
+                <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}"><span>🔗</span><b>Vínculos</b></a>
+
+                <p>Acompanhamento</p>
+                <a href="{% url 'meta-listar' %}" class="{% if pagina_ativa == 'metas' %}ativo{% endif %}"><span>🎯</span><b>Metas</b></a>
+                <a href="{% url 'atividade-listar' %}" class="{% if pagina_ativa == 'atividades' %}ativo{% endif %}"><span>✓</span><b>Atividades</b></a>
+                <a href="{% url 'conteudo-listar' %}" class="{% if pagina_ativa == 'conteudos' %}ativo{% endif %}"><span>▤</span><b>Conteúdos</b></a>
+                <a href="{% url 'frequencia-listar' %}" class="{% if pagina_ativa == 'frequencias' %}ativo{% endif %}"><span>%</span><b>Frequência</b></a>
+            </nav>
+
+            <!-- A autenticação será implementada em outra etapa. -->
+            <div class="rodape-menu"><span>↪</span><b>Sair</b></div>
+        </aside>
+
+        <button id="alternar-menu" class="alternar-menu" type="button" aria-label="Minimizar menu">‹</button>
+
+        <main class="conteudo">
+            {% if messages %}
+                <div class="mensagens">
+                    {% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}
+                </div>
+            {% endif %}
+
+            {% block conteudo %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="{% static 'aplicacao/js/menu-lateral.js' %}"></script>
+</body>
+</html>

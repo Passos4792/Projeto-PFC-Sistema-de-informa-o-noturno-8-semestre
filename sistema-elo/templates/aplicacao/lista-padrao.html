@@ -1,0 +1,41 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Início / {{ titulo }}</p>
+        <h1>{{ titulo }}</h1>
+        <p class="subtitulo">{{ subtitulo }}</p>
+    </div>
+    <a class="botao-principal" href="{{ url_novo }}">+ Novo registro</a>
+</header>
+
+<section class="painel painel-lista">
+    <div class="tabela-responsiva">
+        <table>
+            <thead>
+                <tr>
+                    {% for cabecalho in cabecalhos %}<th>{{ cabecalho }}</th>{% endfor %}
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for linha in linhas %}
+                    <tr>
+                        {% for valor in linha.valores %}<td>{{ valor }}</td>{% endfor %}
+                        <td class="acoes">
+                            {% if linha.url_extra %}<a class="botao-extra" href="{{ linha.url_extra }}">{{ linha.texto_extra }}</a>{% endif %}
+                            <a class="botao-editar" href="{{ linha.url_editar }}">Editar</a>
+                            <a class="botao-excluir" href="{{ linha.url_excluir }}">Excluir</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8" class="sem-dados">Nenhum registro cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
