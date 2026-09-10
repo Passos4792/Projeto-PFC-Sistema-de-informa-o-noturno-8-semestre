@@ -47,6 +47,4 @@ Projeto-PFC
 │
 ├── .env.example
 ├── .gitignore
-├── COMO-RODAR.md
-├── README.md
-└── requirements.txt
+└── README.md
