@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+{#-------------------------------------------------------------------------------------#}
+
+{#configuracoes da pagina#}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ELO - Login</title>
+
+<!--chamada do arquivo de estilo-->
+        <link rel="stylesheet" href="{% static 'aplicacao/css/login-tela.css' %}">
+    </head>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#pagina#}
+    <body>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#conteudo principal#}
+        <main class="pagina-login">
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+            <section class="apresentacao" aria-label="Apresentação do ELO">
+
+                <div class="marca">
+                    <img
+                        class="simbolo-elo"
+                        src="{% static 'aplicacao/imagens/login/logo-elo.png' %}"
+                        alt="Símbolo colorido do ELO"
+                    >
+
+
+                    <p class="nome-elo" aria-label="ELO">
+                        <span>E</span><span>L</span><span>O</span>
+
+                    </p>
+
+                    <p class="descricao-elo">
+                        Sistema de acompanhamento<br>
+                        educacional individualizado
+
+                    </p>
+
+                    <a class="botao-conheca" href="{% url 'sobre' %}">
+                        Conheça o ELO <span aria-hidden="true">›</span>
+                    </a>
+
+                </div>
+
+
+                <div class="ondas" aria-hidden="true">
+                    <img class="imagem-ondas" src="{% static 'aplicacao/imagens/login/onda-login.png' %}" alt="">
+
+                </div>
+
+            </section>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+            <section class="area-formulario">
+
+                <div class="cartao-login">
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+                    <header class="cabecalho-login">
+
+                        <h1>
+                            Bem-vindo(a) ao ELO
+                        </h1>
+
+                        <p>
+                            Entre para acessar sua conta
+                        </p>
+
+                    </header>
+
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#formulario#}
+                    <form class="formulario-login" method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        {% if form.non_field_errors %}
+                            <div role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% elif form.errors %}
+                            <p role="alert">
+                                Preencha usuário e senha corretamente.
+                            </p>
+                        {% endif %}
+
+                        <div class="grupo-campo">
+                            <label for="usuario">Usuário:</label>
+                            <input
+                                id="usuario"
+                                name="username" value="{{ form.username.value|default_if_none:'' }}" required maxlength="150"
+                                type="text"
+                                placeholder="Digite seu usuário"
+                                autocomplete="username"
+                            >
+
+                        </div>
+
+
+                        <div class="grupo-campo">
+                            <label for="senha">Senha:</label>
+
+                            <div class="campo-senha">
+                                <input
+                                    id="senha"
+                                    name="password" required
+                                    type="password"
+                                    placeholder="Digite sua senha"
+                                    autocomplete="current-password"
+                                >
+                                <button class="botao-olho" type="button" aria-label="Mostrar senha">
+                                    <span class="icone-olho"></span>
+                                </button>
+
+                            </div>
+                            <a class="esqueci-senha" href="{% url 'recuperar-senha' %}">Esqueci minha senha</a>
+
+                        </div>
+                        <button class="botao-entrar" type="submit">Entrar</button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+        </main>
+
+<!--chamada do script-->
+        <script src="{% static 'aplicacao/js/login.js' %}"></script>
+    </body>
+</html>
