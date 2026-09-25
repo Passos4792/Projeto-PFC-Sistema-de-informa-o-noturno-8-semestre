@@ -1,0 +1,39 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Redefinir senha{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Início / {{ perfil_alvo.get_tipo_perfil_display }} / Redefinir senha</p>
+        <h1>Redefinir senha</h1>
+        <p class="subtitulo">Crie uma senha temporária para recuperar o acesso.</p>
+    </div>
+</header>
+<section class="painel cartao-senha cartao-redefinicao">
+    <div class="destinatario-senha">
+        <strong>{{ pessoa.nome_completo }}</strong>
+        <span>{{ perfil_alvo.get_tipo_perfil_display }} · Usuário: {{ perfil_alvo.usuario }}</span>
+    </div>
+    <p class="subtitulo">Informe a senha temporária ao usuário. Ele deverá criar uma nova senha antes de acessar o ELO.</p>
+    <form method="post" class="formulario-senha" novalidate>
+        {% csrf_token %}
+        {% for erro in formulario.non_field_errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        {% for campo in formulario %}
+        <div class="grupo-campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% if campo.help_text %}
+            <details class="regras-senha" {% if campo.errors %}open{% endif %}>
+                <summary>Orientações para a senha</summary>
+                <small id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</small>
+            </details>
+            {% endif %}
+            {% for erro in campo.errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="acoes-senha">
+            <button class="botao-principal" type="submit">Redefinir senha</button>
+            <a class="sair-senha" href="{% url rota_voltar %}">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

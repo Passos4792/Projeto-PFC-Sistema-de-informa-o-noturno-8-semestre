@@ -1,0 +1,4 @@
+Django
+PyMySQL[rsa]
+python-dotenv
+cryptography

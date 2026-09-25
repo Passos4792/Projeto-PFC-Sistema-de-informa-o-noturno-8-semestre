@@ -1,6 +1,11 @@
 """Regras simples das telas das funcionalidades 2 e 3."""
 
+#importacoes
 from django.contrib import messages
+from django.db import transaction
+from django.core.paginator import Paginator
+from django.views.decorators.http import require_GET
+from .auditoria import registrar
 from django.db.models import Count, Q
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
@@ -19,21 +24,38 @@ from .forms import (
 from .models import Aluno, Atividade, Conteudo, Frequencia, Meta, Professor, Responsavel, Vinculo
 
 
+#-------------------------------------------------------------------------------------
+
+#texto ativo
 def _texto_ativo(valor):
     """Transforma True e False em um texto mais fácil de entender."""
 
     return "Ativo" if valor else "Inativo"
 
 
+#-------------------------------------------------------------------------------------
+
+#data
 def _data(valor):
     """Formata uma data ou apresenta um traço quando ela não existir."""
 
     return valor.strftime("%d/%m/%Y") if valor else "—"
 
 
-def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas, rota_novo):
+#-------------------------------------------------------------------------------------
+
+#mostrar lista
+def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas, rota_novo, busca=None, total_cadastrados=None):
     """Reutiliza a mesma estrutura visual nas listas simples do projeto."""
 
+    if total_cadastrados is None:
+        total_cadastrados = len(linhas)
+    if busca is None:
+        busca = request.GET.get('busca', '').strip()
+        partes = busca.casefold().split()
+        linhas = [linha for linha in linhas if all(
+            parte in ' '.join(str(valor) for valor in linha['valores']).casefold()
+            for parte in partes)]
     return render(
         request,
         "aplicacao/lista-padrao.html",
@@ -44,17 +66,26 @@ def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas,
             "cabecalhos": cabecalhos,
             "linhas": linhas,
             "url_novo": reverse(rota_novo),
+            "busca_habilitada": busca is not None,
+            "busca": busca or '',
+            "total_cadastrados": total_cadastrados,
         },
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#salvar
 def _salvar(request, formulario_classe, titulo, pagina_ativa, rota_sucesso, instancia=None):
     """Cria ou atualiza um registro usando um ModelForm."""
 
     formulario = formulario_classe(request.POST or None, instance=instancia)
 
     if request.method == "POST" and formulario.is_valid():
-        formulario.save()
+        with transaction.atomic():
+            objeto = formulario.save()
+            registrar('EDICAO' if instancia is not None else 'CRIACAO', request=request,
+                      objeto=objeto, detalhes='Campos: ' + ', '.join(formulario.changed_data))
         messages.success(request, "Registro salvo com sucesso.")
         return redirect(rota_sucesso)
 
@@ -70,17 +101,26 @@ def _salvar(request, formulario_classe, titulo, pagina_ativa, rota_sucesso, inst
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#excluir
 def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso):
     """Mostra uma confirmação antes de excluir um registro."""
 
     objeto = get_object_or_404(modelo, pk=pk)
+    if modelo == Professor and objeto.usuario.professor_principal:
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied('O professor principal não pode ser excluído por esta tela.')
 
     if request.method == "POST":
         try:
-            objeto.delete()
+            with transaction.atomic():
+                registrar('EXCLUSAO', request=request, objeto=objeto)
+                objeto.delete()
             messages.success(request, "Registro excluído com sucesso.")
         except ProtectedError:
-            messages.error(request, "Este registro possui outros dados vinculados e não pode ser excluído.")
+            messages.error(
+                request, "Este registro possui outros dados vinculados e não pode ser excluído.")
         return redirect(rota_sucesso)
 
     return render(
@@ -96,6 +136,57 @@ def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso):
 
 
 # Tela principal de professores, com busca e indicadores reais do banco.
+
+#-------------------------------------------------------------------------------------
+
+#auditoria
+@require_GET
+def auditoria(request):
+    from .models import RegistroAuditoria
+    from .forms import FiltroAuditoria
+    formulario = FiltroAuditoria(request.GET)
+    registros = RegistroAuditoria.objects.all()
+    total_registros = registros.count()
+    busca = request.GET.get('busca', '').strip()
+    for parte in busca.split():
+        registros = registros.filter(Q(autor__icontains=parte) | Q(entidade__icontains=parte)
+                                     | Q(detalhes__icontains=parte) | Q(acao__icontains=parte))
+    if formulario.is_valid():
+        filtros = formulario.cleaned_data
+        if filtros['acao']:
+            registros = registros.filter(acao=filtros['acao'])
+        if filtros['autor']:
+            registros = registros.filter(autor__icontains=filtros['autor'])
+        if filtros['inicio']:
+            registros = registros.filter(criado_em__date__gte=filtros['inicio'])
+        if filtros['fim']:
+            registros = registros.filter(criado_em__date__lte=filtros['fim'])
+    else:
+        registros = registros.none()
+    parametros = request.GET.copy()
+    parametros.pop('pagina', None)
+    return render(request, 'aplicacao/auditoria.html', {
+        'formulario': formulario, 'pagina': Paginator(registros, 25).get_page(request.GET.get('pagina')),
+        'filtros': parametros.urlencode(), 'pagina_ativa': 'auditoria', 'busca': busca, 'total_cadastrados': total_registros})
+
+
+#-------------------------------------------------------------------------------------
+
+#pagina inicial e indicadores
+def pagina_inicial(request):
+    return render(request, 'aplicacao/pagina-inicial.html', {
+        'pagina_ativa': 'pagina-inicial',
+        'total_professores': Professor.objects.count(),
+        'total_alunos': Aluno.objects.count(),
+        'professores_ativos': Professor.objects.filter(ativo=True).count(),
+        'metas_andamento': Meta.objects.filter(situacao=Meta.Situacao.EM_ANDAMENTO).count(),
+        'atividades_pendentes': Atividade.objects.filter(situacao=Atividade.Situacao.PENDENTE).count(),
+    })
+
+
+#-------------------------------------------------------------------------------------
+
+#professores
 def professores(request):
     termo = request.GET.get("busca", "").strip()
     lista = Professor.objects.annotate(
@@ -122,30 +213,58 @@ def professores(request):
     return render(request, "aplicacao/tela-professores.html", contexto)
 
 
+#-------------------------------------------------------------------------------------
+
+#professor criar
 def professor_criar(request):
     return _salvar(request, FormularioProfessor, "Novo professor", "professores", "professor-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#professor editar
 def professor_editar(request, pk):
     professor = get_object_or_404(Professor, pk=pk)
+    if professor.usuario.professor_principal:
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied('A conta principal deve ser administrada pelo responsável técnico.')
     return _salvar(request, FormularioProfessor, "Editar professor", "professores", "professor-listar", professor)
 
 
+#-------------------------------------------------------------------------------------
+
+#professor excluir
 def professor_excluir(request, pk):
     return _excluir(request, Professor, pk, "Excluir professor", "professores", "professor-listar")
 
 
 # Funcionalidade 2: alunos, responsáveis e vínculos.
+
+#-------------------------------------------------------------------------------------
+
+#alunos
+def _buscar_pessoas(modelo, termo):
+    pessoas = modelo.objects.select_related('usuario')
+    for parte in termo.split():
+        pessoas = pessoas.filter(Q(nome__icontains=parte) | Q(sobrenome__icontains=parte))
+    return pessoas
+
+
+#-------------------------------------------------------------------------------------
+
+#alunos
 def alunos(request):
+    busca = request.GET.get('busca', '').strip()
     linhas = [
         {
             "valores": [aluno.nome_completo, aluno.usuario, _data(aluno.data_nascimento), _texto_ativo(aluno.ativo)],
             "url_editar": reverse("aluno-editar", args=[aluno.pk]),
             "url_excluir": reverse("aluno-excluir", args=[aluno.pk]),
+            "url_senha": reverse('usuario-redefinir-senha', args=[aluno.usuario_id]) if aluno.usuario.conta_id else None,
             "url_extra": reverse("aluno-inicio", args=[aluno.pk]),
             "texto_extra": "Ver painel",
         }
-        for aluno in Aluno.objects.all()
+        for aluno in _buscar_pessoas(Aluno, busca)
     ]
     return _mostrar_lista(
         request,
@@ -155,30 +274,46 @@ def alunos(request):
         ["Aluno", "Usuário", "Nascimento", "Situação"],
         linhas,
         "aluno-criar",
+        busca=busca,
+        total_cadastrados=Aluno.objects.count(),
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#aluno criar
 def aluno_criar(request):
     return _salvar(request, FormularioAluno, "Novo aluno", "alunos", "aluno-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#aluno editar
 def aluno_editar(request, pk):
     aluno = get_object_or_404(Aluno, pk=pk)
     return _salvar(request, FormularioAluno, "Editar aluno", "alunos", "aluno-listar", aluno)
 
 
+#-------------------------------------------------------------------------------------
+
+#aluno excluir
 def aluno_excluir(request, pk):
     return _excluir(request, Aluno, pk, "Excluir aluno", "alunos", "aluno-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#responsaveis
 def responsaveis(request):
+    busca = request.GET.get('busca', '').strip()
     linhas = [
         {
             "valores": [responsavel.nome_completo, responsavel.usuario, _texto_ativo(responsavel.ativo)],
             "url_editar": reverse("responsavel-editar", args=[responsavel.pk]),
             "url_excluir": reverse("responsavel-excluir", args=[responsavel.pk]),
+            "url_senha": reverse('usuario-redefinir-senha', args=[responsavel.usuario_id]) if responsavel.usuario.conta_id else None,
         }
-        for responsavel in Responsavel.objects.all()
+        for responsavel in _buscar_pessoas(Responsavel, busca)
     ]
     return _mostrar_lista(
         request,
@@ -188,13 +323,21 @@ def responsaveis(request):
         ["Responsável", "Usuário", "Situação"],
         linhas,
         "responsavel-criar",
+        busca=busca,
+        total_cadastrados=Responsavel.objects.count(),
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#responsavel criar
 def responsavel_criar(request):
     return _salvar(request, FormularioResponsavel, "Novo responsável", "responsaveis", "responsavel-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#responsavel editar
 def responsavel_editar(request, pk):
     responsavel = get_object_or_404(Responsavel, pk=pk)
     return _salvar(
@@ -207,12 +350,18 @@ def responsavel_editar(request, pk):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#responsavel excluir
 def responsavel_excluir(request, pk):
     return _excluir(
         request, Responsavel, pk, "Excluir responsável", "responsaveis", "responsavel-listar"
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#vinculos
 def vinculos(request):
     objetos = Vinculo.objects.select_related("aluno", "professor", "responsavel")
     linhas = [
@@ -240,20 +389,33 @@ def vinculos(request):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#vinculo criar
 def vinculo_criar(request):
     return _salvar(request, FormularioVinculo, "Novo vínculo", "vinculos", "vinculo-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#vinculo editar
 def vinculo_editar(request, pk):
     vinculo = get_object_or_404(Vinculo, pk=pk)
     return _salvar(request, FormularioVinculo, "Editar vínculo", "vinculos", "vinculo-listar", vinculo)
 
 
+#-------------------------------------------------------------------------------------
+
+#vinculo excluir
 def vinculo_excluir(request, pk):
     return _excluir(request, Vinculo, pk, "Excluir vínculo", "vinculos", "vinculo-listar")
 
 
-# Funcionalidade 3: metas, atividades, conteúdos e frequência.
+# Funcionalidade 3: metas e atividades.
+
+#-------------------------------------------------------------------------------------
+
+#metas
 def metas(request):
     objetos = Meta.objects.select_related("aluno", "professor")
     linhas = [
@@ -275,19 +437,31 @@ def metas(request):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#meta criar
 def meta_criar(request):
     return _salvar(request, FormularioMeta, "Nova meta", "metas", "meta-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#meta editar
 def meta_editar(request, pk):
     meta = get_object_or_404(Meta, pk=pk)
     return _salvar(request, FormularioMeta, "Editar meta", "metas", "meta-listar", meta)
 
 
+#-------------------------------------------------------------------------------------
+
+#meta excluir
 def meta_excluir(request, pk):
     return _excluir(request, Meta, pk, "Excluir meta", "metas", "meta-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#atividades
 def atividades(request):
     objetos = Atividade.objects.select_related("aluno", "professor", "meta")
     linhas = [
@@ -309,10 +483,16 @@ def atividades(request):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#atividade criar
 def atividade_criar(request):
     return _salvar(request, FormularioAtividade, "Nova atividade", "atividades", "atividade-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#atividade editar
 def atividade_editar(request, pk):
     atividade = get_object_or_404(Atividade, pk=pk)
     return _salvar(
@@ -320,10 +500,16 @@ def atividade_editar(request, pk):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#atividade excluir
 def atividade_excluir(request, pk):
     return _excluir(request, Atividade, pk, "Excluir atividade", "atividades", "atividade-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#conteudos
 def conteudos(request):
     objetos = Conteudo.objects.select_related("aluno", "professor", "atividade")
     linhas = [
@@ -345,19 +531,31 @@ def conteudos(request):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#conteudo criar
 def conteudo_criar(request):
     return _salvar(request, FormularioConteudo, "Novo conteúdo", "conteudos", "conteudo-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#conteudo editar
 def conteudo_editar(request, pk):
     conteudo = get_object_or_404(Conteudo, pk=pk)
     return _salvar(request, FormularioConteudo, "Editar conteúdo", "conteudos", "conteudo-listar", conteudo)
 
 
+#-------------------------------------------------------------------------------------
+
+#conteudo excluir
 def conteudo_excluir(request, pk):
     return _excluir(request, Conteudo, pk, "Excluir conteúdo", "conteudos", "conteudo-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#frequencias
 def frequencias(request):
     objetos = Frequencia.objects.select_related("aluno", "professor")
     linhas = [
@@ -379,10 +577,16 @@ def frequencias(request):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#frequencia criar
 def frequencia_criar(request):
     return _salvar(request, FormularioFrequencia, "Nova frequência", "frequencias", "frequencia-listar")
 
 
+#-------------------------------------------------------------------------------------
+
+#frequencia editar
 def frequencia_editar(request, pk):
     frequencia = get_object_or_404(Frequencia, pk=pk)
     return _salvar(
@@ -390,11 +594,18 @@ def frequencia_editar(request, pk):
     )
 
 
+#-------------------------------------------------------------------------------------
+
+#frequencia excluir
 def frequencia_excluir(request, pk):
     return _excluir(request, Frequencia, pk, "Excluir frequência", "frequencias", "frequencia-listar")
 
 
 # Painel individual do aluno, alimentado pelos dados cadastrados no banco.
+
+#-------------------------------------------------------------------------------------
+
+#aluno inicio
 def aluno_inicio(request, pk):
     aluno = get_object_or_404(Aluno, pk=pk)
     metas_aluno = aluno.metas.all()
@@ -410,3 +621,4 @@ def aluno_inicio(request, pk):
         "pontos": min(100, metas_concluidas * 20 + atividades_concluidas * 10),
     }
     return render(request, "aplicacao/tela-inicial-aluno.html", contexto)
+#-------------------------------------------------------------------------------------

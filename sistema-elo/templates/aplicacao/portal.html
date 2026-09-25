@@ -1,0 +1,58 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Área do responsável{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+    <header class="topo-pagina">
+        <div>
+            <p class="caminho">
+                Início / Acompanhamento
+            </p>
+            <h1>
+                Cada passo importa
+            </h1>
+            <p class="subtitulo">
+                Acompanhe as metas e atividades dos alunos sob sua responsabilidade.
+            </p>
+        </div>
+    </header>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel">
+        <div class="painel-cabecalho">
+            <div>
+                <h2>
+                    Alunos vinculados
+                </h2>
+                <p>
+                    Escolha um aluno para acompanhar seu desenvolvimento.
+                </p>
+            </div>
+        </div>
+        <div class="grade-cartoes">
+            {% for aluno in alunos %}
+                <article class="cartao-aluno">
+                    <span class="avatar">{{ aluno.nome|first }}{{ aluno.sobrenome|first }}</span>
+                    <h2>
+                        {{ aluno.nome_completo }}
+                    </h2>
+                    <p>
+                        Metas, atividades e conquistas em um só lugar.
+                    </p>
+                    <a class="botao-principal" href="{% url 'aluno-inicio' aluno.pk %}">Ver acompanhamento →</a>
+                </article>
+            {% empty %}
+                <div class="sem-dados">
+                    <span class="icone-vazio" aria-hidden="true">♡</span><strong>Nenhum aluno vinculado ainda</strong>
+                    <p>
+                        Solicite ao professor o vínculo para começar a acompanhar.
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

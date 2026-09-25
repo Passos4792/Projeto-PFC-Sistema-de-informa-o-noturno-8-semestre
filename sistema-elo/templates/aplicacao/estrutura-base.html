@@ -1,52 +1,135 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titulo_pagina %}ELO{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'aplicacao/css/area-professor.css' %}">
-</head>
-<body>
-    <div class="estrutura-pagina">
+
+{#-------------------------------------------------------------------------------------#}
+
+{#configuracoes da pagina#}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block titulo_pagina %}ELO{% endblock %}
+        </title>
+
+<!--chamada do arquivo de estilo-->
+        <link rel="stylesheet" href="{% static 'aplicacao/css/area-professor.css' %}">
+    </head>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#pagina#}
+    <body>
+        <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo</a>
+
+        <div class="estrutura-pagina">
         <!-- O menu é um template compartilhado por todas as telas do professor. -->
-        <aside class="menu-lateral">
-            <div class="logo-menu">
-                <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
-                <small>Área do professor</small>
-            </div>
 
-            <nav class="menu-navegacao">
-                <p>Cadastros e vínculos</p>
-                <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}"><span>🎓</span><b>Alunos</b></a>
-                <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
-                <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
-                <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}"><span>🔗</span><b>Vínculos</b></a>
 
-                <p>Acompanhamento</p>
-                <a href="{% url 'meta-listar' %}" class="{% if pagina_ativa == 'metas' %}ativo{% endif %}"><span>🎯</span><b>Metas</b></a>
-                <a href="{% url 'atividade-listar' %}" class="{% if pagina_ativa == 'atividades' %}ativo{% endif %}"><span>✓</span><b>Atividades</b></a>
-                <a href="{% url 'conteudo-listar' %}" class="{% if pagina_ativa == 'conteudos' %}ativo{% endif %}"><span>▤</span><b>Conteúdos</b></a>
-                <a href="{% url 'frequencia-listar' %}" class="{% if pagina_ativa == 'frequencias' %}ativo{% endif %}"><span>%</span><b>Frequência</b></a>
-            </nav>
+{#-------------------------------------------------------------------------------------#}
 
-            <!-- A autenticação será implementada em outra etapa. -->
-            <div class="rodape-menu"><span>↪</span><b>Sair</b></div>
-        </aside>
+{#menu lateral#}
+            <aside class="menu-lateral">
 
-        <button id="alternar-menu" class="alternar-menu" type="button" aria-label="Minimizar menu">‹</button>
+                <div class="logo-menu">
+                    <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
+                    <small>{% if request.perfil_elo.tipo_perfil == 'PROFESSOR' %}Área do professor{% elif request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}Área do responsável{% else %}Área do aluno{% endif %}</small>
 
-        <main class="conteudo">
-            {% if messages %}
-                <div class="mensagens">
-                    {% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}
                 </div>
-            {% endif %}
 
-            {% block conteudo %}{% endblock %}
-        </main>
-    </div>
 
-    <script src="{% static 'aplicacao/js/menu-lateral.js' %}"></script>
-</body>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#navegacao#}
+                <nav class="menu-navegacao">
+                    {% if request.perfil_elo.tipo_perfil == 'PROFESSOR' %}
+
+                        <p>
+                            Cadastros e vínculos
+                        </p>
+                        {% if request.perfil_elo.professor_principal %}
+                            <a href="{% url 'auditoria' %}" class="{% if pagina_ativa == 'auditoria' %}ativo{% endif %}"><span>☷</span><b>Auditoria</b></a>
+                        {% endif %}
+                        <a href="{% url 'pagina-inicial' %}" class="{% if pagina_ativa == 'pagina-inicial' %}ativo{% endif %}"><span>⌂</span><b>Página inicial</b></a>
+                        <a href="{% url 'usuario-criar' %}" class="{% if pagina_ativa == 'usuarios' %}ativo{% endif %}"><span>+</span><b>Cadastrar usuário</b></a>
+                        <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}"><span>🎓</span><b>Alunos</b></a>
+                        <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
+                        <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
+                        <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}"><span>🔗</span><b>Vínculos</b></a>
+
+
+                        <p>
+                            Acompanhamento
+                        </p>
+                        <a href="{% url 'meta-listar' %}" class="{% if pagina_ativa == 'metas' %}ativo{% endif %}"><span>🎯</span><b>Metas</b></a>
+                        <a href="{% url 'atividade-listar' %}" class="{% if pagina_ativa == 'atividades' %}ativo{% endif %}"><span>✓</span><b>Atividades</b></a>
+                        <a href="{% url 'conteudo-listar' %}" class="{% if pagina_ativa == 'conteudos' %}ativo{% endif %}"><span>▤</span><b>Conteúdos</b></a>
+                        <a href="{% url 'frequencia-listar' %}" class="{% if pagina_ativa == 'frequencias' %}ativo{% endif %}"><span>%</span><b>Frequência</b></a>
+                    {% else %}
+
+                        <p>
+                            Meu acompanhamento
+                        </p>
+                        <a href="{% url 'inicio' %}" class="{% if pagina_ativa != 'minhas-atividades' %}ativo{% endif %}"><span>⌂</span><b>Início</b></a>
+                        <a href="{% url 'minhas-atividades' %}" class="{% if pagina_ativa == 'minhas-atividades' %}ativo{% endif %}"><span>☆</span><b>Atividades</b></a>
+                        {% if aluno %}
+                            <a href="#metas"><span>✓</span><b>Metas</b></a>
+                        {% endif %}
+                    {% endif %}
+
+                </nav>
+
+
+                <div class="conta-menu">
+                    <small>Conectado como</small><strong>{{ request.user.username }}</strong>
+                </div>
+
+                <nav class="links-legais-menu" aria-label="Documentos legais">
+                    <a href="{% url 'termos-uso' %}">Termos de Uso</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="{% url 'politica-privacidade' %}">Privacidade</a>
+                </nav>
+
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#formulario#}
+                <form class="rodape-menu" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}<button type="submit">Sair</button>
+                </form>
+
+            </aside>
+
+            <button id="alternar-menu" class="alternar-menu" type="button" aria-label="Minimizar menu">‹</button>
+
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#conteudo principal#}
+            <main class="conteudo" id="conteudo-principal">
+                {% if messages %}
+
+                    <div class="mensagens" role="status">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}">
+                                {{ message }}
+                            </p>
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
+                {% block conteudo %}
+                {% endblock %}
+
+            </main>
+
+        </div>
+
+
+<!--chamada do script-->
+        <script src="{% static 'aplicacao/js/menu-lateral.js' %}"></script>
+    </body>
 </html>

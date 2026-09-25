@@ -1,0 +1,58 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - Privacidade para alunos{% endblock %}
+{% block conteudo %}
+
+<section class="painel cartao-publico documento-aluno">
+    <span class="etiqueta">Sua privacidade importa</span>
+    <h1>Como o ELO cuida das suas informações</h1>
+    <p class="subtitulo">Uma explicação simples para você saber o que acontece com seus dados.</p>
+
+    <div class="grade-privacidade-aluno">
+        <article>
+            <span aria-hidden="true">☺</span>
+            <h2>O que sabemos sobre você?</h2>
+            <p>Seu nome, seu usuário e, se for informado, sua data de nascimento. Também ficam registrados seus objetivos, atividades, conteúdos e frequência.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">◎</span>
+            <h2>Por que usamos isso?</h2>
+            <p>Para mostrar seu acompanhamento, organizar as atividades e ajudar professor, aluno e responsável a acompanharem o que precisa ser feito.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">⌁</span>
+            <h2>Quem pode ver?</h2>
+            <p>Você vê seu próprio acompanhamento. Seu responsável pode ver quando estiver vinculado à sua conta. Professores usam as informações para realizar o acompanhamento educacional.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">♡</span>
+            <h2>O que não é necessário?</h2>
+            <p>O ELO não precisa de localização, biometria, gravação de voz ou foto para funcionar nesta versão. Também não existe um campo próprio para diagnóstico ou laudo médico.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">✓</span>
+            <h2>Você pode pedir ajuda</h2>
+            <p>Se seu nome ou outra informação estiver errada, fale com seu responsável ou com o professor responsável pelo ambiente para solicitar a correção.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">🔒</span>
+            <h2>Proteja sua senha</h2>
+            <p>Não conte sua senha para colegas. Se achar que alguém entrou na sua conta, avise um adulto responsável e peça a troca da senha.</p>
+        </article>
+        <article>
+            <span aria-hidden="true">▦</span>
+            <h2>Seu calendário é opcional</h2>
+            <p>Você pode conectar sua conta Google e escolher uma atividade para colocar na agenda. Serão enviados seu nome, a atividade e o prazo. Peça ajuda ao seu responsável se precisar. Você pode desconectar quando quiser; os eventos já enviados continuam no Google até você apagá-los.</p>
+        </article>
+    </div>
+
+    <div class="mensagem-privacidade-aluno">
+        <strong>Uma coisa importante:</strong>
+        <p>Se alguma parte não ficou clara, você pode pedir para um responsável ou professor explicar. Suas informações devem ser usadas pensando no que é melhor para você.</p>
+    </div>
+
+    <div class="acoes-documento">
+        <a class="botao-secundario" href="{% url 'politica-privacidade' %}">Ler política completa</a>
+        <a class="botao-principal" href="{% url 'login' %}">Voltar ao login</a>
+    </div>
+</section>
+{% endblock %}

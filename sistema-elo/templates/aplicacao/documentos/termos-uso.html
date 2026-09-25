@@ -1,0 +1,92 @@
+    <div class="cabecalho-documento">
+        <span class="etiqueta">Uso responsável</span>
+        <h1>Termos de Uso</h1>
+        <p class="subtitulo">Regras para usar o ELO com segurança e respeito aos alunos, professores e responsáveis.</p>
+        <p class="versao-documento">Versão {{ versao_termos }} · Vigência: {{ data_vigencia }}</p>
+    </div>
+
+    <div class="corpo-documento">
+        <section>
+            <h2>1. O que é o ELO</h2>
+            <p>O ELO é um sistema web de acompanhamento educacional individualizado. Nesta versão, o projeto permite criar contas com perfis de professor, aluno e responsável, vincular esses perfis e registrar metas, atividades, conteúdos de apoio e frequência.</p>
+            <p>O sistema é um protótipo acadêmico. Seu uso em ambiente real depende da validação da instituição responsável, inclusive quanto à segurança, privacidade, retenção, suporte e regras educacionais aplicáveis.</p>
+        </section>
+
+        <section>
+            <h2>2. Quem pode utilizar</h2>
+            <p>O acesso é destinado apenas a usuários cadastrados por pessoa autorizada no ambiente do ELO. Cada conta possui um perfil de acesso e deve ser utilizada somente pela pessoa a quem foi atribuída.</p>
+            <p>Alunos menores de idade podem utilizar o sistema dentro do contexto educacional definido pela instituição e com as medidas de proteção adequadas à sua idade. O uso por crianças e adolescentes deve sempre considerar seu melhor interesse e os direitos previstos na LGPD e no Estatuto da Criança e do Adolescente.</p>
+        </section>
+
+        <section>
+            <h2>3. Conta, senha e acesso</h2>
+            <ul class="lista-documento">
+                <li>O usuário deve manter sua senha em sigilo e não compartilhá-la com outras pessoas.</li>
+                <li>Não é permitido usar a conta de outra pessoa, tentar descobrir senhas ou contornar controles de acesso.</li>
+                <li>O sistema pode limitar temporariamente tentativas repetidas de login para proteger as contas.</li>
+                <li>Se houver suspeita de acesso indevido, o usuário deve comunicar o responsável pelo ambiente e solicitar redefinição da senha.</li>
+                <li>A recuperação automática por e-mail não está disponível nesta versão do projeto.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Perfis e permissões</h2>
+            <p>O aluno acessa o próprio acompanhamento. O responsável acessa os alunos vinculados à sua conta. Professores utilizam as rotinas de cadastro e acompanhamento pedagógico, e o professor principal possui funções administrativas adicionais.</p>
+            <p>Permissões não devem ser ampliadas por tentativa de alterar endereços, parâmetros, código ou requisições. Antes de uma implantação real, os acessos de professores deverão ser restringidos aos alunos e informações necessários ao exercício de sua função.</p>
+        </section>
+
+        <section>
+            <h2>5. Uso adequado do sistema</h2>
+            <p>Ao utilizar o ELO, o usuário deve agir de forma respeitosa e compatível com a finalidade educacional. Não é permitido:</p>
+            <ul class="lista-documento">
+                <li>inserir informações falsas com intenção de prejudicar outra pessoa;</li>
+                <li>expor, constranger, ridicularizar ou discriminar alunos, responsáveis, professores ou terceiros;</li>
+                <li>registrar dados pessoais que não sejam necessários à atividade educacional;</li>
+                <li>inserir diagnósticos, laudos, informações médicas ou outros dados sensíveis em campos livres sem necessidade, base legal e proteção específicas;</li>
+                <li>tentar acessar dados de outro usuário sem autorização;</li>
+                <li>interferir no funcionamento do sistema, explorar vulnerabilidades ou utilizar o serviço para finalidade ilícita.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>6. Registros educacionais</h2>
+            <p>A conexão com o Google Agenda é opcional e depende da autorização da própria conta Google. O envio é feito individualmente pelo usuário na área de atividades. Atualizações devem ser sincronizadas novamente; atividades sem data de entrega ou canceladas não são enviadas. Eventos já sincronizados permanecem no Google até serem removidos pelo usuário, mesmo após desconectar a integração.</p>
+            <p>Metas, atividades, conteúdos, frequências e observações devem ser relacionados ao acompanhamento educacional e escritos de forma objetiva, respeitosa e adequada. O ELO não deve ser utilizado para criar rankings constrangedores, exposição pública de desempenho ou registros ofensivos.</p>
+            <p>Os usuários são responsáveis pela correção das informações que inserem dentro das atribuições de seu perfil. Registros relevantes podem gerar eventos de auditoria para proteção e rastreabilidade.</p>
+        </section>
+
+        <section>
+            <h2>7. Crianças e adolescentes</h2>
+            <p>O ELO foi pensado para um contexto em que alunos podem ser crianças ou adolescentes. Por isso, a utilização deve preservar sua dignidade, imagem, identidade, autonomia e integridade, evitando coleta excessiva ou tratamento vexatório.</p>
+            <p>A caixa de aceite destes Termos confirma que o usuário leu e concordou com as regras de uso e teve acesso à Política de Privacidade. Esse aceite não autoriza tratamento de dados para finalidades diferentes das informadas e não substitui eventual consentimento específico do responsável legal quando ele for exigido pela LGPD.</p>
+        </section>
+
+        <section>
+            <h2>8. Privacidade e dados pessoais</h2>
+            <p>O tratamento de dados pessoais é explicado separadamente na Política de Privacidade. Os Termos de Uso não autorizam utilização irrestrita de dados e não retiram direitos garantidos por lei.</p>
+            <p><a class="link-destaque" href="{% url 'politica-privacidade' %}">Leia a Política de Privacidade do ELO.</a></p>
+        </section>
+
+        <section>
+            <h2>9. Disponibilidade, manutenção e limitações</h2>
+            <p>Por se tratar de um protótipo acadêmico, o ELO pode passar por manutenção, alteração ou indisponibilidade durante o desenvolvimento e os testes. Não deve ser utilizado como único repositório de informações que a instituição seja legalmente obrigada a conservar sem que existam controles de produção, backup, continuidade e retenção devidamente implementados.</p>
+        </section>
+
+        <section>
+            <h2>10. Suspensão e encerramento de conta</h2>
+            <p>Contas podem ser desativadas quando o vínculo com o ambiente terminar, quando houver necessidade de segurança ou diante de uso indevido, respeitados os direitos do usuário e as regras da instituição. O encerramento da conta não autoriza a eliminação imediata de registros que devam ser mantidos por obrigação legal, segurança ou exercício regular de direitos.</p>
+        </section>
+
+        <section>
+            <h2>11. Propriedade do projeto</h2>
+            <p>O código, identidade visual e materiais do ELO integram o projeto acadêmico de seus autores, sem prejuízo dos direitos de terceiros sobre bibliotecas, frameworks, marcas ou conteúdos utilizados sob suas respectivas licenças. O usuário não adquire propriedade sobre o sistema pelo simples acesso.</p>
+        </section>
+
+        <section>
+            <h2>12. Alterações e legislação aplicável</h2>
+            <p>Estes Termos podem ser atualizados quando o sistema ou suas regras mudarem. Se uma nova versão exigir nova manifestação, o acesso às áreas internas poderá ficar condicionado à leitura e ao novo aceite.</p>
+            <p>Aplicam-se as leis brasileiras pertinentes, especialmente as normas de proteção de dados e de proteção de crianças e adolescentes, quando cabíveis ao contexto de utilização.</p>
+            <p><strong>Versão atual:</strong> {{ versao_termos }} · <strong>Vigência:</strong> {{ data_vigencia }}.</p>
+        </section>
+    </div>
+

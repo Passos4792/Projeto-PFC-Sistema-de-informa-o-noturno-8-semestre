@@ -1,50 +1,86 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELO - Início de {{ aluno.nome }}</title>
-    <link rel="stylesheet" href="{% static 'aplicacao/css/tela-aluno.css' %}">
-</head>
-<body>
-    <header class="cabecalho-aluno">
-        <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
-        <a href="{% url 'aluno-listar' %}" title="Voltar para a área do professor">↪</a>
+{% extends 'aplicacao/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Acompanhamento de {{ aluno.nome }}{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+    <header class="topo-pagina">
+        <div>
+            <p class="caminho">
+                Início / Acompanhamento
+            </p>
+            <h1>
+                {% if request.perfil_elo.tipo_perfil == 'ALUNO' %}Olá, {{ aluno.nome }}!{% else %}{{ aluno.nome_completo }}{% endif %}
+            </h1>
+            <p class="subtitulo">
+                Pequenas conquistas, grandes descobertas. Veja o desenvolvimento por aqui.
+            </p>
+        </div>
+        <a class="botao-secundario" href="{% url 'inicio' %}">Voltar ao início</a>
     </header>
 
-    <div class="estrutura-aluno">
-        <aside class="menu-aluno">
-            <a class="ativo" href="#">⌂ <span>Início</span></a>
-            <a href="{% url 'atividade-listar' %}">▤ <span>Atividades</span></a>
-            <a href="{% url 'meta-listar' %}">✓ <span>Metas</span></a>
-        </aside>
+{#-------------------------------------------------------------------------------------#}
 
-        <main class="inicio-aluno">
-            <img class="onda-aluno" src="{% static 'aplicacao/imagens/onda-aluno.png' %}" alt="">
-            <div class="frente-aluno">
-                <header><h1>Olá, {{ aluno.nome }}!</h1><p>Veja como está o seu desenvolvimento.</p></header>
+{#area de conteudo#}
+    <section class="indicadores indicadores-aluno" id="metas" aria-label="Resumo do acompanhamento">
+        <article>
+            <span>Progresso geral</span><strong>{{ pontos }} <small>pontos</small></strong>
+            <p>
+                Cada conquista faz a diferença.
+            </p>
+        </article>
+        <article>
+            <span>Metas em andamento</span><strong>{{ metas_andamento|stringformat:'02d' }}</strong>
+            <p>
+                Um passo de cada vez.
+            </p>
+        </article>
+        <article>
+            <span>Metas concluídas</span><strong>{{ metas_concluidas|stringformat:'02d' }}</strong>
+            <p>
+                Motivos para comemorar!
+            </p>
+        </article>
+    </section>
 
-                <section class="resumo-aluno">
-                    <article class="progresso"><h2>Progresso geral</h2><strong>{{ pontos }}</strong><span>Pontos</span><p>Você está indo muito bem!</p></article>
-                    <div class="metas-resumo">
-                        <article class="andamento"><strong>{{ metas_andamento|stringformat:'02d' }}</strong><span>Metas em andamento</span></article>
-                        <article class="concluidas"><strong>{{ metas_concluidas|stringformat:'02d' }}</strong><span>Metas concluídas</span></article>
-                    </div>
-                </section>
+{#-------------------------------------------------------------------------------------#}
 
-                <section class="atividades-aluno">
-                    <h2>Atividades da semana</h2>
-                    <div>
-                        {% for atividade in atividades %}
-                            <article><span class="icone">☆</span><h3>{{ atividade.titulo }}</h3><p>{{ atividade.descricao }}</p></article>
-                        {% empty %}
-                            <article><h3>Nenhuma atividade pendente</h3><p>As próximas atividades aparecerão aqui.</p></article>
-                        {% endfor %}
-                    </div>
-                </section>
+{#area de conteudo#}
+    <section class="painel" id="atividades">
+        <div class="painel-cabecalho">
+            <div>
+                <h2>
+                    Próximas atividades
+                </h2>
+                <p>
+                    Continue aprendendo no seu ritmo.
+                </p>
             </div>
-        </main>
-    </div>
-</body>
-</html>
+            {% if request.perfil_elo.tipo_perfil != 'PROFESSOR' %}
+            <a class="botao-secundario" href="{% url 'minhas-atividades' %}">Ver todas as atividades</a>
+            {% else %}<span class="etiqueta">Acompanhamento</span>{% endif %}
+        </div>
+        <div class="grade-cartoes">
+            {% for atividade in atividades %}
+                <article class="cartao-aluno">
+                    <span class="icone-vazio" aria-hidden="true">☆</span>
+                    <h2>
+                        {{ atividade.titulo }}
+                    </h2>
+                    <p>
+                        {{ atividade.descricao }}
+                    </p>
+                    {% if atividade.data_entrega %}<span class="etiqueta">Até {{ atividade.data_entrega|date:'d/m/Y' }}</span>{% endif %}
+                </article>
+            {% empty %}
+                <div class="sem-dados">
+                    <span class="icone-vazio" aria-hidden="true">✓</span><strong>Tudo em dia por aqui</strong>
+                    <p>
+                        As próximas atividades aparecerão neste espaço.
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,7 +1,11 @@
+#importacoes
 import os
 import sys
 
 
+#-------------------------------------------------------------------------------------
+
+#principal
 def principal():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configuracao.settings')
     try:
@@ -14,5 +18,9 @@ def principal():
     execute_from_command_line(sys.argv)
 
 
+#-------------------------------------------------------------------------------------
+
+#iniciar aplicacao
 if __name__ == '__main__':
     principal()
+#-------------------------------------------------------------------------------------
