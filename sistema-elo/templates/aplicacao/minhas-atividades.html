@@ -1,0 +1,64 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Minhas atividades{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div>
+    <p class="caminho">Meu acompanhamento / Atividades</p>
+    <h1>Atividades</h1>
+    <p class="subtitulo">{% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}Acompanhe as atividades dos alunos vinculados a você.{% else %}Organize suas atividades e acompanhe os prazos.{% endif %}</p>
+</div></header>
+<section class="painel conexao-calendario">
+    <div>
+        <span class="etiqueta">Seu calendário</span><h2>Google Agenda</h2>
+        <p>Envie as atividades que escolher para sua conta Google. Cada evento leva o título, a descrição, o nome do aluno, a situação e a data de entrega.</p>
+        <small>A conexão é opcional. A sincronização acontece somente ao clicar no botão de cada atividade, como um evento de dia inteiro. Alterações posteriores precisam ser sincronizadas novamente.</small>
+    </div>
+    <div class="acoes-calendario">
+        {% if google_conectado %}
+        <span class="etiqueta">Conta conectada</span>
+        <form method="post" action="{% url 'google-desconectar' %}">{% csrf_token %}<button class="botao-secundario" type="submit">Desconectar</button></form>
+        <small>Desconectar não apaga eventos já enviados.</small>
+        {% elif google_configurado %}
+        <form method="post" action="{% url 'google-conectar' %}">{% csrf_token %}<button class="botao-principal" type="submit">Conectar conta Google</button></form>
+        {% else %}
+        <span class="etiqueta">Em configuração</span><small>A conexão com o Google será liberada pelo administrador.</small>
+        {% endif %}
+    </div>
+</section>
+<section class="painel painel-lista">
+    <div class="painel-cabecalho cabecalho-registros">
+        <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>atividades</span></div>
+        <div><h2>Suas atividades</h2><p data-contagem-lista aria-live="polite">{{ atividades|length }} atividade(s) nesta lista.</p></div>
+        <form method="get" class="busca" role="search" data-busca-automatica>
+            <input type="search" name="busca" value="{{ busca }}" placeholder="Buscar atividade ou aluno" aria-label="Buscar atividade ou aluno">
+            <small data-erro-busca role="alert" hidden>Não foi possível atualizar. Pressione Enter para tentar novamente.</small>
+        </form>
+    </div>
+    <div data-resultados-lista>
+        <div class="grade-cartoes grade-atividades-calendario">
+        {% for atividade in atividades %}
+            <article class="cartao-aluno atividade-calendario">
+                <span class="etiqueta">{{ atividade.get_situacao_display }}</span>
+                <h2>{{ atividade.titulo }}</h2>
+                {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}<strong class="aluno-atividade">{{ atividade.aluno.nome_completo }}</strong>{% endif %}
+                <p>{{ atividade.descricao|default:'Sem descrição.' }}</p>
+                <p class="prazo-atividade">{% if atividade.data_entrega %}Entrega: {{ atividade.data_entrega|date:'d/m/Y' }}{% else %}Data de entrega ainda não definida{% endif %}</p>
+                <div class="sincronizacao-atividade">
+                {% if atividade.google_sincronizado_em %}<small>Último envio: {{ atividade.google_sincronizado_em|date:'d/m/Y H:i' }}</small>{% endif %}
+                {% if atividade.situacao == 'CANCELADA' %}
+                    <small>Atividade cancelada. Se já foi enviada, remova o evento no seu Google Agenda.</small>
+                {% elif not atividade.data_entrega %}
+                    <small>A sincronização ficará disponível quando o professor definir uma data.</small>
+                {% elif google_conectado and google_configurado %}
+                    <form method="post" action="{% url 'google-sincronizar' atividade.pk %}">{% csrf_token %}
+                        <button class="botao-secundario" type="submit">{% if atividade.google_sincronizado_em %}Atualizar no Google Agenda{% else %}Sincronizar com Google Agenda{% endif %}</button>
+                    </form>
+                {% else %}<small>Conecte sua conta Google para sincronizar esta atividade.</small>{% endif %}
+                </div>
+            </article>
+        {% empty %}<div class="sem-dados"><strong>Nenhuma atividade encontrada.</strong><p>{% if busca %}Tente outro nome ou apague a busca.{% else %}As atividades cadastradas pelo professor aparecerão aqui.{% endif %}</p></div>{% endfor %}
+        </div>
+    </div>
+</section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>
+{% endblock %}

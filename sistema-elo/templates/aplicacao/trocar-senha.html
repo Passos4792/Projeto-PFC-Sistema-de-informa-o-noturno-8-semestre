@@ -1,0 +1,39 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - Crie sua senha{% endblock %}
+{% block conteudo %}
+<section class="painel cartao-publico cartao-senha">
+    <header class="cabecalho-senha">
+    <span class="rotulo-senha">Primeiro acesso</span>
+    <h1>Defina sua senha</h1>
+    <p class="subtitulo">Troque a senha recebida por uma senha pessoal.</p>
+    </header>
+    <form method="post" class="formulario-senha" novalidate>
+        {% csrf_token %}
+        {% for erro in formulario.non_field_errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        {% for campo in formulario %}
+        <div class="grupo-campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% if campo.help_text %}
+                {% if campo.name == 'new_password1' %}
+                <details class="regras-senha" {% if campo.errors %}open{% endif %}>
+                    <summary>Orientações para a senha</summary>
+                    <small id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</small>
+                </details>
+                {% else %}
+                <small id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</small>
+                {% endif %}
+            {% endif %}
+            {% for erro in campo.errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="acoes-senha">
+            <button class="botao-principal" type="submit">Salvar senha</button>
+            <button class="sair-senha" type="submit" form="sair-primeiro-acesso">Sair da conta</button>
+        </div>
+    </form>
+    <form id="sair-primeiro-acesso" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+    </form>
+</section>
+{% endblock %}

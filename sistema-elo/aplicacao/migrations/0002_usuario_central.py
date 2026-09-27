@@ -1,7 +1,11 @@
+#importacoes
 import django.db.models.deletion
 from django.db import migrations, models
 
 
+#-------------------------------------------------------------------------------------
+
+#configuracoes iniciais
 PERFIS = (
     ("Professor", "PROFESSOR"),
     ("Aluno", "ALUNO"),
@@ -9,6 +13,9 @@ PERFIS = (
 )
 
 
+#-------------------------------------------------------------------------------------
+
+#validar usuarios existentes
 def validar_usuarios_existentes(apps, schema_editor):
     usuarios_encontrados = {}
 
@@ -28,6 +35,9 @@ def validar_usuarios_existentes(apps, schema_editor):
             usuarios_encontrados[chave] = tipo_perfil
 
 
+#-------------------------------------------------------------------------------------
+
+#criar contas centrais
 def criar_contas_centrais(apps, schema_editor):
     Usuario = apps.get_model("elo", "Usuario")
 
@@ -43,6 +53,9 @@ def criar_contas_centrais(apps, schema_editor):
             perfil.save(update_fields=["conta"])
 
 
+#-------------------------------------------------------------------------------------
+
+#migracao do banco de dados
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -150,3 +163,4 @@ class Migration(migrations.Migration):
             ),
         ),
     ]
+#-------------------------------------------------------------------------------------

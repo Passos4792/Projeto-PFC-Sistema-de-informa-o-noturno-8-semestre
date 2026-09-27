@@ -1,0 +1,20 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - 403{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel cartao-publico">
+        <p class="caminho">
+            403
+        </p>
+        <h1>
+            Esta área tem acesso limitado.
+        </h1>
+        <p class="subtitulo">
+            Seu perfil não tem permissão para acessar esta página. Volte ao início para continuar.
+        </p>
+        <a class="botao-principal" href="{% url 'inicio' %}">Voltar ao início</a>
+    </section>
+{% endblock %}

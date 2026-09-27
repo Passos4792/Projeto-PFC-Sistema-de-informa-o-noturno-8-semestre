@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+
+{#-------------------------------------------------------------------------------------#}
+
+{#configuracoes da pagina#}
+    <head>
+        <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block titulo_pagina %}ELO{% endblock %}
+        </title><link rel="stylesheet" href="{% static 'aplicacao/css/area-professor.css' %}">
+    </head>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#pagina#}
+    <body class="pagina-publica">
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+        <header class="cabecalho-publico">
+            <a href="{% url 'login' %}" aria-label="ELO — Login"><img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO"></a><span>Acompanhamento educacional individualizado</span>
+        </header>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#conteudo principal#}
+        <main class="conteudo-publico">
+            {% block conteudo %}
+            {% endblock %}
+        </main>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#rodape#}
+        <footer class="rodape-publico">
+            <span>ELO · Conectando pessoas, acompanhando conquistas.</span>
+            <nav aria-label="Documentos legais">
+                <a href="{% url 'politica-privacidade' %}">Política de Privacidade</a>
+                <a href="{% url 'termos-uso' %}">Termos de Uso</a>
+                <a href="{% url 'privacidade-aluno' %}">Privacidade para alunos</a>
+            </nav>
+        </footer>
+    </body>
+</html>

@@ -1,6 +1,10 @@
+#importacoes
 from django.db import migrations
 
 
+#-------------------------------------------------------------------------------------
+
+#migracao do banco de dados
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -19,3 +23,4 @@ class Migration(migrations.Migration):
             new_name="situacao",
         ),
     ]
+#-------------------------------------------------------------------------------------
