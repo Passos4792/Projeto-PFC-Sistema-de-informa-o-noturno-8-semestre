@@ -1,0 +1,636 @@
+/* Paleta baseada no protótipo enviado para a tela de login do ELO. */
+/*-------------------------------------------------------------------------------------*/
+
+/*cores do projeto*/
+:root {
+    --azul: #79a1ef;
+    --azul-claro: #91b5f7;
+    --verde: #a9dfae;
+    --amarelo: #f6d967;
+    --laranja: #efa082;
+    --roxo: #b794e8;
+    --fundo: #f3f0ea;
+    --cartao: rgba(255, 255, 255, 0.68);
+    --texto: #080808;
+    --borda: #8c8985;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*configuracao geral*/
+* {
+    box-sizing: border-box;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estrutura da pagina*/
+html,
+body {
+    min-height: 100%;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*pagina*/
+body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: button,*/
+button,
+input {
+    font: inherit;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estrutura do login*/
+.pagina-login {
+    display: grid;
+    grid-template-columns: 53% 47%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Lado esquerdo: marca e elementos decorativos. */
+/*-------------------------------------------------------------------------------------*/
+
+/*apresentacao do ELO*/
+.apresentacao {
+    position: relative;
+    display: grid;
+    min-height: 720px;
+    place-items: center;
+    padding: 40px 40px 150px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .marca*/
+.marca {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 390px);
+    text-align: center;
+    /* Compensa a extensão das ondas para a direita e centraliza o conjunto sobre elas. */
+    transform: translateX(8%);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .simbolo-elo*/
+.simbolo-elo {
+    display: block;
+    width: 280px;
+    height: auto;
+    margin: 0 auto 20px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .nome-elo*/
+.nome-elo {
+    display: flex;
+    justify-content: center;
+    gap: 42px;
+    margin: 0;
+    font-size: clamp(76px, 8vw, 118px);
+    font-weight: 300;
+    line-height: 1;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .descricao-elo*/
+.descricao-elo {
+    width: fit-content;
+    margin: 26px auto 0;
+    color: #6e9cf3;
+    font-size: 19px;
+    line-height: 1.45;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-conheca {
+    display: flex;
+    width: fit-content;
+    margin: 62px auto 0;
+    padding: 9px 18px;
+    align-items: center;
+    gap: 8px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--azul);
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-conheca span {
+    font-size: 28px;
+    line-height: 16px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*imagens decorativas*/
+.ondas {
+    position: absolute;
+    z-index: 1;
+    right: -24%;
+    bottom: -7px;
+    left: 0;
+    pointer-events: none;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*imagens*/
+.imagem-ondas {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Lado direito: cartão do formulário. */
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .area-formulario*/
+.area-formulario {
+    display: grid;
+    min-height: 720px;
+    place-items: center;
+    padding: 48px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*cartoes*/
+.cartao-login {
+    width: min(100%, 490px);
+    padding: 52px 40px 38px;
+    border-radius: 34px;
+    background: var(--cartao);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .cabecalho-login*/
+.cabecalho-login {
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .cabecalho-login h1*/
+.cabecalho-login h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .cabecalho-login p*/
+.cabecalho-login p {
+    margin: 3px 0 0;
+    color: var(--azul);
+    font-size: 21px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*formularios*/
+.formulario-login {
+    display: grid;
+    gap: 42px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos do formulario*/
+.grupo-campo {
+    display: grid;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos do formulario*/
+.grupo-campo label {
+    margin: 0 0 5px 9px;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos do formulario*/
+.grupo-campo input {
+    width: 100%;
+    height: 57px;
+    padding: 0 25px;
+    border: 1.5px solid var(--borda);
+    border-radius: 30px;
+    background: transparent;
+    outline: none;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos do formulario*/
+.grupo-campo input::placeholder {
+    color: var(--azul);
+    opacity: 1;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos do formulario*/
+.grupo-campo input:focus {
+    border-color: var(--azul);
+    box-shadow: 0 0 0 3px rgba(121, 161, 239, 0.18);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos de entrada*/
+.campo-senha {
+    position: relative;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*campos de entrada*/
+.campo-senha input {
+    padding-right: 65px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-olho {
+    position: absolute;
+    top: 50%;
+    right: 17px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translateY(-50%);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .icone-olho*/
+.icone-olho {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 23px;
+    height: 15px;
+    border: 2px solid var(--azul);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .icone-olho::after*/
+.icone-olho::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--azul);
+    content: "";
+    transform: translate(-50%, -50%);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .esqueci-senha*/
+.esqueci-senha {
+    margin: 5px 7px 0 0;
+    color: var(--azul);
+    font-size: 14px;
+    text-align: right;
+    text-decoration: none;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-entrar {
+    width: 255px;
+    margin: -10px auto 0;
+    padding: 14px 25px;
+    border: 0;
+    border-radius: 30px;
+    background: var(--azul);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-entrar:hover {
+    background: #638ddd;
+}
+
+/* Adaptação da tela para tablets. */
+/*-------------------------------------------------------------------------------------*/
+
+/*adaptacao para diferentes tamanhos de tela*/
+@media (max-width: 1000px) {
+    .pagina-login {
+        grid-template-columns: 45% 55%;
+    }
+
+    .marca {
+        width: 300px;
+    }
+
+    .nome-elo {
+        font-size: 78px;
+        gap: 28px;
+    }
+
+    .descricao-elo {
+        font-size: 15px;
+    }
+
+    .area-formulario {
+        padding: 30px;
+    }
+}
+
+/* Em celulares, o formulário aparece abaixo da marca. */
+/*-------------------------------------------------------------------------------------*/
+
+/*adaptacao para diferentes tamanhos de tela*/
+@media (max-width: 760px) {
+    .pagina-login {
+        grid-template-columns: 1fr;
+        overflow: visible;
+    }
+
+    .apresentacao {
+        min-height: 480px;
+        padding: 35px 20px 110px;
+    }
+
+    .marca {
+        width: min(100%, 330px);
+        text-align: center;
+        transform: none;
+    }
+
+    .simbolo-elo {
+        transform: scale(0.78);
+    }
+
+    .nome-elo {
+        font-size: 75px;
+        gap: 25px;
+    }
+
+    .descricao-elo {
+        margin-left: 0;
+        font-size: 14px;
+    }
+
+    .botao-conheca {
+        margin-top: 28px;
+        font-size: 15px;
+    }
+
+    .area-formulario {
+        min-height: auto;
+        padding: 35px 18px 60px;
+    }
+
+    .cartao-login {
+        padding: 38px 24px 32px;
+    }
+
+    .cabecalho-login {
+        margin-bottom: 38px;
+    }
+
+    .cabecalho-login h1 {
+        font-size: 27px;
+    }
+
+    .cabecalho-login p {
+        font-size: 18px;
+    }
+
+    .grupo-campo label {
+        font-size: 21px;
+    }
+
+    .botao-entrar {
+        width: min(100%, 255px);
+    }
+}
+
+/* Ajustes de leitura e estados de interação. */
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-entrar {
+    background: #527ab9;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-entrar:hover {
+    background: #3f639e;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*cartoes*/
+.cartao-login {
+    border: 1px solid #e2ddd5;
+    box-shadow: 0 12px 40px rgba(73, 87, 111, .06);
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*formularios*/
+.formulario-login [role="alert"] {
+    padding: 14px;
+    border-radius: 12px;
+    background: #fff0eb;
+    color: #9c4036;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*formularios*/
+.formulario-login .errorlist {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*botoes*/
+.botao-olho {
+    cursor: pointer;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: :focus-visible*/
+:focus-visible {
+    outline: 3px solid #527ab9;
+    outline-offset: 4px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*estilo: .esqueci-senha,*/
+.esqueci-senha,
+.cabecalho-login p {
+    color: #527ab9;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*adaptacao para diferentes tamanhos de tela*/
+@media (max-width: 760px) {
+    .apresentacao {
+        min-height: 310px;
+        padding-bottom: 70px;
+    }
+
+    .simbolo-elo {
+        width: 150px;
+        margin-bottom: 10px;
+        transform: none;
+    }
+
+    .nome-elo {
+        font-size: 44px;
+        gap: 24px;
+    }
+
+    .descricao-elo {
+        margin: 14px auto 0;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .botao-conheca {
+        margin-top: 16px;
+        font-size: 12px;
+    }
+
+    .area-formulario {
+        padding-top: 18px;
+    }
+
+    .cartao-login {
+        border-radius: 24px;
+    }
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*adaptacao para diferentes tamanhos de tela*/
+@media (max-width: 760px) {
+    .apresentacao {
+        overflow: hidden;
+    }
+
+    .ondas {
+        right: 0;
+    }
+}
+/*-------------------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------------------*/
+/*links de privacidade e termos na tela de login*/
+.acoes-login {
+    display: grid;
+    justify-items: center;
+}
+
+.acoes-login .botao-entrar {
+    margin: 0 auto;
+}
+
+.documentos-login {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #dcdfe5;
+    text-align: center;
+}
+
+.links-legais-login {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 20px;
+    color: #365c91;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.links-legais-login a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.links-legais-login a:hover {
+    text-decoration: underline;
+}
+
+.links-legais-login a:focus-visible {
+    outline: 2px solid #365c91;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.aviso-primeiro-acesso {
+    max-width: 330px;
+    margin: 8px auto 0;
+    color: #615e59;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}

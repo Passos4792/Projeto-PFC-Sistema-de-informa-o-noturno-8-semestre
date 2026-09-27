@@ -1,0 +1,47 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}Conheça o ELO{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel cartao-publico">
+        <span class="etiqueta">Escola e família, mais próximas</span>
+        <h1>
+            Um elo em cada conquista.
+        </h1>
+        <p class="subtitulo">
+            Acompanhamento educacional individualizado, com espaço para o ritmo de cada aluno.
+        </p>
+        <div class="grade-beneficios">
+            <article>
+                <span aria-hidden="true">◎</span>
+                <h2>
+                    Metas claras
+                </h2>
+                <p>
+                    Acompanhe os objetivos e o desenvolvimento ao longo do tempo.
+                </p>
+            </article>
+            <article>
+                <span aria-hidden="true">☆</span>
+                <h2>
+                    Aprender e crescer
+                </h2>
+                <p>
+                    Organize atividades e valorize cada etapa da aprendizagem.
+                </p>
+            </article>
+            <article>
+                <span aria-hidden="true">♡</span>
+                <h2>
+                    Juntos no cuidado
+                </h2>
+                <p>
+                    Professores e responsáveis acompanham as conquistas dos alunos.
+                </p>
+            </article>
+        </div>
+        <a class="botao-principal" href="{% url 'login' %}">Acessar minha conta →</a>
+    </section>
+{% endblock %}

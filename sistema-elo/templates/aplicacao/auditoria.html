@@ -1,0 +1,94 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Auditoria{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+    <header class="topo-pagina">
+        <div>
+            <p class="caminho">
+                Início / Auditoria
+            </p>
+            <h1>
+                Auditoria
+            </h1>
+            <p class="subtitulo">
+                Histórico de acessos e alterações. Registros disponíveis somente para consulta.
+            </p>
+        </div>
+    </header>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel">
+        <div class="painel-cabecalho cabecalho-registros">
+            <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>registros</span></div>
+            <div><h2>Histórico de auditoria</h2><p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} registro(s) encontrado(s).</p></div>
+            <form method="get" class="busca" data-busca-automatica role="search">
+                <input type="search" name="busca" value="{{ busca }}" placeholder="Buscar na auditoria" aria-label="Buscar na auditoria">
+                <small data-erro-busca role="alert" hidden>Não foi possível atualizar. Pressione Enter para tentar novamente.</small>
+            </form>
+        </div>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#formulario#}
+        <form method="get" class="formulario-auditoria">
+            <input type="hidden" name="busca" value="{{ busca }}" data-busca-filtros>
+            {{ formulario.as_p }}
+            <button class="botao-principal" type="submit">Filtrar</button>
+            <a class="botao-secundario" href="{% url 'auditoria' %}">Limpar filtros</a>
+
+        </form>
+
+        <div data-resultados-lista>
+
+        <div class="tabela-responsiva">
+
+{#-------------------------------------------------------------------------------------#}
+
+{#tabela de registros#}
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Data e hora</th><th>Responsável</th><th>Ação</th><th>Registro</th><th>Detalhes</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for registro in pagina %}
+                        <tr>
+                            <td>{{ registro.criado_em|date:'d/m/Y H:i:s' }}</td><td>{{ registro.autor }}</td>
+                            <td>{{ registro.get_acao_display }}</td><td>{{ registro.entidade }}{% if registro.objeto_id %} #{{ registro.objeto_id }}{% endif %}</td>
+                            <td>{{ registro.detalhes|default:'—' }}</td>
+
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="sem-dados">Nenhum registro encontrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#navegacao#}
+        <nav aria-label="Paginação da auditoria">
+            {% if pagina.has_previous %}<a class="botao-secundario" href="?{{ filtros }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+            {% if pagina.has_next %}<a class="botao-secundario" href="?{{ filtros }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+
+        </nav>
+        </div>
+    </section>
+    <script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,26 @@
+#importacoes
+import os
+import sys
+
+
+#-------------------------------------------------------------------------------------
+
+#principal
+def principal():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'configuracao.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Não foi possível importar o Django. Verifique se ele foi instalado "
+            "no Python disponível neste computador."
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+#-------------------------------------------------------------------------------------
+
+#iniciar aplicacao
+if __name__ == '__main__':
+    principal()
+#-------------------------------------------------------------------------------------

@@ -1,0 +1,114 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% load static %}
+
+{% block titulo_pagina %}ELO - Professores{% endblock %}
+
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+    <header class="topo-pagina">
+
+        <div>
+
+            <p class="caminho">
+                Início / Professores
+            </p>
+
+            <h1>
+                Professores
+            </h1>
+
+            <p class="subtitulo">
+                Cadastre e visualize os professores do projeto ELO.
+            </p>
+
+        </div>
+        {% if request.perfil_elo.professor_principal %}<a class="botao-principal" href="{% url 'professor-criar' %}">+ Novo professor</a>{% endif %}
+    </header>
+
+<!-- Os números são calculados pelas views usando o banco MySQL. -->
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel">
+
+        <div class="painel-cabecalho cabecalho-registros">
+            <div class="resumo-registros"><strong>{{ total_professores }}</strong><span>cadastrados</span></div>
+
+            <div>
+
+                <h2>
+                    Professores cadastrados
+                </h2>
+
+                <p data-contagem-lista aria-live="polite">
+                    {{ professores|length }} registro(s) nesta lista.
+                </p>
+
+            </div>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#formulario#}
+            <form method="get" class="busca" data-busca-automatica role="search">
+                <input name="busca" type="search" value="{{ busca }}" placeholder="Buscar professor" aria-label="Buscar professor">
+
+                <small data-erro-busca role="alert" hidden>Não foi possível atualizar. Pressione Enter para tentar novamente.</small>
+            </form>
+
+        </div>
+
+
+        <div class="tabela-responsiva" data-resultados-lista>
+
+
+{#-------------------------------------------------------------------------------------#}
+
+{#tabela de registros#}
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Professor</th><th>Usuário</th><th>Alunos</th><th>Status</th><th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for professor in professores %}
+
+                        <tr>
+                            <td><span class="avatar">{{ professor.nome|first }}{{ professor.sobrenome|first }}</span>{{ professor.nome_completo }}</td>
+                            <td>{{ professor.usuario }}</td>
+                            <td>{{ professor.quantidade_alunos }} aluno{{ professor.quantidade_alunos|pluralize }}</td>
+                            <td><span class="situacao {% if not professor.ativo %}inativo{% endif %}">{% if professor.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
+                            <td class="acoes">
+                                {% if request.perfil_elo.professor_principal %}<a class="botao-editar" href="{% url 'professor-editar' professor.pk %}">Editar</a>{% endif %}
+                                {% if request.perfil_elo.professor_principal %}<a class="botao-excluir" href="{% url 'professor-excluir' professor.pk %}">Excluir</a>{% endif %}
+                            </td>
+
+                        </tr>
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="sem-dados">Nenhum professor encontrado.</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>
+{% endblock %}

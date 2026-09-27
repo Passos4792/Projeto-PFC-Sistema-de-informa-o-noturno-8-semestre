@@ -1,0 +1,137 @@
+    <div class="cabecalho-documento">
+        <span class="etiqueta">Privacidade no ELO</span>
+        <h1>Política de Privacidade</h1>
+        <p class="subtitulo">Como os dados são usados para permitir o acompanhamento educacional com segurança, clareza e respeito.</p>
+        <p class="versao-documento">Versão {{ versao_privacidade }} · Vigência: {{ data_vigencia }}</p>
+    </div>
+
+    <div class="atalhos-documento" aria-label="Atalhos da política">
+        <a href="#dados">Dados utilizados</a>
+        <a href="#criancas">Crianças e adolescentes</a>
+        <a href="#direitos">Seus direitos</a>
+        <a href="#seguranca">Segurança</a>
+    </div>
+
+    <div class="chamada-aluno">
+        <div>
+            <strong>Você é aluno?</strong>
+            <p>Temos uma explicação mais curta e simples sobre privacidade.</p>
+        </div>
+        <a class="botao-secundario" href="{% url 'privacidade-aluno' %}">Ler versão para alunos</a>
+    </div>
+
+    <div class="corpo-documento">
+        <section>
+            <h2>1. Sobre o ELO e esta política</h2>
+            <p>O ELO é um sistema de acompanhamento educacional individualizado, desenvolvido como projeto acadêmico. Ele organiza contas de acesso e informações relacionadas ao acompanhamento de alunos, permitindo a atuação de professores, alunos e responsáveis.</p>
+            <p>Esta política descreve o comportamento da versão atual do projeto. Em uma implantação real, a instituição de ensino que decidir as finalidades e a forma de uso dos dados deverá assumir o papel de controladora e complementar este documento com seus dados de identificação, canal de privacidade, regras de retenção e demais obrigações aplicáveis.</p>
+        </section>
+
+        <section>
+            <h2>2. Quem utiliza o sistema</h2>
+            <p>O ELO possui três perfis de acesso: <strong>professor</strong>, <strong>aluno</strong> e <strong>responsável</strong>. Há também a função de professor principal para atividades administrativas específicas, como gestão de professores e consulta à auditoria.</p>
+            <p>O acesso é realizado por conta individual. O responsável visualiza os alunos a ele vinculados e o aluno acessa o próprio painel. No protótipo atual, o perfil de professor possui acesso operacional amplo aos cadastros pedagógicos; antes de uma implantação real, a instituição deverá limitar esse acesso ao conjunto de alunos necessário à função de cada profissional.</p>
+        </section>
+
+        <section id="dados">
+            <h2>3. Quais dados são tratados</h2>
+            <div class="grade-dados">
+                <article>
+                    <h3>Conta e identificação</h3>
+                    <p>Nome, sobrenome, nome de usuário, perfil de acesso, situação da conta e credenciais de autenticação protegidas pelo mecanismo de senhas do Django.</p>
+                </article>
+                <article>
+                    <h3>Dados do aluno</h3>
+                    <p>Nome, sobrenome, usuário, situação do cadastro e, quando informada, data de nascimento.</p>
+                </article>
+                <article>
+                    <h3>Acompanhamento educacional</h3>
+                    <p>Metas, atividades, conteúdos de apoio, prazos, situações, registros de frequência e observações relacionadas ao acompanhamento.</p>
+                </article>
+                <article>
+                    <h3>Vínculos</h3>
+                    <p>Relação entre aluno, professor e responsável, data do vínculo e sua situação ativa ou inativa.</p>
+                </article>
+                <article>
+                    <h3>Segurança e auditoria</h3>
+                    <p>Eventos de entrada e saída, falhas de login, bloqueios, acessos negados e alterações relevantes em registros. O limite de tentativas usa referências criptográficas derivadas do usuário e do endereço IP, sem guardar esses valores em texto puro nessa tabela.</p>
+                </article>
+                <article>
+                    <h3>Aceite dos documentos</h3>
+                    <p>Data e hora do aceite e versões dos Termos de Uso e da Política de Privacidade apresentadas ao usuário.</p>
+                </article>
+            </div>
+            <div class="nota-documento">
+                <strong>O que a versão atual não possui:</strong> não há campo próprio para diagnóstico médico, laudo, biometria, localização, voz ou envio de fotografia. Campos de texto livre não devem ser usados para registrar informações de saúde ou outros dados sensíveis sem necessidade, base legal e proteção específicas.
+            </div>
+        </section>
+
+        <section>
+            <h2>4. Para que os dados são usados</h2>
+            <div class="tabela-responsiva">
+                <table class="tabela-documento">
+                    <thead>
+                        <tr><th>Finalidade</th><th>Dados envolvidos</th><th>Hipótese jurídica a validar na implantação</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Criar e autenticar contas</td><td>Identificação, usuário e credenciais</td><td>Execução da relação educacional e/ou outra hipótese do art. 7º da LGPD adequada ao contexto.</td></tr>
+                        <tr><td>Acompanhar a rotina educacional</td><td>Metas, atividades, conteúdos, frequência e vínculos</td><td>Execução da relação educacional e, quando aplicável, cumprimento de obrigação legal ou regulatória.</td></tr>
+                        <tr><td>Permitir o acompanhamento pelo responsável</td><td>Vínculo e informações pedagógicas do aluno vinculado</td><td>Hipótese adequada à relação educacional, sempre considerando o melhor interesse do aluno menor de idade.</td></tr>
+                        <tr><td>Proteger contas e registrar ações relevantes</td><td>Eventos de login, bloqueios e auditoria</td><td>Legítimo interesse em segurança, prevenção de abuso e exercício regular de direitos, mediante avaliação de necessidade e salvaguardas.</td></tr>
+                        <tr><td>Comprovar o aceite das versões apresentadas</td><td>Data, hora e versões dos documentos</td><td>Execução dos Termos de Uso e exercício regular de direitos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>As hipóteses jurídicas acima são referências para a implantação educacional e devem ser confirmadas pela instituição controladora conforme sua natureza, obrigações e contexto. O ELO não trata o consentimento como autorização genérica para todas as operações.</p>
+        </section>
+
+        <section id="criancas">
+            <h2>5. Crianças e adolescentes</h2>
+            <p>Como o ELO pode ser utilizado por crianças e adolescentes, o tratamento de seus dados deve observar o <strong>melhor interesse</strong> do aluno, conforme o art. 14 da LGPD, além dos direitos de liberdade, respeito, dignidade, imagem, identidade e autonomia protegidos pelo Estatuto da Criança e do Adolescente.</p>
+            <p>O sistema deve coletar apenas o necessário ao acompanhamento educacional, usar linguagem adequada à idade e manter configurações protetivas. Quando a hipótese jurídica escolhida for o consentimento para tratar dados de uma criança, esse consentimento deverá ser específico, destacado e obtido de pelo menos um dos pais ou do responsável legal, com esforços razoáveis para verificar sua legitimidade.</p>
+            <div class="nota-documento destaque">
+                <strong>Importante:</strong> a caixa “Li e concordo” do ELO registra o aceite dos Termos de Uso e a ciência desta Política de Privacidade. Ela não representa consentimento genérico para qualquer uso de dados e não substitui eventual consentimento específico do responsável legal quando a LGPD o exigir.
+            </div>
+        </section>
+
+        <section>
+            <h2>6. Compartilhamento, integrações e cookies</h2>
+            <p>O ELO oferece conexão opcional com o Google Agenda para alunos e responsáveis, disponível após a configuração pelo administrador. A autorização é realizada diretamente no Google. O ELO não recebe a senha Google e não solicita o e-mail para o cadastro ou recuperação de acesso.</p>
+            <p>Ao clicar em sincronizar uma atividade, o usuário envia ao seu calendário principal do Google o título, a descrição, o nome do aluno, a situação e a data de entrega. O evento é de dia inteiro e marcado como privado. A integração não importa outros compromissos do calendário para o ELO. O tratamento dos dados pelo Google segue também a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidade do Google</a>.</p>
+            <p>O ELO armazena as credenciais de autorização cifradas, um identificador opaco da conta Google e os identificadores e datas dos eventos enviados. As credenciais são excluídas ao desconectar; os registros de sincronização permanecem vinculados à conta e à atividade para evitar duplicatas após reconexão. O usuário pode revogar a autorização nas conexões da Conta Google. Desconectar ou excluir uma atividade no ELO não apaga os eventos já enviados; sua remoção é feita no Google Agenda.</p>
+            <p>Alterações em atividades não são enviadas automaticamente: o usuário deve clicar novamente para atualizar o evento. A hospedagem de produção ainda deverá ser definida pela instituição responsável.</p>
+            <p>O sistema utiliza recursos de sessão necessários à autenticação e à segurança. A configuração atual utiliza cookie de sessão com proteção <em>HttpOnly</em> e <em>SameSite=Lax</em>. Não há, no protótipo, cookies opcionais de publicidade ou análise comportamental.</p>
+        </section>
+
+        <section>
+            <h2>7. Retenção e descarte</h2>
+            <p>Os prazos devem seguir a finalidade e as obrigações da instituição controladora. Para o ELO, os critérios mínimos são:</p>
+            <ul class="lista-documento">
+                <li><strong>Conta e perfil:</strong> enquanto a conta estiver ativa e pelo período adicional que a instituição justificar para segurança ou cumprimento de obrigação.</li>
+                <li><strong>Registros pedagógicos:</strong> enquanto forem necessários ao acompanhamento educacional e durante eventual prazo de guarda exigido à instituição.</li>
+                <li><strong>Auditoria e segurança:</strong> pelo período definido no plano de segurança e retenção da instituição, de forma proporcional ao risco.</li>
+                <li><strong>Aceites:</strong> enquanto forem necessários para demonstrar a manifestação do usuário sobre as versões apresentadas.</li>
+                <li><strong>Dados de demonstração:</strong> somente durante o projeto acadêmico e os testes autorizados, devendo ser excluídos ao final do ambiente de demonstração.</li>
+            </ul>
+            <p>A versão atual do protótipo não executa descarte automático por prazo. Essa rotina deve ser implementada e validada antes de uso em produção.</p>
+        </section>
+
+        <section id="direitos">
+            <h2>8. Direitos dos titulares</h2>
+            <p>Nos termos da LGPD, o titular pode solicitar, quando cabível, confirmação do tratamento, acesso, correção, informações sobre compartilhamentos, anonimização, bloqueio ou eliminação de dados inadequados ou excessivos, portabilidade, revogação de consentimento e oposição ao tratamento.</p>
+            <p>Quando o titular for criança ou adolescente, o atendimento deve considerar sua idade, capacidade de compreensão e o melhor interesse. No ambiente acadêmico atual, correções e solicitações relacionadas à conta devem ser encaminhadas ao professor principal responsável pelo ambiente. Em uma implantação real, a instituição controladora deverá disponibilizar nesta página um canal formal e funcional de privacidade.</p>
+        </section>
+
+        <section id="seguranca">
+            <h2>9. Segurança</h2>
+            <p>O projeto adota controles compatíveis com sua etapa acadêmica, incluindo senhas processadas pelo sistema de autenticação do Django, proteção contra tentativas repetidas de login, separação de perfis, verificação de autorização no backend, proteção CSRF, cookies de sessão protegidos e registro de eventos de auditoria sem armazenar senhas nos logs.</p>
+            <p>Em caso de incidente, a instituição responsável deverá conter o evento, identificar dados e titulares afetados, avaliar o risco, preservar evidências, corrigir a causa e realizar as comunicações legalmente cabíveis.</p>
+        </section>
+
+        <section>
+            <h2>10. Atualizações desta política</h2>
+            <p>Alterações relevantes nas finalidades, categorias de dados, compartilhamentos ou funcionalidades exigem revisão desta política. Quando uma nova versão exigir nova manifestação, o ELO poderá solicitar novo aceite antes do acesso às áreas internas.</p>
+            <p><strong>Versão atual:</strong> {{ versao_privacidade }} · <strong>Vigência:</strong> {{ data_vigencia }}.</p>
+        </section>
+    </div>
+

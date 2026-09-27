@@ -1,0 +1,20 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - 404{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel cartao-publico">
+        <p class="caminho">
+            404
+        </p>
+        <h1>
+            Vamos encontrar o caminho?
+        </h1>
+        <p class="subtitulo">
+            Este endereço não existe ou não está mais disponível.
+        </p>
+        <a class="botao-principal" href="{% url 'inicio' %}">Voltar ao início</a>
+    </section>
+{% endblock %}

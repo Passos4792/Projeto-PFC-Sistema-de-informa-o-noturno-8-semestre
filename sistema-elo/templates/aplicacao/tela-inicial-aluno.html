@@ -1,0 +1,86 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Acompanhamento de {{ aluno.nome }}{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#cabecalho#}
+    <header class="topo-pagina">
+        <div>
+            <p class="caminho">
+                Início / Acompanhamento
+            </p>
+            <h1>
+                {% if request.perfil_elo.tipo_perfil == 'ALUNO' %}Olá, {{ aluno.nome }}!{% else %}{{ aluno.nome_completo }}{% endif %}
+            </h1>
+            <p class="subtitulo">
+                Pequenas conquistas, grandes descobertas. Veja o desenvolvimento por aqui.
+            </p>
+        </div>
+        <a class="botao-secundario" href="{% url 'inicio' %}">Voltar ao início</a>
+    </header>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="indicadores indicadores-aluno" id="metas" aria-label="Resumo do acompanhamento">
+        <article>
+            <span>Progresso geral</span><strong>{{ pontos }} <small>pontos</small></strong>
+            <p>
+                Cada conquista faz a diferença.
+            </p>
+        </article>
+        <article>
+            <span>Metas em andamento</span><strong>{{ metas_andamento|stringformat:'02d' }}</strong>
+            <p>
+                Um passo de cada vez.
+            </p>
+        </article>
+        <article>
+            <span>Metas concluídas</span><strong>{{ metas_concluidas|stringformat:'02d' }}</strong>
+            <p>
+                Motivos para comemorar!
+            </p>
+        </article>
+    </section>
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel" id="atividades">
+        <div class="painel-cabecalho">
+            <div>
+                <h2>
+                    Próximas atividades
+                </h2>
+                <p>
+                    Continue aprendendo no seu ritmo.
+                </p>
+            </div>
+            {% if request.perfil_elo.tipo_perfil != 'PROFESSOR' %}
+            <a class="botao-secundario" href="{% url 'minhas-atividades' %}">Ver todas as atividades</a>
+            {% else %}<span class="etiqueta">Acompanhamento</span>{% endif %}
+        </div>
+        <div class="grade-cartoes">
+            {% for atividade in atividades %}
+                <article class="cartao-aluno">
+                    <span class="icone-vazio" aria-hidden="true">☆</span>
+                    <h2>
+                        {{ atividade.titulo }}
+                    </h2>
+                    <p>
+                        {{ atividade.descricao }}
+                    </p>
+                    {% if atividade.data_entrega %}<span class="etiqueta">Até {{ atividade.data_entrega|date:'d/m/Y' }}</span>{% endif %}
+                </article>
+            {% empty %}
+                <div class="sem-dados">
+                    <span class="icone-vazio" aria-hidden="true">✓</span><strong>Tudo em dia por aqui</strong>
+                    <p>
+                        As próximas atividades aparecerão neste espaço.
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

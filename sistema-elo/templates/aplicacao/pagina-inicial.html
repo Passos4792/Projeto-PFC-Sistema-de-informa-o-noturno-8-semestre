@@ -1,0 +1,41 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Página inicial{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div><p class="caminho">Visão geral</p><h1>Página inicial</h1><p class="subtitulo">Acompanhe os principais números do ELO e acesse os cadastros.</p></div></header>
+    <section class="indicadores">
+
+        <article>
+            <span>Total de professores</span><strong>{{ total_professores }}</strong>
+        </article>
+
+        <article>
+            <span>Alunos cadastrados</span><strong>{{ total_alunos }}</strong>
+        </article>
+
+        <article>
+            <span>Professores ativos</span><strong>{{ professores_ativos }}</strong>
+        </article>
+
+        <article>
+            <span>Metas em andamento</span><strong>{{ metas_andamento }}</strong>
+        </article>
+
+        <article>
+            <span>Atividades pendentes</span><strong>{{ atividades_pendentes }}</strong>
+        </article>
+    </section>
+<section class="painel atalhos-inicio">
+    <h2>O que você deseja acompanhar?</h2>
+    <p>Escolha uma área para consultar e organizar os registros.</p>
+    <div class="grade-atalhos">
+        <a href="{% url 'aluno-listar' %}"><strong>Alunos</strong><span>Cadastros e acompanhamento →</span></a>
+        <a href="{% url 'professor-listar' %}"><strong>Professores</strong><span>Equipe de acompanhamento →</span></a>
+        <a href="{% url 'responsavel-listar' %}"><strong>Responsáveis</strong><span>Famílias cadastradas →</span></a>
+        <a href="{% url 'vinculo-listar' %}"><strong>Vínculos</strong><span>Alunos, professores e responsáveis →</span></a>
+        <a href="{% url 'meta-listar' %}"><strong>Metas</strong><span>Objetivos e progresso →</span></a>
+        <a href="{% url 'atividade-listar' %}"><strong>Atividades</strong><span>Tarefas e prazos →</span></a>
+        <a href="{% url 'conteudo-listar' %}"><strong>Conteúdos</strong><span>Materiais de apoio →</span></a>
+        <a href="{% url 'frequencia-listar' %}"><strong>Frequência</strong><span>Presenças nos acompanhamentos →</span></a>
+    </div>
+</section>
+{% endblock %}

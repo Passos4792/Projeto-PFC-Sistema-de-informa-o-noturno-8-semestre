@@ -1,0 +1,32 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - Recuperar acesso{% endblock %}
+{% block conteudo %}
+
+{#-------------------------------------------------------------------------------------#}
+
+{#area de conteudo#}
+    <section class="painel cartao-publico">
+        <span class="icone-vazio" aria-hidden="true">↗</span>
+        <p class="caminho">
+            Cuidando do seu acesso
+        </p>
+        <h1>
+            Esqueceu sua senha?
+        </h1>
+        <p class="subtitulo">
+            Vamos ajudar você a voltar.
+        </p>
+        <div class="aviso-informativo">
+            <h2>
+                Fale com um professor
+            </h2>
+            <p>
+                Informe seu nome de usuário e solicite a redefinição da senha. Não envie sua senha antiga.
+            </p>
+            <p>
+                O professor definirá uma senha temporária. Ao entrar com ela, você deverá criar uma nova senha.
+            </p>
+        </div>
+        <a class="botao-principal" href="{% url 'login' %}">Voltar para o login</a>
+    </section>
+{% endblock %}

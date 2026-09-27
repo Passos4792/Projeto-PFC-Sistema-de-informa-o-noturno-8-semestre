@@ -1,0 +1,45 @@
+{% extends 'aplicacao/estrutura-publica.html' %}
+{% block titulo_pagina %}ELO - Termos e Privacidade{% endblock %}
+{% block conteudo %}
+
+<section class="painel cartao-publico documento-legal aceite-unificado">
+    <p class="contexto-aceite">Antes de continuar, leia os documentos e confirme o aceite ao final da página.</p>
+    <nav class="navegacao-documentos" aria-label="Escolher documento">
+        <a href="?documento=termos&amp;next={{ next|urlencode }}" {% if documento == 'termos' %}aria-current="page"{% endif %}>Termos de Uso</a>
+        <a href="?documento=privacidade&amp;next={{ next|urlencode }}" {% if documento == 'privacidade' %}aria-current="page"{% endif %}>Política de Privacidade</a>
+    </nav>
+    {% if documento == 'privacidade' %}
+        {% include 'aplicacao/documentos/politica-privacidade.html' %}
+    {% else %}
+        {% include 'aplicacao/documentos/termos-uso.html' %}
+    {% endif %}
+    <div class="acoes-documento">
+        {% if documento == 'termos' %}
+        <a class="botao-secundario" href="?documento=privacidade&amp;next={{ next|urlencode }}">Ler Política de Privacidade</a>
+        {% else %}
+        <a class="botao-secundario" href="?documento=termos&amp;next={{ next|urlencode }}">Ler Termos de Uso</a>
+        {% endif %}
+    </div>
+
+    <form method="post" class="formulario-aceite" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <label class="caixa-aceite" for="{{ formulario.aceite.id_for_label }}">
+            {{ formulario.aceite }}
+            <span>
+                <strong>Li e concordo com os Termos de Uso</strong> e declaro que tive acesso à Política de Privacidade.
+            </span>
+        </label>
+        {% for erro in formulario.aceite.errors %}
+            <p class="erro-aceite" role="alert">{{ erro }}</p>
+        {% endfor %}
+
+        <p class="observacao-aceite">Este aceite não autoriza usos de dados além dos descritos e não substitui eventual consentimento específico do responsável legal quando ele for exigido.</p>
+
+        <button class="botao-principal botao-continuar" type="submit">Concordar e continuar</button>
+    </form>
+
+    <p class="versao-documento">Termos v{{ versao_termos }} · Política v{{ versao_privacidade }} · Vigência: {{ data_vigencia }}</p>
+</section>
+{% endblock %}
