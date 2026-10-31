@@ -5,9 +5,7 @@
 
 {% block conteudo %}
 
-{#-------------------------------------------------------------------------------------#}
 
-{#cabecalho#}
     <header class="topo-pagina">
 
         <div>
@@ -21,24 +19,13 @@
             </h1>
 
             <p class="subtitulo">
-                Cadastre e visualize os professores do projeto ELO.
+                Consulte e gerencie os professores do projeto ELO.
             </p>
 
         </div>
-        {% if request.perfil_elo.professor_principal %}<a class="botao-principal" href="{% url 'professor-criar' %}">+ Novo professor</a>{% endif %}
     </header>
 
-<!-- Os números são calculados pelas views usando o banco MySQL. -->
 
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
-
-
-
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
     <section class="painel">
 
         <div class="painel-cabecalho cabecalho-registros">
@@ -51,15 +38,12 @@
                 </h2>
 
                 <p data-contagem-lista aria-live="polite">
-                    {{ professores|length }} registro(s) nesta lista.
+                    {{ pagina.paginator.count }} registro(s) encontrado(s) · {{ professores|length }} nesta página.
                 </p>
 
             </div>
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#formulario#}
             <form method="get" class="busca" data-busca-automatica role="search">
                 <input name="busca" type="search" value="{{ busca }}" placeholder="Buscar professor" aria-label="Buscar professor">
 
@@ -69,12 +53,10 @@
         </div>
 
 
-        <div class="tabela-responsiva" data-resultados-lista>
+        <div data-resultados-lista>
+        <div class="tabela-responsiva">
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#tabela de registros#}
             <table>
 
                 <thead>
@@ -108,6 +90,14 @@
 
             </table>
 
+        </div>
+        {% if pagina.paginator.num_pages > 1 %}
+        <nav class="rodape-painel acoes-cartao" aria-label="Páginas de professores">
+            {% if pagina.has_previous %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+            {% if pagina.has_next %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+        </nav>
+        {% endif %}
         </div>
     </section>
 <script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>

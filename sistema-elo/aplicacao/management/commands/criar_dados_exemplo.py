@@ -1,4 +1,4 @@
-#importacoes
+
 from datetime import date
 
 from django.core.management.base import BaseCommand, CommandError
@@ -6,15 +6,10 @@ from django.core.management.base import BaseCommand, CommandError
 from aplicacao.models import Aluno, Atividade, Conteudo, Frequencia, Meta, Professor, Responsavel, Usuario, Vinculo
 
 
-#-------------------------------------------------------------------------------------
-
-#comando de gerenciamento
 class Command(BaseCommand):
     help = "Cria os dados de exemplo da primeira versão do ELO."
 
-    #-------------------------------------------------------------------------------------
 
-    #execucao do comando
     def handle(self, *args, **options):
         def obter_conta(nome_usuario, tipo_perfil):
             conta, criada = Usuario.objects.get_or_create(
@@ -133,4 +128,4 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS("Dados de exemplo criados com sucesso."))
-#-------------------------------------------------------------------------------------
+

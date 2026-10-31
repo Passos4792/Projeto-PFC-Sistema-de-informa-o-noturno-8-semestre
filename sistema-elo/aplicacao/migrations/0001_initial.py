@@ -1,11 +1,8 @@
-#importacoes
+
 import django.db.models.deletion
 from django.db import migrations, models
 
 
-#-------------------------------------------------------------------------------------
-
-#migracao do banco de dados
 class Migration(migrations.Migration):
 
     initial = True
@@ -188,4 +185,4 @@ class Migration(migrations.Migration):
                 'data_prazo__gte', models.F('data_inicio')), _connector='OR'), name='chk_meta_datas'),
         ),
     ]
-#-------------------------------------------------------------------------------------
+

@@ -1,16 +1,11 @@
 """Versões vigentes dos documentos legais apresentados no ELO."""
 
-#-------------------------------------------------------------------------------------
 
-#versoes e data de vigencia dos documentos
 VERSAO_TERMOS = "1.1"
 VERSAO_PRIVACIDADE = "1.1"
 DATA_VIGENCIA = "24/09/2026"
 
 
-#-------------------------------------------------------------------------------------
-
-#verificacao do aceite das versoes vigentes
 def documentos_aceitos(perfil):
     """Confirma se o usuário registrou aceite das versões atualmente vigentes."""
     return bool(

@@ -20,6 +20,7 @@
         <small>Desconectar não apaga eventos já enviados.</small>
         {% elif google_configurado %}
         <form method="post" action="{% url 'google-conectar' %}">{% csrf_token %}<button class="botao-principal" type="submit">Conectar conta Google</button></form>
+        <small>Na tela do Google, permita ver e editar os eventos do calendário para concluir a conexão.</small>
         {% else %}
         <span class="etiqueta">Em configuração</span><small>A conexão com o Google será liberada pelo administrador.</small>
         {% endif %}
@@ -40,9 +41,29 @@
             <article class="cartao-aluno atividade-calendario">
                 <span class="etiqueta">{{ atividade.get_situacao_display }}</span>
                 <h2>{{ atividade.titulo }}</h2>
+                <span class="etiqueta">{{ atividade.disciplina|default:'Conteúdo não definido' }}</span>
                 {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}<strong class="aluno-atividade">{{ atividade.aluno.nome_completo }}</strong>{% endif %}
                 <p>{{ atividade.descricao|default:'Sem descrição.' }}</p>
                 <p class="prazo-atividade">{% if atividade.data_entrega %}Entrega: {{ atividade.data_entrega|date:'d/m/Y' }}{% else %}Data de entrega ainda não definida{% endif %}</p>
+                <div class="conclusao-atividade">
+                {% if atividade.situacao == 'CONCLUIDA' %}
+                    <p class="situacao-meta estado-alcancada">Realização confirmada pelo professor</p>
+                {% elif atividade.situacao == 'PENDENTE' %}
+                    {% if atividade.ultima_solicitacao.situacao == 'PENDENTE' %}
+                        <p class="nota-painel">Conclusão solicitada. Aguardando avaliação do professor.</p>
+                    {% else %}
+                        {% if atividade.ultima_solicitacao.situacao == 'RECUSADA' %}<p><strong>Orientação do professor:</strong> {{ atividade.ultima_solicitacao.resposta }}</p>{% endif %}
+                        <details><summary>Solicitar conclusão</summary>
+                            <form data-solicitar action="{% url 'api-solicitar-conclusao' atividade.pk %}" method="post">{% csrf_token %}
+                                <label for="mensagem-{{ atividade.pk }}">Mensagem ao professor (opcional)</label>
+                                <textarea class="campo-formulario" id="mensagem-{{ atividade.pk }}" name="mensagem" rows="3" maxlength="500"></textarea>
+                                <button class="botao-principal" type="submit">Enviar solicitação</button>
+                                <p data-retorno role="status"></p>
+                            </form>
+                        </details>
+                    {% endif %}
+                {% endif %}
+                </div>
                 <div class="sincronizacao-atividade">
                 {% if atividade.google_sincronizado_em %}<small>Último envio: {{ atividade.google_sincronizado_em|date:'d/m/Y H:i' }}</small>{% endif %}
                 {% if atividade.situacao == 'CANCELADA' %}
@@ -61,4 +82,5 @@
     </div>
 </section>
 <script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>
+<script src="{% static 'aplicacao/js/solicitacoes.js' %}" defer></script>
 {% endblock %}

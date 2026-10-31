@@ -1,5 +1,5 @@
-//configuracao e eventos da tela
-// Minimiza ou expande o menu sem recarregar a página.
+
+
 const botaoMenu = document.getElementById("alternar-menu");
 
 if (botaoMenu) {
@@ -18,4 +18,4 @@ if (botaoMenu) {
         atualizarMenu();
     });
 }
-//-------------------------------------------------------------------------------------
+

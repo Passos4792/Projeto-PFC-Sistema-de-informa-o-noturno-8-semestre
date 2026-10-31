@@ -1,12 +1,11 @@
 {% extends 'aplicacao/estrutura-base.html' %}
+{% load static %}
 
 {% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
 
 {% block conteudo %}
 
-{#-------------------------------------------------------------------------------------#}
 
-{#cabecalho#}
     <header class="topo-pagina topo-formulario">
 
         <div>
@@ -27,16 +26,10 @@
     </header>
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
     <section class="painel painel-formulario">
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#formulario#}
-        <form method="post" novalidate class="formulario-cadastro">
+        <form method="post" novalidate class="formulario-cadastro" data-formulario-atividade data-metas-url="{% url 'api-metas-aluno' 0 %}">
             {% csrf_token %}
 
             {% for campo in formulario %}
@@ -69,4 +62,5 @@
 
         </form>
     </section>
+<script src="{% static 'aplicacao/js/formulario-atividade.js' %}" defer></script>
 {% endblock %}
