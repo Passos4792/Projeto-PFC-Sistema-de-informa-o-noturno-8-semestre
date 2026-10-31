@@ -13,9 +13,9 @@ class FiltroAuditoria(forms.Form):
                              choices=[('', 'Todas')] + list(RegistroAuditoria.Acao.choices))
     autor = forms.CharField(label='Usuário responsável', required=False, max_length=150)
     inicio = forms.DateField(label='De', required=False,
-                             widget=forms.DateInput(attrs={'type': 'date'}))
+                             widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}))
     fim = forms.DateField(label='Até', required=False,
-                          widget=forms.DateInput(attrs={'type': 'date'}))
+                          widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}))
 
     #-------------------------------------------------------------------------------------
 

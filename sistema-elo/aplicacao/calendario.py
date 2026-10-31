@@ -30,6 +30,7 @@ def conferir_perfil(request):
 
 #listagem e pesquisa das atividades do usuario
 @require_GET
+@never_cache
 def minhas_atividades(request):
     conferir_perfil(request)
     atividades = Atividade.objects.filter(aluno__in=alunos_permitidos(request.perfil_elo)).select_related('aluno', 'professor')
@@ -89,13 +90,20 @@ def retorno(request):
         messages.error(request, 'Não foi possível concluir a conexão com o Google.')
         return redirect('minhas-atividades')
     try:
-        identidade, credenciais = google.trocar_codigo(request.GET['code'], fluxo['verifier'])
+        conexao_anterior = ConexaoGoogle.objects.filter(usuario=request.perfil_elo).first()
+        identidade, credenciais = google.trocar_codigo(request.GET['code'], fluxo['verifier'],
+                                                       conexao_anterior, fluxo.get('conta_google'))
         with transaction.atomic():
             ConexaoGoogle.objects.update_or_create(usuario=request.perfil_elo, defaults={
                 'identidade': identidade, 'credenciais': credenciais,
             })
             registrar('EDICAO', request=request, entidade='Google Agenda', detalhes='Conta conectada ao calendário.')
         messages.success(request, 'Google Agenda conectado. Escolha as atividades que deseja sincronizar.')
+    except google.PermissaoCalendarioPendente as exc:
+        if not fluxo.get('conta_google'):
+            #completa a autorizacao parcial uma unica vez, sem reiniciar pelo painel
+            return redirect(google.iniciar_oauth(request, conta_google=exc.identidade))
+        messages.error(request, str(exc))
     except google.GoogleErro as exc:
         messages.error(request, str(exc))
     return redirect('minhas-atividades')
@@ -120,6 +128,11 @@ def sincronizar(request, pk):
             conexao = ConexaoGoogle.objects.select_for_update().filter(usuario=request.perfil_elo).first()
             if not conexao:
                 raise google.ReconectarGoogle('Conecte sua conta Google antes de sincronizar.')
+            #releitura apos aguardar outra sincronizacao, usando os dados atuais do painel
+            atividade = get_object_or_404(Atividade.objects.select_for_update().select_related('aluno'),
+                                         pk=pk, aluno__in=alunos_permitidos(request.perfil_elo))
+            if not atividade.data_entrega or atividade.situacao == 'CANCELADA':
+                raise google.GoogleErro('A atividade foi alterada. Confira a data e a situação antes de sincronizar.')
             sync, _ = SincronizacaoGoogle.objects.get_or_create(
                 usuario=request.perfil_elo, atividade=atividade, identidade=conexao.identidade,
                 defaults={'evento_id': google.evento_id(request.perfil_elo, conexao.identidade, atividade)},
@@ -128,12 +141,13 @@ def sincronizar(request, pk):
             sync.sincronizado_em = timezone.now()
             sync.save(update_fields=['evento_id', 'sincronizado_em'])
             registrar('EDICAO', request=request, objeto=atividade, detalhes='Atividade sincronizada com o Google Agenda pelo usuário.')
-        messages.success(request, 'Atividade sincronizada no seu calendário principal do Google.')
+        messages.success(request, f'Google confirmou: “{atividade.titulo}” em '
+                         f'{atividade.data_entrega:%d/%m/%Y}, no calendário principal da conta conectada.')
     except google.ReconectarGoogle as exc:
         ConexaoGoogle.objects.filter(usuario=request.perfil_elo).delete()
         messages.warning(request, str(exc))
-    except google.GoogleErro:
-        messages.error(request, 'Não foi possível sincronizar agora. Tente novamente; se continuar, reconecte sua conta Google.')
+    except google.GoogleErro as exc:
+        messages.error(request, str(exc))
     return redirect('minhas-atividades')
 
 

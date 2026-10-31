@@ -1,3 +1,6 @@
+--configuracao do banco de dados
+---------------------------------------------------------------------------------------
+
 /*
     PROJETO ELO - CRIAÇÃO DO BANCO DE DADOS
 
@@ -210,3 +213,4 @@ CREATE TABLE IF NOT EXISTS frequencia (
 
 /* Exibe as tabelas criadas para facilitar a conferência no Workbench. */
 SHOW TABLES;
+---------------------------------------------------------------------------------------
