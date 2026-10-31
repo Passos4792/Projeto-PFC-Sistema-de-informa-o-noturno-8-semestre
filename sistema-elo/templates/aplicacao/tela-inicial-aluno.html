@@ -2,9 +2,7 @@
 {% block titulo_pagina %}ELO - Acompanhamento de {{ aluno.nome }}{% endblock %}
 {% block conteudo %}
 
-{#-------------------------------------------------------------------------------------#}
 
-{#cabecalho#}
     <header class="topo-pagina">
         <div>
             <p class="caminho">
@@ -20,9 +18,7 @@
         <a class="botao-secundario" href="{% url 'inicio' %}">Voltar ao início</a>
     </header>
 
-{#-------------------------------------------------------------------------------------#}
 
-{#area de conteudo#}
     <section class="indicadores indicadores-aluno" id="metas" aria-label="Resumo do acompanhamento">
         <article>
             <span>Progresso geral</span><strong>{{ pontos }} <small>pontos</small></strong>
@@ -44,9 +40,7 @@
         </article>
     </section>
 
-{#-------------------------------------------------------------------------------------#}
 
-{#area de conteudo#}
     <section class="painel" id="atividades">
         <div class="painel-cabecalho">
             <div>

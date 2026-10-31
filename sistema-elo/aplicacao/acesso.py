@@ -1,4 +1,4 @@
-#importacoes
+
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import redirect
@@ -8,9 +8,6 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from .models import Aluno
 
 
-#-------------------------------------------------------------------------------------
-
-#perfil ativo
 def perfil_ativo(user):
     if not user.is_authenticated or not user.is_active:
         return None
@@ -22,14 +19,9 @@ def perfil_ativo(user):
         return None
 
 
-#-------------------------------------------------------------------------------------
-
-#autenticacao do usuario
 class BackendElo(ModelBackend):
 
-    #-------------------------------------------------------------------------------------
 
-    #autenticacao
     def authenticate(self, request, username=None, password=None, **kwargs):
         from .limite_login import autenticar_com_limite
         if password is None:
@@ -38,16 +30,11 @@ class BackendElo(ModelBackend):
         return autenticar_com_limite(request, username,
                                      lambda nome: autenticar(request, username=nome, password=password, **kwargs))
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao da conta ativa
     def user_can_authenticate(self, user):
         return super().user_can_authenticate(user) and (user.is_superuser or perfil_ativo(user) is not None)
 
 
-#-------------------------------------------------------------------------------------
-
-#alunos permitidos
 def alunos_permitidos(perfil):
     if perfil.tipo_perfil == 'PROFESSOR':
         return Aluno.objects.all()
@@ -56,20 +43,13 @@ def alunos_permitidos(perfil):
     return Aluno.objects.filter(vinculo__responsavel__usuario=perfil, vinculo__ativo=True)
 
 
-#-------------------------------------------------------------------------------------
-
-#controle de acesso as paginas
 class ControleAcesso:
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, get_response):
         self.get_response = get_response
 
-    #-------------------------------------------------------------------------------------
 
-    #processamento da requisicao
     def __call__(self, request):
         resposta = self.get_response(request)
         from .auditoria import registrar_consulta
@@ -81,16 +61,14 @@ class ControleAcesso:
                       detalhes='Rota: ' + (match.url_name or '') if match else 'Rota não identificada')
         return resposta
 
-    #-------------------------------------------------------------------------------------
 
-    #verificacao das permissoes da pagina
     def process_view(self, request, view_func, view_args, view_kwargs):
         match = request.resolver_match
         if match.app_name == 'admin':
             return None
         nome = match.url_name
         if nome and nome.startswith('api-'):
-            #a API devolve erros JSON e verifica perfil, senha e aceite em AcessoElo
+
             return None
         if nome in (
             'login', 'recuperar-senha', 'sobre', 'politica-privacidade',
@@ -111,7 +89,7 @@ class ControleAcesso:
         if perfil.troca_senha_obrigatoria:
             return redirect('trocar-senha')
 
-        # O primeiro acesso e novas versões exigem aceite antes das áreas internas.
+
         if nome == 'aceitar-termos':
             return None
         from .documentos_legais import documentos_aceitos
@@ -137,4 +115,4 @@ class ControleAcesso:
             raise PermissionDenied
         if nome in ('professor-criar', 'professor-editar', 'professor-excluir') and not perfil.professor_principal:
             raise PermissionDenied
-#-------------------------------------------------------------------------------------
+

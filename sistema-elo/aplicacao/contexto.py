@@ -1,10 +1,7 @@
-#importacoes
+
 from .documentos_legais import DATA_VIGENCIA, VERSAO_PRIVACIDADE, VERSAO_TERMOS
 
 
-#-------------------------------------------------------------------------------------
-
-#documentos legais disponiveis nas telas
 def documentos_legais(request):
     """Disponibiliza as versões vigentes para os templates públicos e autenticados."""
     perfil = getattr(request, 'perfil_elo', None)

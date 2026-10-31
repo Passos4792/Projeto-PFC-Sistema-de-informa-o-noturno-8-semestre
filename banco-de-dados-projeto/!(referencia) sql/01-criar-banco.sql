@@ -1,27 +1,13 @@
---configuracao do banco de dados
----------------------------------------------------------------------------------------
 
-/*
-    PROJETO ELO - CRIAÇÃO DO BANCO DE DADOS
 
-    Este arquivo cria somente o banco e suas tabelas.
-    Ele não possui ligação com HTML, CSS, JavaScript ou Django.
-
-    Banco preparado para MySQL 8.
-*/
-
-/* Cria o banco sem apagar um banco existente. */
 CREATE DATABASE IF NOT EXISTS elo_db
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-/* Define elo_db como o banco utilizado pelos próximos comandos. */
+
 USE elo_db;
 
-/*
-    Tabela de professores.
-    O campo usuario substitui o e-mail e será formado pelo nome e sobrenome.
-*/
+
 CREATE TABLE IF NOT EXISTS professor (
     id_professor INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nome VARCHAR(80) NOT NULL,
@@ -35,7 +21,7 @@ CREATE TABLE IF NOT EXISTS professor (
     UNIQUE KEY uk_professor_usuario (usuario)
 ) ENGINE = InnoDB;
 
-/* Tabela das pessoas responsáveis pelos alunos. */
+
 CREATE TABLE IF NOT EXISTS responsavel (
     id_responsavel INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nome VARCHAR(80) NOT NULL,
@@ -49,7 +35,7 @@ CREATE TABLE IF NOT EXISTS responsavel (
     UNIQUE KEY uk_responsavel_usuario (usuario)
 ) ENGINE = InnoDB;
 
-/* Tabela dos alunos acompanhados pelo projeto ELO. */
+
 CREATE TABLE IF NOT EXISTS aluno (
     id_aluno INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nome VARCHAR(80) NOT NULL,
@@ -64,12 +50,7 @@ CREATE TABLE IF NOT EXISTS aluno (
     UNIQUE KEY uk_aluno_usuario (usuario)
 ) ENGINE = InnoDB;
 
-/*
-    FUNCIONALIDADE 2 - VÍNCULOS
 
-    Une um aluno ao professor e ao responsável que o acompanham.
-    Nesta primeira versão, cada aluno terá somente um vínculo ativo.
-*/
 CREATE TABLE IF NOT EXISTS vinculo (
     id_vinculo INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_aluno INT UNSIGNED NOT NULL,
@@ -94,11 +75,7 @@ CREATE TABLE IF NOT EXISTS vinculo (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-/*
-    FUNCIONALIDADE 3 - METAS
 
-    Cada meta pertence a um aluno e é criada por um professor.
-*/
 CREATE TABLE IF NOT EXISTS meta (
     id_meta INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_aluno INT UNSIGNED NOT NULL,
@@ -126,12 +103,7 @@ CREATE TABLE IF NOT EXISTS meta (
         CHECK (data_prazo IS NULL OR data_prazo >= data_inicio)
 ) ENGINE = InnoDB;
 
-/*
-    FUNCIONALIDADE 3 - ATIVIDADES
 
-    A atividade pode estar ligada a uma meta.
-    id_meta aceita NULL porque também poderão existir atividades extras.
-*/
 CREATE TABLE IF NOT EXISTS atividade (
     id_atividade INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_aluno INT UNSIGNED NOT NULL,
@@ -161,7 +133,7 @@ CREATE TABLE IF NOT EXISTS atividade (
         ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
-/* Conteúdos de apoio enviados pelo professor para o aluno. */
+
 CREATE TABLE IF NOT EXISTS conteudo (
     id_conteudo INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_aluno INT UNSIGNED NOT NULL,
@@ -188,7 +160,7 @@ CREATE TABLE IF NOT EXISTS conteudo (
         ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
-/* Registros de presença nos acompanhamentos realizados. */
+
 CREATE TABLE IF NOT EXISTS frequencia (
     id_frequencia INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_aluno INT UNSIGNED NOT NULL,
@@ -211,6 +183,6 @@ CREATE TABLE IF NOT EXISTS frequencia (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-/* Exibe as tabelas criadas para facilitar a conferência no Workbench. */
+
 SHOW TABLES;
----------------------------------------------------------------------------------------
+

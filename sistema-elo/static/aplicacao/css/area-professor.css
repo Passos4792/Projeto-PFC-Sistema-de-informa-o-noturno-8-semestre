@@ -1,6 +1,5 @@
-/*-------------------------------------------------------------------------------------*/
 
-/*cores do projeto*/
+
 :root {
     --azul: #79a1ea;
     --azul-escuro: #527ab9;
@@ -16,16 +15,12 @@
     --borda: #e6e1d9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*configuracao geral*/
 * {
     box-sizing: border-box;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body {
     margin: 0;
     background: var(--fundo);
@@ -33,16 +28,12 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: a*/
 a {
     color: inherit;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: button,*/
 button,
 input,
 select,
@@ -50,9 +41,7 @@ textarea {
     font: inherit;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .estrutura-pagina*/
 .estrutura-pagina {
     display: grid;
     grid-template-columns: 242px minmax(0, 1fr);
@@ -60,9 +49,7 @@ textarea {
     transition: grid-template-columns .35s ease;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-lateral {
     display: flex;
     min-height: 100vh;
@@ -72,9 +59,7 @@ textarea {
     background: rgba(255, 253, 251, .98);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*marca do sistema*/
 .logo-menu {
     display: grid;
     min-height: 104px;
@@ -83,17 +68,13 @@ textarea {
     border-bottom: 1px solid var(--borda);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*marca do sistema*/
 .logo-menu img {
     width: 130px;
     height: auto;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*marca do sistema*/
 .logo-menu small {
     margin-top: 8px;
     color: #6f8fca;
@@ -102,17 +83,13 @@ textarea {
     text-transform: uppercase;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao {
     flex: 1;
     margin-top: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao p {
     margin: 22px 12px 8px;
     color: #938ba1;
@@ -122,9 +99,7 @@ textarea {
     text-transform: uppercase;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao a {
     display: flex;
     min-height: 46px;
@@ -137,9 +112,7 @@ textarea {
     text-decoration: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao a span {
     display: grid;
     width: 28px;
@@ -151,18 +124,14 @@ textarea {
     font-size: 15px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao a:hover,
 .menu-navegacao a.ativo {
     background: var(--azul-claro);
     color: #315a9e;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*rodape*/
 .rodape-menu {
     display: flex;
     padding: 11px;
@@ -174,9 +143,7 @@ textarea {
     color: #b86452;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*rodape*/
 .rodape-menu span {
     display: grid;
     width: 27px;
@@ -186,9 +153,7 @@ textarea {
     border-radius: 6px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .alternar-menu*/
 .alternar-menu {
     position: fixed;
     z-index: 20;
@@ -209,38 +174,28 @@ textarea {
     transition: left .35s ease;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .estrutura-pagina {
     grid-template-columns: 82px minmax(0, 1fr);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .alternar-menu {
     left: 61px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .menu-lateral {
     padding-right: 10px;
     padding-left: 10px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .logo-menu img {
     width: 52px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .logo-menu small,
 body.menu-minimizado .menu-navegacao p,
 body.menu-minimizado .menu-navegacao b,
@@ -248,9 +203,7 @@ body.menu-minimizado .rodape-menu b {
     display: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .menu-navegacao a,
 body.menu-minimizado .rodape-menu {
     justify-content: center;
@@ -258,9 +211,7 @@ body.menu-minimizado .rodape-menu {
     padding-left: 6px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*area de conteudo*/
 .conteudo {
     width: min(100%, 1320px);
     min-width: 0;
@@ -269,9 +220,7 @@ body.menu-minimizado .rodape-menu {
     padding-bottom: 64px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cabecalho da pagina*/
 .topo-pagina {
     display: flex;
     align-items: flex-end;
@@ -279,9 +228,7 @@ body.menu-minimizado .rodape-menu {
     gap: 24px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .caminho*/
 .caminho {
     margin: 0 0 9px;
     color: var(--azul-escuro);
@@ -289,27 +236,21 @@ body.menu-minimizado .rodape-menu {
     font-weight: 700;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: h1*/
 h1 {
     margin: 0;
     font-size: clamp(34px, 3vw, 43px);
     font-weight: 500;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .subtitulo*/
 .subtitulo {
     margin: 8px 0 0;
     color: var(--texto-suave);
     font-size: 17px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-principal,
 .botao-secundario,
 .botao-perigo,
@@ -325,9 +266,7 @@ h1 {
     cursor: pointer;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-principal {
     padding: 13px 20px;
     border-color: #6e96df;
@@ -337,53 +276,41 @@ h1 {
     box-shadow: 0 5px 12px rgba(92, 131, 195, .18);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-secundario {
     border-color: #c7c1b8;
     color: #555;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-perigo {
     border-color: #d87964;
     background: #d87964;
     color: #fff;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-editar {
     padding: 7px 12px;
     border-color: var(--azul);
     color: var(--azul-escuro);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-excluir {
     padding: 7px 12px;
     border-color: #e39d8c;
     color: #b66351;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-extra {
     padding: 7px 12px;
     border-color: #bda9e9;
     color: #745bad;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -391,9 +318,7 @@ h1 {
     margin: 32px 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article {
     min-height: 112px;
     padding: 19px;
@@ -402,9 +327,7 @@ h1 {
     background: rgba(255, 253, 251, .92);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores span {
     display: block;
     min-height: 34px;
@@ -412,9 +335,7 @@ h1 {
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores strong {
     display: block;
     margin-top: 6px;
@@ -422,65 +343,47 @@ h1 {
     font-size: 34px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(2) {
     border-color: #c8e6cd;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(2) strong {
     color: var(--verde);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(3) {
     border-color: #f3dda1;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(3) strong {
     color: var(--amarelo);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(4) {
     border-color: #f3c6ba;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(4) strong {
     color: var(--salmao);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(5) {
     border-color: #d8cbf5;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(5) strong {
     color: var(--lilas);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel {
     width: 100%;
     margin-top: 32px;
@@ -491,9 +394,7 @@ h1 {
     box-shadow: 0 8px 24px rgba(89, 104, 132, .07);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-cabecalho {
     display: flex;
     padding: 24px 26px;
@@ -503,26 +404,20 @@ h1 {
     border-bottom: 1px solid var(--borda);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-cabecalho h2,
 .painel-cabecalho p {
     margin: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-cabecalho p {
     margin-top: 5px;
     color: var(--texto-suave);
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .busca input*/
 .busca input {
     width: 270px;
     padding: 12px 16px;
@@ -531,24 +426,18 @@ h1 {
     outline: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*tabelas*/
 .tabela-responsiva {
     overflow-x: auto;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: table*/
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: th,*/
 th,
 td {
     padding: 16px 18px;
@@ -556,9 +445,7 @@ td {
     text-align: left;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: th*/
 th {
     background: #eaf0fa;
     color: #4d6faa;
@@ -567,23 +454,17 @@ th {
     text-transform: uppercase;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: tbody tr:last-child td*/
 tbody tr:last-child td {
     border-bottom: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: tbody tr:hover*/
 tbody tr:hover {
     background: #f8faff;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .avatar*/
 .avatar {
     display: inline-grid;
     width: 38px;
@@ -598,9 +479,7 @@ tbody tr:hover {
     font-weight: 700;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .situacao*/
 .situacao {
     padding: 6px 11px;
     border: 1px solid #c6e4cc;
@@ -611,66 +490,50 @@ tbody tr:hover {
     font-weight: 700;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .situacao.inativo*/
 .situacao.inativo {
     border-color: #e9b9ad;
     background: #fff0eb;
     color: #a85f50;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .acoes*/
 .acoes {
     white-space: nowrap;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .acoes a*/
 .acoes a {
     margin: 2px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .sem-dados*/
 .sem-dados {
     padding: 35px;
     color: var(--texto-suave);
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-formulario {
     max-width: 860px;
     padding: clamp(22px, 3vw, 36px);
     margin-inline: auto;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo {
     margin-bottom: 18px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo label {
     display: block;
     margin-bottom: 7px;
     font-weight: 700;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-formulario:not([type="checkbox"]) {
     width: 100%;
     padding: 11px 13px;
@@ -679,50 +542,38 @@ tbody tr:hover {
     background: #fff;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: textarea.campo-formulario*/
 textarea.campo-formulario {
     resize: vertical;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-checkbox {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-checkbox label {
     margin: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-checkbox input {
     order: -1;
     width: 19px;
     height: 19px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*mensagens de erro*/
 .erro-campo {
     margin: 5px 0;
     color: #b8424f;
     font-size: 13px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .acoes-formulario*/
 .acoes-formulario {
     display: flex;
     margin-top: 25px;
@@ -730,9 +581,7 @@ textarea.campo-formulario {
     gap: 10px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-confirmacao {
     max-width: 620px;
     padding: 34px;
@@ -740,56 +589,42 @@ textarea.campo-formulario {
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-confirmacao p {
     font-size: 17px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-confirmacao .aviso {
     color: #a85f50;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*mensagens do sistema*/
 .mensagens p {
     padding: 12px 16px;
     border-radius: 10px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*mensagens do sistema*/
 .mensagens .success {
     background: #e6f4e8;
     color: #377749;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*mensagens do sistema*/
 .mensagens .error {
     background: #fff0eb;
     color: #a85f50;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 1150px) {
     .indicadores {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 800px) {
 
     .estrutura-pagina,
@@ -859,9 +694,7 @@ textarea.campo-formulario {
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria {
     display: flex;
     flex-wrap: wrap;
@@ -870,18 +703,14 @@ textarea.campo-formulario {
     padding: 20px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria p {
     display: grid;
     gap: 6px;
     margin: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria input,
 .formulario-auditoria select {
     font: inherit;
@@ -891,9 +720,7 @@ textarea.campo-formulario {
     max-width: 100%;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel nav[aria-label="Paginação da auditoria"] {
     display: flex;
     flex-wrap: wrap;
@@ -902,9 +729,7 @@ textarea.campo-formulario {
     padding: 20px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 480px) {
 
     .menu-navegacao,
@@ -913,17 +738,12 @@ textarea.campo-formulario {
     }
 }
 
-/* Componentes compartilhados pelas telas do ELO. */
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body {
     line-height: 1.5;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: h1,*/
 h1,
 h2,
 h3 {
@@ -931,25 +751,19 @@ h3 {
     overflow-wrap: anywhere;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: h2*/
 h2 {
     font-size: 21px;
     font-weight: 600;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: :focus-visible*/
 :focus-visible {
     outline: 3px solid #416ba9;
     outline-offset: 4px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .pular-conteudo*/
 .pular-conteudo {
     position: fixed;
     top: -80px;
@@ -960,16 +774,12 @@ h2 {
     background: white;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .pular-conteudo:focus*/
 .pular-conteudo:focus {
     top: 12px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-lateral {
     position: sticky;
     top: 0;
@@ -978,55 +788,41 @@ h2 {
     overflow-y: auto;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao a {
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*menu de navegacao*/
 .menu-navegacao a.ativo {
     border-left-color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*conta conectada*/
 .conta-menu {
     display: grid;
     padding: 24px 12px 12px;
     overflow-wrap: anywhere;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*conta conectada*/
 .conta-menu small {
     color: var(--texto-suave);
     font-size: 12px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*conta conectada*/
 .conta-menu strong {
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*rodape*/
 .rodape-menu {
     margin: 0;
     padding: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*rodape*/
 .rodape-menu button {
     width: 100%;
     min-height: 44px;
@@ -1038,55 +834,41 @@ h2 {
     font-weight: 600;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body.menu-minimizado .conta-menu {
     display: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cabecalho da pagina*/
 .topo-pagina>div {
     min-width: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cabecalho da pagina*/
 .topo-pagina>a {
     flex-shrink: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cabecalho da pagina*/
 .topo-formulario {
     max-width: 860px;
     margin-inline: auto;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-cadastro {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-cadastro .grupo-campo {
     margin: 0;
     min-width: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-cadastro .grupo-campo:has(textarea),
 .formulario-cadastro .grupo-campo:has(input[type="password"]),
 .formulario-cadastro>.erro-campo,
@@ -1094,9 +876,7 @@ body.menu-minimizado .conta-menu {
     grid-column: 1 / -1;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo small {
     display: block;
     margin-top: 7px;
@@ -1105,17 +885,13 @@ body.menu-minimizado .conta-menu {
     font-size: 12px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo small ul {
     padding-left: 18px;
     margin: 8px 0 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-formulario:not([type="checkbox"]) {
     min-height: 46px;
     border-color: #cbd4e0;
@@ -1123,39 +899,29 @@ body.menu-minimizado .conta-menu {
     background: #fff;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-formulario:focus {
     outline: 3px solid #dae5fa;
     border-color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-formulario[aria-invalid="true"] {
     border-color: #ba4c4c;
     background: #fff8f6;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-checkbox {
     padding-top: 16px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .obrigatorio*/
 .obrigatorio {
     color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .acoes-formulario*/
 .acoes-formulario {
     justify-content: flex-end;
     flex-wrap: wrap;
@@ -1164,56 +930,42 @@ body.menu-minimizado .conta-menu {
     border-top: 1px solid var(--borda);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel-confirmacao .acoes-formulario {
     justify-content: center;
     margin-top: 28px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-principal {
     background: #527ab9;
     border-color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-principal:hover {
     background: #3f639e;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-secundario:hover,
 .botao-editar:hover {
     background: #eaf0fa;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-excluir:hover,
 .botao-perigo:hover {
     background: #a94c3c;
     color: white;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-extra:hover {
     background: #f0eafb;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-principal,
 .botao-secundario,
 .botao-perigo {
@@ -1221,18 +973,14 @@ body.menu-minimizado .conta-menu {
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-editar,
 .botao-excluir,
 .botao-extra {
     min-height: 36px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .icone-vazio,*/
 .icone-vazio,
 .icone-confirmacao {
     display: grid;
@@ -1246,41 +994,31 @@ body.menu-minimizado .conta-menu {
     margin: 0 auto 16px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .icone-confirmacao*/
 .icone-confirmacao {
     background: #fff0eb;
     color: #a85f50;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .sem-dados*/
 .sem-dados {
     padding: 48px 24px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .sem-dados strong*/
 .sem-dados strong {
     display: block;
     font-size: 18px;
     color: #444;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .sem-dados p*/
 .sem-dados p {
     margin: 8px 0 0;
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .etiqueta*/
 .etiqueta {
     display: inline-block;
     padding: 6px 12px;
@@ -1291,68 +1029,50 @@ body.menu-minimizado .conta-menu {
     font-weight: 600;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores strong {
     color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(2) strong {
     color: #468256;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(3) strong {
     color: #92700c;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(4) strong {
     color: #ac5d49;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores article:nth-child(5) strong {
     color: #7961ad;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores-aluno {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores-aluno strong small {
     font-size: 16px;
     font-weight: 400;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*indicadores*/
 .indicadores-aluno p {
     color: var(--texto-suave);
     font-size: 13px;
     margin: 8px 0 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-cartoes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
@@ -1360,16 +1080,12 @@ body.menu-minimizado .conta-menu {
     padding: 26px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-cartoes>.sem-dados {
     grid-column: 1 / -1;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-aluno {
     padding: 24px;
     border: 1px solid #d9e3f3;
@@ -1378,39 +1094,29 @@ body.menu-minimizado .conta-menu {
     overflow-wrap: anywhere;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-aluno .avatar {
     width: 48px;
     height: 48px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-aluno .icone-vazio {
     margin-left: 0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-aluno h2 {
     margin: 18px 0 10px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-aluno p {
     color: var(--texto-suave);
     font-size: 15px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1418,17 +1124,13 @@ body.menu-minimizado .conta-menu {
     border-bottom: 1px solid var(--borda);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria label {
     font-size: 13px;
     font-weight: 600;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria input,
 .formulario-auditoria select {
     width: 100%;
@@ -1438,44 +1140,34 @@ body.menu-minimizado .conta-menu {
     background: white;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-auditoria .errorlist {
     grid-column: 1 / -1;
     color: #a54040;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*paineis*/
 .painel>p {
     padding-inline: 26px;
     color: var(--texto-suave);
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: td*/
 td {
     font-size: 14px;
     max-width: 380px;
     overflow-wrap: anywhere;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .pagina-publica*/
 .pagina-publica {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-publico*/
 .cabecalho-publico {
     display: flex;
     align-items: center;
@@ -1486,43 +1178,33 @@ td {
     border-bottom: 1px solid var(--borda);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-publico img*/
 .cabecalho-publico img {
     width: 112px;
     display: block;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-publico span*/
 .cabecalho-publico span {
     color: var(--texto-suave);
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*area de conteudo*/
 .conteudo-publico {
     width: min(100%, 1060px);
     margin: auto;
     padding: 48px 24px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-publico {
     margin: 0;
     padding: clamp(24px, 5vw, 64px);
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .saida-primeiro-acesso {
     margin-top: 20px;
 }
@@ -1531,18 +1213,14 @@ td {
     margin-top: 20px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-publico .subtitulo {
     max-width: 660px;
     margin: 16px auto 28px;
     line-height: 1.6;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .aviso-informativo*/
 .aviso-informativo {
     background: #edf2fa;
     border-radius: 16px;
@@ -1552,16 +1230,12 @@ td {
     text-align: left;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .aviso-informativo p*/
 .aviso-informativo p {
     color: #53627a;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1570,55 +1244,41 @@ td {
     text-align: left;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios article {
     padding: 22px;
     background: #f1f5fc;
     border-radius: 16px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios article:nth-child(2) {
     background: #eff7f0;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios article:nth-child(3) {
     background: #f4effb;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios article>span {
     font-size: 28px;
     color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios h2 {
     font-size: 18px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*organizacao dos cartoes*/
 .grade-beneficios p {
     color: var(--texto-suave);
     font-size: 14px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*rodape*/
 .rodape-publico {
     padding: 20px;
     text-align: center;
@@ -1626,18 +1286,14 @@ td {
     color: var(--texto-suave);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 1050px) {
     .formulario-auditoria {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 800px) {
     .menu-lateral {
         position: static;
@@ -1679,9 +1335,7 @@ td {
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 580px) {
 
     .formulario-cadastro,
@@ -1723,9 +1377,7 @@ td {
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*acessibilidade: movimento reduzido*/
 @media (prefers-reduced-motion: reduce) {
 
     *,
@@ -1736,9 +1388,7 @@ td {
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 800px) {
 
     .estrutura-pagina,
@@ -1750,12 +1400,8 @@ td {
         align-self: start;
     }
 }
-/*-------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------*/
-/* DOCUMENTOS LEGAIS, PRIVACIDADE E ACEITE */
 
-/*links legais no menu autenticado*/
 .links-legais-menu {
     display: flex;
     justify-content: center;
@@ -1778,7 +1424,7 @@ body.menu-minimizado .links-legais-menu {
     display: none;
 }
 
-/*rodape publico com acesso permanente aos documentos*/
+
 .rodape-publico {
     display: grid;
     gap: 8px;
@@ -1800,7 +1446,7 @@ body.menu-minimizado .links-legais-menu {
     text-decoration: underline;
 }
 
-/*pagina de documento*/
+
 .documento-legal,
 .documento-aluno,
 .aceite-documentos {
@@ -1990,7 +1636,7 @@ body.menu-minimizado .links-legais-menu {
     border-top: 1px solid var(--borda);
 }
 
-/*versao simples para alunos*/
+
 .documento-aluno {
     padding: clamp(28px, 5vw, 58px);
     text-align: center;
@@ -2070,7 +1716,7 @@ body.menu-minimizado .links-legais-menu {
     margin: 6px 0 0;
 }
 
-/*tela obrigatoria de aceite no primeiro acesso*/
+
 .aceite-documentos {
     max-width: 820px;
     margin: 0 auto;
@@ -2221,7 +1867,7 @@ body.menu-minimizado .links-legais-menu {
     }
 }
 
-/* Primeiro acesso: formulário compacto e documentos com apresentação compartilhada. */
+
 .cartao-senha {
     max-width: 420px;
     margin: 0 auto;
@@ -2357,7 +2003,7 @@ body.menu-minimizado .links-legais-menu {
     .acoes-documento { flex-wrap: wrap; }
 }
 
-/* Resumo e busca das listas de pessoas. */
+
 .indicadores-cadastro { grid-template-columns: minmax(0, 240px); }
 [data-busca-automatica] { max-width: 100%; }
 [data-busca-automatica] input { max-width: 100%; }
@@ -2365,7 +2011,7 @@ body.menu-minimizado .links-legais-menu {
 [data-erro-busca] { display: block; max-width: 270px; margin-top: 8px; color: #a43c3c; }
 [data-erro-busca][hidden] { display: none; }
 
-/* Quantidade integrada ao cabeçalho das listagens. */
+
 .cabecalho-registros { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
 .resumo-registros {
     flex: 0 0 100px; min-height: 86px; display: flex; flex-direction: column;
@@ -2403,7 +2049,6 @@ body.menu-minimizado .links-legais-menu {
 .cartao-redefinicao > .subtitulo { padding: 0; }
 
 
-/* Menu compacto: sem rolagem interna; em telas baixas a página acompanha o menu. */
 @media (min-width: 801px) {
     .menu-lateral { padding: 14px 12px; overflow: visible; }
     .logo-menu { min-height: 76px; padding: 0 8px 12px; }

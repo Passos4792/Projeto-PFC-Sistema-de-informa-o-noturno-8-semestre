@@ -1,11 +1,8 @@
-#importacoes
+
 from calendar import monthrange
 from datetime import date, timedelta
 
 
-#-------------------------------------------------------------------------------------
-
-#limites dos periodos do calendario a partir de uma data de referencia
 def limites_periodo(periodo, referencia):
     if periodo == 'SEMANAL':
         inicio = referencia - timedelta(days=referencia.weekday())

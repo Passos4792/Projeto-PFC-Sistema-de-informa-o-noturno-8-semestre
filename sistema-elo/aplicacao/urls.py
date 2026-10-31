@@ -1,4 +1,4 @@
-#importacoes
+
 from django.urls import path
 
 from . import views, contas, calendario, paineis, api
@@ -6,9 +6,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 
 
-#-------------------------------------------------------------------------------------
-
-#rotas
 urlpatterns = [
     path('api/painel/', api.PainelApi.as_view(), name='api-painel'),
     path('api/alunos/<int:aluno_id>/metas/', api.MetasAlunoApi.as_view(), name='api-metas-aluno'),
@@ -75,4 +72,4 @@ urlpatterns = [
     path("frequencias/<int:pk>/editar/", views.frequencia_editar, name="frequencia-editar"),
     path("frequencias/<int:pk>/excluir/", views.frequencia_excluir, name="frequencia-excluir"),
 ]
-#-------------------------------------------------------------------------------------
+

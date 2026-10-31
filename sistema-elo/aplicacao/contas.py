@@ -1,4 +1,4 @@
-#importacoes
+
 from django import forms
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm, SetPasswordForm
@@ -17,14 +17,9 @@ from .documentos_legais import (
 )
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario de troca obrigatoria de senha
 class TrocaSenhaInicial(PasswordChangeForm):
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['old_password'].label = 'Senha atual'
@@ -35,9 +30,6 @@ class TrocaSenhaInicial(PasswordChangeForm):
             campo.widget.attrs['class'] = 'campo-formulario'
 
 
-    #-------------------------------------------------------------------------------------
-
-    #validacao da nova senha
     def clean_new_password1(self):
         senha = self.cleaned_data['new_password1']
         if self.user.check_password(senha):
@@ -45,9 +37,6 @@ class TrocaSenhaInicial(PasswordChangeForm):
         return senha
 
 
-#-------------------------------------------------------------------------------------
-
-#troca obrigatoria de senha no primeiro acesso
 def trocar_senha(request):
     perfil = request.perfil_elo
     if not perfil.troca_senha_obrigatoria:
@@ -66,14 +55,9 @@ def trocar_senha(request):
     return render(request, 'aplicacao/trocar-senha.html', {'formulario': formulario})
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario de redefinicao de senha
 class RedefinicaoSenha(SetPasswordForm):
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['new_password1'].label = 'Senha temporária'
@@ -83,9 +67,6 @@ class RedefinicaoSenha(SetPasswordForm):
             campo.widget.attrs['class'] = 'campo-formulario'
 
 
-    #-------------------------------------------------------------------------------------
-
-    #validacao da nova senha
     def clean_new_password1(self):
         senha = self.cleaned_data['new_password1']
         if self.user.check_password(senha):
@@ -93,9 +74,6 @@ class RedefinicaoSenha(SetPasswordForm):
         return senha
 
 
-#-------------------------------------------------------------------------------------
-
-#redefinicao de senha pelo professor
 @sensitive_post_parameters('new_password1', 'new_password2')
 @require_http_methods(['GET', 'POST'])
 def redefinir_senha(request, pk):
@@ -125,14 +103,9 @@ def redefinir_senha(request, pk):
     })
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario de login
 class LoginElo(AuthenticationForm):
 
-    #-------------------------------------------------------------------------------------
 
-    #mensagem de erro no login
     def get_invalid_login_error(self):
         espera = getattr(self.request, 'login_espera', 0)
         if espera:
@@ -142,16 +115,11 @@ class LoginElo(AuthenticationForm):
                 code='login_bloqueado', params={'minutos': ceil(espera / 60)})
         return super().get_invalid_login_error()
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do nome de usuario
     def clean_username(self):
         return self.cleaned_data['username'].strip().lower()
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario de cadastro de usuario
 class CadastroUsuario(UserCreationForm):
     nome = forms.CharField(max_length=80)
     sobrenome = forms.CharField(max_length=120)
@@ -159,17 +127,13 @@ class CadastroUsuario(UserCreationForm):
     data_nascimento = forms.DateField(required=False, label='Data de nascimento (aluno)',
                                       widget=forms.DateInput(attrs={'type': 'date'}))
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = get_user_model()
         fields = ['nome', 'sobrenome', 'username', 'tipo_perfil',
                   'data_nascimento', 'password1', 'password2']
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, *args, operador, **kwargs):
         super().__init__(*args, **kwargs)
         escolhas = [('ALUNO', 'Aluno'), ('RESPONSAVEL', 'Responsável')]
@@ -179,18 +143,14 @@ class CadastroUsuario(UserCreationForm):
         for campo in self.fields.values():
             campo.widget.attrs['class'] = 'campo-formulario'
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do nome de usuario
     def clean_username(self):
         nome = self.cleaned_data['username'].strip().lower()
         if Usuario.objects.filter(usuario__iexact=nome).exists() or get_user_model().objects.filter(username__iexact=nome).exists():
             raise forms.ValidationError('Este usuário já está sendo utilizado.')
         return nome
 
-    #-------------------------------------------------------------------------------------
 
-    #salvar registro
     @transaction.atomic
     def save(self, commit=True):
         conta = super().save(commit=False)
@@ -207,9 +167,6 @@ class CadastroUsuario(UserCreationForm):
         return conta
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario de aceite dos documentos legais
 class AceiteDocumentos(forms.Form):
     aceite = forms.BooleanField(
         required=True,
@@ -218,9 +175,6 @@ class AceiteDocumentos(forms.Form):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#aceite dos termos e ciencia da politica de privacidade
 def aceitar_termos(request):
     perfil = request.perfil_elo
     proximo = request.POST.get('next') or request.GET.get('next') or ''
@@ -264,9 +218,6 @@ def aceitar_termos(request):
     })
 
 
-#-------------------------------------------------------------------------------------
-
-#cadastrar
 def cadastrar(request):
     form = CadastroUsuario(request.POST or None, operador=request.perfil_elo)
     if request.method == 'POST' and form.is_valid():
@@ -283,9 +234,6 @@ def cadastrar(request):
         'formulario': form, 'titulo': 'Cadastrar usuário', 'pagina_ativa': 'usuarios', 'url_voltar': '/'})
 
 
-#-------------------------------------------------------------------------------------
-
-#inicio
 def inicio(request):
     perfil = request.perfil_elo
     if perfil.tipo_perfil == 'PROFESSOR':
@@ -293,4 +241,4 @@ def inicio(request):
     if perfil.tipo_perfil == 'ALUNO':
         return redirect('aluno-inicio', pk=perfil.aluno_perfil.pk)
     return render(request, 'aplicacao/portal.html', {'alunos': alunos_permitidos(perfil), 'pagina_ativa': 'inicio'})
-#-------------------------------------------------------------------------------------
+

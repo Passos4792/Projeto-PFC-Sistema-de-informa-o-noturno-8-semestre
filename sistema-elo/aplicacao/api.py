@@ -1,4 +1,4 @@
-#importacoes
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -15,9 +15,6 @@ from .indicadores import FiltroPainel, dados_painel, dados_frequencia, dados_con
 from .models import Atividade, Meta, SolicitacaoConclusao
 
 
-#-------------------------------------------------------------------------------------
-
-#a API exige as mesmas etapas e permissoes das paginas do ELO
 class AcessoElo(BasePermission):
     message = 'Entre no ELO e conclua a troca de senha e o aceite dos documentos.'
 
@@ -29,17 +26,11 @@ class AcessoElo(BasePermission):
         return True
 
 
-#-------------------------------------------------------------------------------------
-
-#base autenticada sem cache de dados pessoais
 @method_decorator(never_cache, name='dispatch')
 class ApiElo(APIView):
     permission_classes = [AcessoElo]
 
 
-#-------------------------------------------------------------------------------------
-
-#indicadores autorizados para os graficos e paineis
 class PainelApi(ApiElo):
     def get(self, request):
         secao = request.query_params.get('secao')
@@ -57,9 +48,6 @@ class PainelApi(ApiElo):
         return Response(calcular(request.perfil_elo, formulario.cleaned_data))
 
 
-#-------------------------------------------------------------------------------------
-
-#opcoes de metas do aluno para o formulario de atividade
 class MetasAlunoApi(ApiElo):
     def get(self, request, aluno_id):
         aluno = get_object_or_404(alunos_permitidos(request.perfil_elo), pk=aluno_id)
@@ -67,16 +55,10 @@ class MetasAlunoApi(ApiElo):
         return Response([{'id': m.pk, 'titulo': m.titulo, 'disciplina': m.disciplina_id} for m in metas])
 
 
-#-------------------------------------------------------------------------------------
-
-#validacao da mensagem de solicitacao
 class SolicitarSerializer(serializers.Serializer):
     mensagem = serializers.CharField(max_length=500, required=False, allow_blank=True, default='')
 
 
-#-------------------------------------------------------------------------------------
-
-#solicitacao de conclusao feita pelo aluno ou responsavel vinculado
 class SolicitarConclusaoApi(ApiElo):
     def post(self, request, pk):
         perfil = request.perfil_elo
@@ -98,9 +80,6 @@ class SolicitarConclusaoApi(ApiElo):
         return Response({'mensagem': 'Solicitação enviada. A realização contará após a aprovação do professor.'}, status=201)
 
 
-#-------------------------------------------------------------------------------------
-
-#validacao da decisao do professor
 class DecisaoSerializer(serializers.Serializer):
     decisao = serializers.ChoiceField(choices=['APROVADA', 'RECUSADA'])
     resposta = serializers.CharField(max_length=500, required=False, allow_blank=True, default='')
@@ -111,9 +90,6 @@ class DecisaoSerializer(serializers.Serializer):
         return dados
 
 
-#-------------------------------------------------------------------------------------
-
-#fila restrita ao professor da atividade e ao professor principal
 def solicitacoes_permitidas(perfil):
     registros = SolicitacaoConclusao.objects.select_related('atividade', 'aluno', 'solicitante', 'professor')
     if not perfil.professor_principal:
@@ -121,9 +97,6 @@ def solicitacoes_permitidas(perfil):
     return registros
 
 
-#-------------------------------------------------------------------------------------
-
-#aprovacao ou recusa, com transacao para impedir decisoes duplicadas
 class DecidirConclusaoApi(ApiElo):
     def patch(self, request, pk):
         perfil = request.perfil_elo
@@ -134,7 +107,7 @@ class DecidirConclusaoApi(ApiElo):
         alvo = get_object_or_404(solicitacoes_permitidas(perfil), pk=pk)
         with transaction.atomic():
             atividade = Atividade.objects.select_for_update().get(pk=alvo.atividade_id)
-            #revalida a atribuicao depois de adquirir o bloqueio
+            # Revalidar após o bloqueio evita decidir sobre uma atribuição alterada em paralelo.
             if not perfil.professor_principal and atividade.professor.usuario_id != perfil.pk:
                 return Response({'erro': 'A atividade foi atribuída a outro professor.'}, status=403)
             solicitacao = SolicitacaoConclusao.objects.select_for_update().get(pk=pk)

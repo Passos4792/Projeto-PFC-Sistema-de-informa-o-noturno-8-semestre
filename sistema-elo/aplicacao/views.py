@@ -1,6 +1,6 @@
 """Regras simples das telas das funcionalidades 2 e 3."""
 
-#importacoes
+
 from datetime import datetime, time, timedelta
 
 from django.contrib import messages
@@ -27,27 +27,18 @@ from .forms import (
 from .models import Aluno, Atividade, Conteudo, Frequencia, Meta, Professor, Responsavel, Vinculo
 
 
-#-------------------------------------------------------------------------------------
-
-#texto ativo
 def _texto_ativo(valor):
     """Transforma True e False em um texto mais fácil de entender."""
 
     return "Ativo" if valor else "Inativo"
 
 
-#-------------------------------------------------------------------------------------
-
-#data
 def _data(valor):
     """Formata uma data ou apresenta um traço quando ela não existir."""
 
     return valor.strftime("%d/%m/%Y") if valor else "—"
 
 
-#-------------------------------------------------------------------------------------
-
-#mostrar lista
 def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas, rota_novo, busca=None, total_cadastrados=None, pagina=None):
     """Reutiliza a mesma estrutura visual nas listas simples do projeto."""
 
@@ -80,9 +71,6 @@ def _mostrar_lista(request, titulo, subtitulo, pagina_ativa, cabecalhos, linhas,
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#salvar
 @transaction.atomic
 def _salvar(request, formulario_classe, titulo, pagina_ativa, rota_sucesso, instancia=None):
     """Cria ou atualiza um registro usando um ModelForm."""
@@ -116,9 +104,6 @@ def _salvar(request, formulario_classe, titulo, pagina_ativa, rota_sucesso, inst
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#excluir
 def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso):
     """Mostra uma confirmação antes de excluir um registro."""
 
@@ -150,11 +135,6 @@ def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso):
     )
 
 
-# Tela principal de professores, com busca e indicadores reais do banco.
-
-#-------------------------------------------------------------------------------------
-
-#auditoria
 @require_GET
 def auditoria(request):
     from .models import RegistroAuditoria
@@ -169,11 +149,11 @@ def auditoria(request):
         if filtros['autor']:
             registros = registros.filter(autor__icontains=filtros['autor'])
         if filtros['inicio']:
-            #inicio do dia no fuso usado para apresentar os registros
+
             inicio = timezone.make_aware(datetime.combine(filtros['inicio'], time.min))
             registros = registros.filter(criado_em__gte=inicio)
         if filtros['fim']:
-            #limite exclusivo inclui o dia final inteiro, sem converter datas no banco
+
             fim = timezone.make_aware(datetime.combine(filtros['fim'], time.min)) + timedelta(days=1)
             registros = registros.filter(criado_em__lt=fim)
     else:
@@ -186,9 +166,6 @@ def auditoria(request):
         'filtros': parametros.urlencode(), 'pagina_ativa': 'auditoria', 'total_cadastrados': total_registros})
 
 
-#-------------------------------------------------------------------------------------
-
-#pagina inicial e indicadores
 def pagina_inicial(request):
     from .indicadores import dados_painel
     metas = dados_painel(request.perfil_elo, {})['metas']
@@ -202,9 +179,6 @@ def pagina_inicial(request):
     })
 
 
-#-------------------------------------------------------------------------------------
-
-#professores
 def professores(request):
     termo = request.GET.get("busca", "").strip()
     lista = Professor.objects.select_related('usuario').annotate(
@@ -236,16 +210,10 @@ def professores(request):
     return render(request, "aplicacao/tela-professores.html", contexto)
 
 
-#-------------------------------------------------------------------------------------
-
-#professor criar
 def professor_criar(request):
     return _salvar(request, FormularioProfessor, "Novo professor", "professores", "professor-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#professor editar
 def professor_editar(request, pk):
     professor = get_object_or_404(Professor, pk=pk)
     if professor.usuario.professor_principal:
@@ -254,18 +222,10 @@ def professor_editar(request, pk):
     return _salvar(request, FormularioProfessor, "Editar professor", "professores", "professor-listar", professor)
 
 
-#-------------------------------------------------------------------------------------
-
-#professor excluir
 def professor_excluir(request, pk):
     return _excluir(request, Professor, pk, "Excluir professor", "professores", "professor-listar")
 
 
-# Funcionalidade 2: alunos, responsáveis e vínculos.
-
-#-------------------------------------------------------------------------------------
-
-#alunos
 def _buscar_pessoas(modelo, termo):
     pessoas = modelo.objects.select_related('usuario')
     for parte in termo.split():
@@ -273,9 +233,6 @@ def _buscar_pessoas(modelo, termo):
     return pessoas
 
 
-#-------------------------------------------------------------------------------------
-
-#alunos
 def alunos(request):
     busca = request.GET.get('busca', '').strip()
     pagina = Paginator(_buscar_pessoas(Aluno, busca).order_by('nome', 'sobrenome', 'pk'), 10).get_page(request.GET.get('pagina'))
@@ -304,31 +261,19 @@ def alunos(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#aluno criar
 def aluno_criar(request):
     return _salvar(request, FormularioAluno, "Novo aluno", "alunos", "aluno-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#aluno editar
 def aluno_editar(request, pk):
     aluno = get_object_or_404(Aluno, pk=pk)
     return _salvar(request, FormularioAluno, "Editar aluno", "alunos", "aluno-listar", aluno)
 
 
-#-------------------------------------------------------------------------------------
-
-#aluno excluir
 def aluno_excluir(request, pk):
     return _excluir(request, Aluno, pk, "Excluir aluno", "alunos", "aluno-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#responsaveis
 def responsaveis(request):
     busca = request.GET.get('busca', '').strip()
     pagina = Paginator(_buscar_pessoas(Responsavel, busca).order_by('nome', 'sobrenome', 'pk'), 10).get_page(request.GET.get('pagina'))
@@ -355,16 +300,10 @@ def responsaveis(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#responsavel criar
 def responsavel_criar(request):
     return _salvar(request, FormularioResponsavel, "Novo responsável", "responsaveis", "responsavel-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#responsavel editar
 def responsavel_editar(request, pk):
     responsavel = get_object_or_404(Responsavel, pk=pk)
     return _salvar(
@@ -377,18 +316,12 @@ def responsavel_editar(request, pk):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#responsavel excluir
 def responsavel_excluir(request, pk):
     return _excluir(
         request, Responsavel, pk, "Excluir responsável", "responsaveis", "responsavel-listar"
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#vinculos
 def vinculos(request):
     objetos = Vinculo.objects.select_related("aluno", "professor", "responsavel")
     total = objetos.count()
@@ -433,33 +366,19 @@ def vinculos(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#vinculo criar
 def vinculo_criar(request):
     return _salvar(request, FormularioVinculo, "Novo vínculo", "vinculos", "vinculo-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#vinculo editar
 def vinculo_editar(request, pk):
     vinculo = get_object_or_404(Vinculo, pk=pk)
     return _salvar(request, FormularioVinculo, "Editar vínculo", "vinculos", "vinculo-listar", vinculo)
 
 
-#-------------------------------------------------------------------------------------
-
-#vinculo excluir
 def vinculo_excluir(request, pk):
     return _excluir(request, Vinculo, pk, "Excluir vínculo", "vinculos", "vinculo-listar")
 
 
-# Funcionalidade 3: metas e atividades.
-
-#-------------------------------------------------------------------------------------
-
-#metas
 def metas(request):
     objetos = Meta.objects.select_related("aluno", "professor")
     linhas = [
@@ -481,31 +400,19 @@ def metas(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#meta criar
 def meta_criar(request):
     return _salvar(request, FormularioMeta, "Nova meta", "metas", "meta-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#meta editar
 def meta_editar(request, pk):
     meta = get_object_or_404(Meta, pk=pk)
     return _salvar(request, FormularioMeta, "Editar meta", "metas", "meta-listar", meta)
 
 
-#-------------------------------------------------------------------------------------
-
-#meta excluir
 def meta_excluir(request, pk):
     return _excluir(request, Meta, pk, "Excluir meta", "metas", "meta-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#atividades
 def atividades(request):
     objetos = Atividade.objects.select_related("aluno", "disciplina")
     aluno_id = request.GET.get('aluno', '')
@@ -513,7 +420,7 @@ def atividades(request):
         objetos = objetos.filter(aluno_id=aluno_id if aluno_id.isdigit() else 0)
     total = objetos.count()
     busca = request.GET.get('busca', '').strip()
-    #Busca no banco antes de paginar, sem carregar todas as atividades na memoria.
+
     for parte in busca.split():
         criterio = (Q(titulo__icontains=parte) | Q(aluno__nome__icontains=parte)
                     | Q(aluno__sobrenome__icontains=parte) | Q(disciplina__nome__icontains=parte))
@@ -549,16 +456,10 @@ def atividades(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#atividade criar
 def atividade_criar(request):
     return _salvar(request, FormularioAtividade, "Nova atividade", "atividades", "atividade-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#atividade editar
 def atividade_editar(request, pk):
     atividade = get_object_or_404(Atividade, pk=pk)
     return _salvar(
@@ -566,16 +467,10 @@ def atividade_editar(request, pk):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#atividade excluir
 def atividade_excluir(request, pk):
     return _excluir(request, Atividade, pk, "Excluir atividade", "atividades", "atividade-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#conteudos
 def conteudos(request):
     objetos = Conteudo.objects.select_related("aluno", "professor", "atividade")
     linhas = [
@@ -597,31 +492,19 @@ def conteudos(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#conteudo criar
 def conteudo_criar(request):
     return _salvar(request, FormularioConteudo, "Novo conteúdo", "conteudos", "conteudo-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#conteudo editar
 def conteudo_editar(request, pk):
     conteudo = get_object_or_404(Conteudo, pk=pk)
     return _salvar(request, FormularioConteudo, "Editar conteúdo", "conteudos", "conteudo-listar", conteudo)
 
 
-#-------------------------------------------------------------------------------------
-
-#conteudo excluir
 def conteudo_excluir(request, pk):
     return _excluir(request, Conteudo, pk, "Excluir conteúdo", "conteudos", "conteudo-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencias
 def frequencias(request):
     objetos = Frequencia.objects.select_related("aluno", "professor")
     linhas = [
@@ -643,16 +526,10 @@ def frequencias(request):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencia criar
 def frequencia_criar(request):
     return _salvar(request, FormularioFrequencia, "Nova frequência", "frequencias", "frequencia-listar")
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencia editar
 def frequencia_editar(request, pk):
     frequencia = get_object_or_404(Frequencia, pk=pk)
     return _salvar(
@@ -660,18 +537,10 @@ def frequencia_editar(request, pk):
     )
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencia excluir
 def frequencia_excluir(request, pk):
     return _excluir(request, Frequencia, pk, "Excluir frequência", "frequencias", "frequencia-listar")
 
 
-# Painel individual do aluno, alimentado pelos dados cadastrados no banco.
-
-#-------------------------------------------------------------------------------------
-
-#aluno inicio
 def aluno_inicio(request, pk):
     aluno = get_object_or_404(Aluno, pk=pk)
     metas_aluno = aluno.metas.all()
@@ -687,4 +556,4 @@ def aluno_inicio(request, pk):
         "pontos": min(100, metas_concluidas * 20 + atividades_concluidas * 10),
     }
     return render(request, "aplicacao/tela-inicial-aluno.html", contexto)
-#-------------------------------------------------------------------------------------
+
