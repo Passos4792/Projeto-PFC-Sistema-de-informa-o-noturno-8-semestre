@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "aplicacao.apps.AplicacaoConfig",
 ]
 
@@ -143,6 +144,15 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 #identificadores dos registros
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+#-------------------------------------------------------------------------------------
+
+#autenticacao e formato da API dos paineis
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
+}
 
 # Credenciais OAuth do aplicativo web; nunca são enviadas ao navegador.
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')

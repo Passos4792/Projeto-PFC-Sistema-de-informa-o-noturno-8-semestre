@@ -15,7 +15,7 @@ from django.views.decorators.http import require_GET, require_POST
 from . import google_calendar as google
 from .acesso import alunos_permitidos
 from .auditoria import registrar
-from .models import Atividade, ConexaoGoogle, SincronizacaoGoogle
+from .models import Atividade, ConexaoGoogle, SincronizacaoGoogle, SolicitacaoConclusao
 
 
 #-------------------------------------------------------------------------------------
@@ -33,7 +33,11 @@ def conferir_perfil(request):
 @never_cache
 def minhas_atividades(request):
     conferir_perfil(request)
-    atividades = Atividade.objects.filter(aluno__in=alunos_permitidos(request.perfil_elo)).select_related('aluno', 'professor')
+    atividades = Atividade.objects.filter(aluno__in=alunos_permitidos(request.perfil_elo)).select_related('aluno', 'professor', 'disciplina')
+    aluno_id = request.GET.get('aluno', '')
+    if aluno_id:
+        aluno = get_object_or_404(alunos_permitidos(request.perfil_elo), pk=aluno_id if aluno_id.isdigit() else 0)
+        atividades = atividades.filter(aluno=aluno)
     total = atividades.count()
     busca = request.GET.get('busca', '').strip()
     for parte in busca.split():
@@ -46,8 +50,12 @@ def minhas_atividades(request):
             usuario=request.perfil_elo, identidade=conexao.identidade,
             sincronizado_em__isnull=False).values_list('atividade_id', 'sincronizado_em'))
     itens = list(atividades)
+    ultimas = {}
+    for solicitacao in SolicitacaoConclusao.objects.filter(atividade__in=itens).select_related('professor'):
+        ultimas.setdefault(solicitacao.atividade_id, solicitacao)
     for atividade in itens:
         atividade.google_sincronizado_em = sincronizadas.get(atividade.pk)
+        atividade.ultima_solicitacao = ultimas.get(atividade.pk)
     return render(request, 'aplicacao/minhas-atividades.html', {
         'pagina_ativa': 'minhas-atividades', 'atividades': itens, 'total_cadastrados': total,
         'busca': busca, 'google_conectado': bool(conexao), 'google_configurado': google.configurado(),

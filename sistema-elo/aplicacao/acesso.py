@@ -72,6 +72,8 @@ class ControleAcesso:
     #processamento da requisicao
     def __call__(self, request):
         resposta = self.get_response(request)
+        from .auditoria import registrar_consulta
+        registrar_consulta(request, resposta)
         if resposta.status_code == 403:
             from .auditoria import registrar
             match = getattr(request, 'resolver_match', None)
@@ -87,6 +89,9 @@ class ControleAcesso:
         if match.app_name == 'admin':
             return None
         nome = match.url_name
+        if nome and nome.startswith('api-'):
+            #a API devolve erros JSON e verifica perfil, senha e aceite em AcessoElo
+            return None
         if nome in (
             'login', 'recuperar-senha', 'sobre', 'politica-privacidade',
             'termos-uso', 'privacidade-aluno'
@@ -117,6 +122,8 @@ class ControleAcesso:
         if nome == 'auditoria' and not (perfil.tipo_perfil == 'PROFESSOR' and perfil.professor_principal):
             raise PermissionDenied
         if nome in ('inicio', 'portal'):
+            return None
+        if nome in ('meta-listar', 'conteudo-listar', 'frequencia-listar'):
             return None
         if nome in ('minhas-atividades', 'google-conectar', 'google-retorno', 'google-sincronizar', 'google-desconectar'):
             if perfil.tipo_perfil not in ('ALUNO', 'RESPONSAVEL'):
