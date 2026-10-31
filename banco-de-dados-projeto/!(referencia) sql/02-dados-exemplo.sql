@@ -1,3 +1,6 @@
+--configuracao do banco de dados
+---------------------------------------------------------------------------------------
+
 /*
     PROJETO ELO - DADOS DE EXEMPLO
 
@@ -87,3 +90,4 @@ UNION ALL
 SELECT 'conteudo', COUNT(*) FROM conteudo
 UNION ALL
 SELECT 'frequencia', COUNT(*) FROM frequencia;
+---------------------------------------------------------------------------------------

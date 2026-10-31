@@ -1,7 +1,10 @@
 """Regras simples das telas das funcionalidades 2 e 3."""
 
 #importacoes
+from datetime import datetime, time, timedelta
+
 from django.contrib import messages
+from django.utils import timezone
 from django.db import transaction
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET
@@ -147,10 +150,6 @@ def auditoria(request):
     formulario = FiltroAuditoria(request.GET)
     registros = RegistroAuditoria.objects.all()
     total_registros = registros.count()
-    busca = request.GET.get('busca', '').strip()
-    for parte in busca.split():
-        registros = registros.filter(Q(autor__icontains=parte) | Q(entidade__icontains=parte)
-                                     | Q(detalhes__icontains=parte) | Q(acao__icontains=parte))
     if formulario.is_valid():
         filtros = formulario.cleaned_data
         if filtros['acao']:
@@ -158,16 +157,21 @@ def auditoria(request):
         if filtros['autor']:
             registros = registros.filter(autor__icontains=filtros['autor'])
         if filtros['inicio']:
-            registros = registros.filter(criado_em__date__gte=filtros['inicio'])
+            #inicio do dia no fuso usado para apresentar os registros
+            inicio = timezone.make_aware(datetime.combine(filtros['inicio'], time.min))
+            registros = registros.filter(criado_em__gte=inicio)
         if filtros['fim']:
-            registros = registros.filter(criado_em__date__lte=filtros['fim'])
+            #limite exclusivo inclui o dia final inteiro, sem converter datas no banco
+            fim = timezone.make_aware(datetime.combine(filtros['fim'], time.min)) + timedelta(days=1)
+            registros = registros.filter(criado_em__lt=fim)
     else:
         registros = registros.none()
     parametros = request.GET.copy()
     parametros.pop('pagina', None)
+    parametros.pop('busca', None)
     return render(request, 'aplicacao/auditoria.html', {
         'formulario': formulario, 'pagina': Paginator(registros, 25).get_page(request.GET.get('pagina')),
-        'filtros': parametros.urlencode(), 'pagina_ativa': 'auditoria', 'busca': busca, 'total_cadastrados': total_registros})
+        'filtros': parametros.urlencode(), 'pagina_ativa': 'auditoria', 'total_cadastrados': total_registros})
 
 
 #-------------------------------------------------------------------------------------
