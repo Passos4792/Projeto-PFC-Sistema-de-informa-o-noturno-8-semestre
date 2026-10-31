@@ -2,6 +2,9 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 
 #-------------------------------------------------------------------------------------
@@ -24,6 +27,11 @@ class RegistroAuditoria(models.Model):
         PERMISSAO = 'PERMISSAO', 'Permissão definida ou alterada'
         SENHA = 'SENHA', 'Senha definida ou redefinida'
         DOCUMENTOS = 'DOCUMENTOS', 'Aceite de termos e privacidade'
+        CONSULTA = 'CONSULTA', 'Consulta de dados'
+        SOLICITACAO = 'SOLICITACAO', 'Conclusão solicitada'
+        APROVACAO = 'APROVACAO', 'Conclusão aprovada'
+        RECUSA = 'RECUSA', 'Conclusão recusada'
+        FREQUENCIA = 'FREQUENCIA', 'Frequência mínima alterada'
 
     criado_em = models.DateTimeField(auto_now_add=True, db_index=True)
     autor_id_original = models.PositiveBigIntegerField(null=True, blank=True)
@@ -182,6 +190,9 @@ class Responsavel(PessoaBase):
 #alunos
 class Aluno(PessoaBase):
     data_nascimento = models.DateField(blank=True, null=True)
+    frequencia_minima = models.DecimalField(
+        'Frequência mínima (%)', max_digits=5, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     #-------------------------------------------------------------------------------------
 
@@ -191,6 +202,45 @@ class Aluno(PessoaBase):
         ordering = ["nome", "sobrenome"]
         verbose_name = "aluno"
         verbose_name_plural = "alunos"
+        constraints = [models.CheckConstraint(
+            condition=Q(frequencia_minima__isnull=True) | Q(frequencia_minima__gte=0, frequencia_minima__lte=100),
+            name='aluno_frequencia_entre_0_100')]
+
+
+#-------------------------------------------------------------------------------------
+
+#catalogo de conteudos curriculares compartilhado pelas atividades
+class Disciplina(models.Model):
+    nome = models.CharField('Conteúdo', max_length=100, unique=True)
+    descricao = models.TextField('Descrição', blank=True)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    #-------------------------------------------------------------------------------------
+
+    #metadados do modelo
+    class Meta:
+        db_table = 'disciplina'
+        ordering = ['nome']
+        verbose_name = 'conteúdo curricular'
+        verbose_name_plural = 'conteúdos curriculares'
+
+    #-------------------------------------------------------------------------------------
+
+    #validacao do nome sem repeticoes de maiusculas e espacos
+    def clean(self):
+        super().clean()
+        self.nome = ' '.join(self.nome.split())
+        if not self.nome:
+            raise ValidationError({'nome': 'Informe o nome do conteúdo.'})
+        if Disciplina.objects.filter(nome__iexact=self.nome).exclude(pk=self.pk).exists():
+            raise ValidationError({'nome': 'Este conteúdo já está cadastrado.'})
+
+    #-------------------------------------------------------------------------------------
+
+    #representacao do registro
+    def __str__(self):
+        return self.nome
 
 
 #-------------------------------------------------------------------------------------
@@ -226,6 +276,16 @@ class Meta(models.Model):
 
     #-------------------------------------------------------------------------------------
 
+    #periodos do acompanhamento
+    class Periodo(models.TextChoices):
+        SEMANAL = 'SEMANAL', 'Semanal'
+        MENSAL = 'MENSAL', 'Mensal'
+        TRIMESTRAL = 'TRIMESTRAL', 'Trimestral'
+        SEMESTRAL = 'SEMESTRAL', 'Semestral'
+        PERSONALIZADO = 'PERSONALIZADO', 'Registro anterior'
+
+    #-------------------------------------------------------------------------------------
+
     #situacoes disponiveis
     class Situacao(models.TextChoices):
         EM_ANDAMENTO = "EM_ANDAMENTO", "Em andamento"
@@ -238,6 +298,10 @@ class Meta(models.Model):
     descricao = models.TextField(blank=True)
     data_inicio = models.DateField()
     data_prazo = models.DateField(blank=True, null=True)
+    periodo = models.CharField('Período', max_length=20, choices=Periodo.choices, default=Periodo.PERSONALIZADO)
+    quantidade_alvo = models.PositiveIntegerField('Atividades a realizar', default=1, validators=[MinValueValidator(1)])
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name='metas', verbose_name='Conteúdo')
     situacao = models.CharField(
         max_length=20,
         choices=Situacao.choices,
@@ -256,8 +320,20 @@ class Meta(models.Model):
             models.CheckConstraint(
                 condition=Q(data_prazo__isnull=True) | Q(data_prazo__gte=models.F("data_inicio")),
                 name="chk_meta_datas",
-            )
+            ),
+            models.CheckConstraint(condition=Q(quantidade_alvo__gte=1), name='meta_alvo_positivo'),
         ]
+
+    #-------------------------------------------------------------------------------------
+
+    #validacao do periodo e da quantidade planejada
+    def clean(self):
+        super().clean()
+        if self.data_inicio and self.periodo in ('SEMANAL', 'MENSAL', 'TRIMESTRAL', 'SEMESTRAL'):
+            from .periodos import limites_periodo
+            self.data_inicio, self.data_prazo = limites_periodo(self.periodo, self.data_inicio)
+        if self.data_inicio and self.data_prazo and self.data_prazo < self.data_inicio:
+            raise ValidationError({'data_prazo': 'O prazo não pode ser anterior ao início.'})
 
     #-------------------------------------------------------------------------------------
 
@@ -283,6 +359,8 @@ class Atividade(models.Model):
     professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="atividades")
     meta = models.ForeignKey(Meta, on_delete=models.SET_NULL, blank=True,
                              null=True, related_name="atividades")
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name='atividades', verbose_name='Conteúdo')
     titulo = models.CharField(max_length=150)
     descricao = models.TextField(blank=True)
     data_entrega = models.DateField(blank=True, null=True)
@@ -293,6 +371,42 @@ class Atividade(models.Model):
     )
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
+    concluida_em = models.DateTimeField(blank=True, null=True, editable=False)
+
+    #-------------------------------------------------------------------------------------
+
+    #consistencia entre aluno, conteudo e meta opcional
+    def clean(self):
+        super().clean()
+        if self.meta_id:
+            if self.meta.aluno_id != self.aluno_id:
+                raise ValidationError({'meta': 'A meta deve pertencer ao mesmo aluno da atividade.'})
+            if self.meta.disciplina_id and self.meta.disciplina_id != self.disciplina_id:
+                raise ValidationError({'disciplina': 'Selecione o conteúdo definido na meta.'})
+        if self.disciplina_id and not self.disciplina.ativo:
+            anterior = Atividade.objects.filter(pk=self.pk).values_list('disciplina_id', flat=True).first()
+            if anterior != self.disciplina_id:
+                raise ValidationError({'disciplina': 'Escolha um conteúdo ativo.'})
+        if self.pk and SolicitacaoConclusao.objects.filter(atividade_id=self.pk, situacao='PENDENTE').exists():
+            anterior = Atividade.objects.filter(pk=self.pk).values('aluno_id', 'situacao').first()
+            if anterior and (anterior['aluno_id'] != self.aluno_id or anterior['situacao'] != self.situacao):
+                raise ValidationError('Analise a solicitação de conclusão antes de mudar o aluno ou a situação.')
+        if self.pk and self.situacao == 'CONCLUIDA':
+            anterior = Atividade.objects.filter(pk=self.pk).values('aluno_id').first()
+            if anterior and anterior['aluno_id'] != self.aluno_id:
+                raise ValidationError({'aluno': 'Uma realização confirmada não pode ser transferida para outro aluno.'})
+
+    #-------------------------------------------------------------------------------------
+
+    #registro da conclusao validada pelo professor
+    def save(self, *args, **kwargs):
+        if self.situacao == self.Situacao.CONCLUIDA and not self.concluida_em:
+            self.concluida_em = timezone.now()
+        elif self.situacao != self.Situacao.CONCLUIDA:
+            self.concluida_em = None
+        if kwargs.get('update_fields') is not None:
+            kwargs['update_fields'] = set(kwargs['update_fields']) | {'concluida_em'}
+        return super().save(*args, **kwargs)
 
     #-------------------------------------------------------------------------------------
 
@@ -310,7 +424,31 @@ class Atividade(models.Model):
 
 #-------------------------------------------------------------------------------------
 
-#conteudos
+#solicitacoes de conclusao e decisoes do professor
+class SolicitacaoConclusao(models.Model):
+    atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE, related_name='solicitacoes')
+    aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name='solicitacoes')
+    solicitante = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, related_name='solicitacoes')
+    mensagem = models.CharField('Mensagem', max_length=500, blank=True)
+    situacao = models.CharField(max_length=10, choices=[
+        ('PENDENTE', 'Aguardando aprovação'), ('APROVADA', 'Aprovada'), ('RECUSADA', 'Recusada')],
+        default='PENDENTE', db_index=True)
+    resposta = models.CharField(max_length=500, blank=True)
+    professor = models.ForeignKey(Professor, on_delete=models.SET_NULL, null=True, blank=True)
+    solicitado_em = models.DateTimeField(auto_now_add=True)
+    respondido_em = models.DateTimeField(null=True, blank=True)
+
+    #-------------------------------------------------------------------------------------
+
+    #historico das solicitacoes de conclusao
+    class Meta:
+        db_table = 'solicitacao_conclusao'
+        ordering = ['-solicitado_em', '-pk']
+
+
+#-------------------------------------------------------------------------------------
+
+#registros de conteudos da versao anterior, preservados para consulta
 class Conteudo(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="conteudos")
     professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="conteudos")

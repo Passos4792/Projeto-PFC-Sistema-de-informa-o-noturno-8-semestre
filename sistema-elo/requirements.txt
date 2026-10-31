@@ -2,3 +2,4 @@ Django
 PyMySQL[rsa]
 python-dotenv
 cryptography
+djangorestframework==3.18.3

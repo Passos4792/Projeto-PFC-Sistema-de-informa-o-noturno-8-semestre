@@ -1,7 +1,7 @@
 #importacoes
 from django.urls import path
 
-from . import views, contas, calendario
+from . import views, contas, calendario, paineis, api
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 
@@ -10,6 +10,16 @@ from django.views.generic import TemplateView
 
 #rotas
 urlpatterns = [
+    path('api/painel/', api.PainelApi.as_view(), name='api-painel'),
+    path('api/alunos/<int:aluno_id>/metas/', api.MetasAlunoApi.as_view(), name='api-metas-aluno'),
+    path('api/atividades/<int:pk>/solicitar-conclusao/', api.SolicitarConclusaoApi.as_view(), name='api-solicitar-conclusao'),
+    path('api/solicitacoes/<int:pk>/decidir/', api.DecidirConclusaoApi.as_view(), name='api-decidir-conclusao'),
+    path('aprovacoes/', paineis.aprovacoes, name='aprovacoes'),
+    path('frequencias/minimo/<int:pk>/', paineis.frequencia_configurar, name='frequencia-configurar'),
+    path('conteudos/registros-anteriores/', views.conteudos, name='conteudos-anteriores'),
+    path('conteudos/registros-anteriores/<int:pk>/editar/', views.conteudo_editar, name='conteudo-anterior-editar'),
+    path('conteudos/registros-anteriores/<int:pk>/excluir/', views.conteudo_excluir, name='conteudo-anterior-excluir'),
+    path('frequencias/presencas-anteriores/', views.frequencias, name='frequencias-anteriores'),
     path('minhas-atividades/', calendario.minhas_atividades, name='minhas-atividades'),
     path('google/conectar/', calendario.conectar, name='google-conectar'),
     path('google/retorno/', calendario.retorno, name='google-retorno'),
@@ -39,7 +49,7 @@ urlpatterns = [
     path("alunos/novo/", contas.cadastrar, name="aluno-criar"),
     path("alunos/<int:pk>/editar/", views.aluno_editar, name="aluno-editar"),
     path("alunos/<int:pk>/excluir/", views.aluno_excluir, name="aluno-excluir"),
-    path("alunos/<int:pk>/inicio/", views.aluno_inicio, name="aluno-inicio"),
+    path("alunos/<int:pk>/inicio/", paineis.aluno_inicio, name="aluno-inicio"),
     path("responsaveis/", views.responsaveis, name="responsavel-listar"),
     path("responsaveis/novo/", contas.cadastrar, name="responsavel-criar"),
     path("responsaveis/<int:pk>/editar/", views.responsavel_editar, name="responsavel-editar"),
@@ -48,7 +58,7 @@ urlpatterns = [
     path("vinculos/novo/", views.vinculo_criar, name="vinculo-criar"),
     path("vinculos/<int:pk>/editar/", views.vinculo_editar, name="vinculo-editar"),
     path("vinculos/<int:pk>/excluir/", views.vinculo_excluir, name="vinculo-excluir"),
-    path("metas/", views.metas, name="meta-listar"),
+    path("metas/", paineis.metas, name="meta-listar"),
     path("metas/nova/", views.meta_criar, name="meta-criar"),
     path("metas/<int:pk>/editar/", views.meta_editar, name="meta-editar"),
     path("metas/<int:pk>/excluir/", views.meta_excluir, name="meta-excluir"),
@@ -56,12 +66,12 @@ urlpatterns = [
     path("atividades/nova/", views.atividade_criar, name="atividade-criar"),
     path("atividades/<int:pk>/editar/", views.atividade_editar, name="atividade-editar"),
     path("atividades/<int:pk>/excluir/", views.atividade_excluir, name="atividade-excluir"),
-    path("conteudos/", views.conteudos, name="conteudo-listar"),
-    path("conteudos/novo/", views.conteudo_criar, name="conteudo-criar"),
-    path("conteudos/<int:pk>/editar/", views.conteudo_editar, name="conteudo-editar"),
-    path("conteudos/<int:pk>/excluir/", views.conteudo_excluir, name="conteudo-excluir"),
-    path("frequencias/", views.frequencias, name="frequencia-listar"),
-    path("frequencias/nova/", views.frequencia_criar, name="frequencia-criar"),
+    path("conteudos/", paineis.conteudos, name="conteudo-listar"),
+    path("conteudos/novo/", paineis.conteudo_criar, name="conteudo-criar"),
+    path("conteudos/<int:pk>/editar/", paineis.conteudo_editar, name="conteudo-editar"),
+    path("conteudos/<int:pk>/excluir/", paineis.conteudo_excluir, name="conteudo-excluir"),
+    path("frequencias/", paineis.frequencias, name="frequencia-listar"),
+    path("frequencias/nova/", paineis.frequencia_configurar, name="frequencia-criar"),
     path("frequencias/<int:pk>/editar/", views.frequencia_editar, name="frequencia-editar"),
     path("frequencias/<int:pk>/excluir/", views.frequencia_excluir, name="frequencia-excluir"),
 ]

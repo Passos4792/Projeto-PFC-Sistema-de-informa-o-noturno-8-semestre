@@ -19,6 +19,12 @@ from django.views.decorators.debug import sensitive_variables
 
 #escopos e enderecos da API do Google
 SCOPES = ['openid', 'https://www.googleapis.com/auth/calendar.events.owned']
+#permissoes equivalentes que podem ter sido concedidas em uma conexao anterior
+SCOPES_CALENDARIO = {
+    'https://www.googleapis.com/auth/calendar.events.owned',
+    'https://www.googleapis.com/auth/calendar.events',
+    'https://www.googleapis.com/auth/calendar',
+}
 TOKEN_URL = 'https://oauth2.googleapis.com/token'
 EVENTS_URL = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
 
@@ -35,6 +41,20 @@ class GoogleErro(Exception):
 #necessidade de nova autorizacao do Google
 class ReconectarGoogle(GoogleErro):
     pass
+
+
+#-------------------------------------------------------------------------------------
+
+#autorizacao parcial que ainda precisa da permissao do calendario
+class PermissaoCalendarioPendente(GoogleErro):
+
+    #-------------------------------------------------------------------------------------
+
+    #identificacao da conta para continuar o mesmo fluxo de autorizacao
+    def __init__(self, identidade):
+        self.identidade = identidade
+        super().__init__('O Google não concedeu acesso ao calendário. Clique em Conectar conta Google '
+                         'e marque a permissão para ver e editar os eventos antes de continuar.')
 
 
 #-------------------------------------------------------------------------------------
@@ -118,43 +138,61 @@ def decifrar(conexao):
 #-------------------------------------------------------------------------------------
 
 #inicio da autorizacao com estado e PKCE
-def iniciar_oauth(request):
+def iniciar_oauth(request, conta_google=None):
     state = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(64)
     request.session['google_oauth'] = {
         'state': state, 'verifier': verifier, 'criado': time.time(),
         'usuario': request.user.pk,
+        'conta_google': conta_google,
     }
     challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip('=')
-    return 'https://accounts.google.com/o/oauth2/v2/auth?' + urlencode({
+    parametros = {
         'client_id': settings.GOOGLE_CLIENT_ID, 'redirect_uri': settings.GOOGLE_REDIRECT_URI,
         'response_type': 'code', 'scope': ' '.join(SCOPES), 'state': state,
-        'access_type': 'offline', 'prompt': 'consent select_account',
+        'access_type': 'offline', 'prompt': 'consent' if conta_google else 'consent select_account',
+        'include_granted_scopes': 'true',
         'code_challenge': challenge, 'code_challenge_method': 'S256',
-    })
+    }
+    if conta_google:
+        #o identificador confirmado pelo Google evita pedir a escolha da conta outra vez
+        parametros['login_hint'] = conta_google
+    return 'https://accounts.google.com/o/oauth2/v2/auth?' + urlencode(parametros)
 
 
 #-------------------------------------------------------------------------------------
 
 #troca do codigo de autorizacao por credenciais
 @sensitive_variables()
-def trocar_codigo(code, verifier):
+def trocar_codigo(code, verifier, conexao_anterior=None, conta_esperada=None):
     dados = requisicao(TOKEN_URL, metodo='POST', formulario={
         'code': code, 'client_id': settings.GOOGLE_CLIENT_ID,
         'client_secret': settings.GOOGLE_CLIENT_SECRET, 'redirect_uri': settings.GOOGLE_REDIRECT_URI,
         'grant_type': 'authorization_code', 'code_verifier': verifier,
     })
-    if not set(SCOPES).issubset(set(dados.get('scope', '').split())):
-        raise GoogleErro('Autorize o acesso ao calendário para concluir a conexão.')
-    if not dados.get('refresh_token') or not dados.get('access_token'):
-        raise GoogleErro('A conexão não foi concluída. Conecte novamente e autorize o calendário.')
+    if not dados.get('access_token'):
+        raise GoogleErro('O Google não retornou a credencial de acesso. Tente conectar novamente.')
     identidade = requisicao('https://openidconnect.googleapis.com/v1/userinfo', token=dados['access_token'])
     if not identidade.get('sub'):
         raise GoogleErro('Não foi possível identificar a conta Google.')
+    if conta_esperada and identidade['sub'] != conta_esperada:
+        raise GoogleErro('A conta Google foi alterada durante a autorização. Inicie a conexão novamente.')
+    if not SCOPES_CALENDARIO.intersection(dados.get('scope', '').split()):
+        raise PermissaoCalendarioPendente(identidade['sub'])
     # Identificador opaco; não solicitamos nem guardamos o endereço de e-mail.
     identificador = salted_hmac('elo.google.identidade', identidade['sub'], algorithm='sha256').hexdigest()
+    #a identificacao confirmada pelo Google impede reaproveitar tokens de outra conta
+    refresh_token = dados.get('refresh_token')
+    if not refresh_token and conexao_anterior and conexao_anterior.identidade == identificador:
+        try:
+            refresh_token = decifrar(conexao_anterior).get('refresh_token')
+        except ReconectarGoogle:
+            pass
+    if not refresh_token:
+        raise GoogleErro('O Google não concedeu acesso para manter a conexão. '
+                         'Remova o acesso do ELO nas conexões da sua Conta Google e conecte novamente.')
     credenciais = {
-        'access_token': dados['access_token'], 'refresh_token': dados['refresh_token'],
+        'access_token': dados['access_token'], 'refresh_token': refresh_token,
         'expira': time.time() + int(dados.get('expires_in', 3600)),
     }
     return identificador, cifrar(credenciais)
@@ -191,7 +229,7 @@ def token_acesso(conexao, renovar=False):
 
 #chamada ao calendario com renovacao de acesso
 @sensitive_variables()
-def chamar_calendar(conexao, url, metodo, dados):
+def chamar_calendar(conexao, url, metodo, dados=None):
     token = token_acesso(conexao)
     try:
         return requisicao(url, metodo=metodo, token=token, dados=dados)
@@ -216,6 +254,26 @@ def evento_id(perfil, identidade, atividade):
 
 #-------------------------------------------------------------------------------------
 
+#confirmacao do conteudo realmente salvo no calendario
+def conferir_evento(conexao, url, identificador, dados):
+    evento = chamar_calendar(conexao, url, 'GET')
+    if evento.get('status') == 'cancelled':
+        raise RespostaGoogle(410)
+    corresponde = (
+        evento.get('id') == identificador
+        and evento.get('status') == 'confirmed'
+        and evento.get('summary') == dados['summary']
+        and evento.get('description') == dados['description']
+        and evento.get('start', {}).get('date') == dados['start']['date']
+        and evento.get('end', {}).get('date') == dados['end']['date']
+    )
+    if not corresponde:
+        raise GoogleErro('O Google ainda não confirmou os dados atualizados da atividade. '
+                         'Tente sincronizar novamente.')
+
+
+#-------------------------------------------------------------------------------------
+
 #criacao e atualizacao do evento da atividade
 def enviar_atividade(conexao, atividade, identificador, tentativas=0):
     if not atividade.data_entrega:
@@ -226,6 +284,8 @@ def enviar_atividade(conexao, atividade, identificador, tentativas=0):
         'start': {'date': atividade.data_entrega.isoformat()},
         'end': {'date': (atividade.data_entrega + timedelta(days=1)).isoformat()},
         'visibility': 'private',
+        #restaura eventos que foram enviados para a lixeira do Google Agenda
+        'status': 'confirmed',
         'extendedProperties': {'private': {'elo_atividade': str(atividade.pk)}},
     }
     url = EVENTS_URL + '/' + quote(identificador, safe='')
@@ -249,6 +309,15 @@ def enviar_atividade(conexao, atividade, identificador, tentativas=0):
                 # determinístico mantém as novas tentativas idempotentes.
                 proximo = 'elo' + hashlib.sha256((identificador + ':recriado').encode()).hexdigest()
                 return enviar_atividade(conexao, atividade, proximo, tentativas + 1)
+    try:
+        conferir_evento(conexao, url, identificador, dados)
+    except RespostaGoogle as exc:
+        #um 404 logo apos salvar pode ser temporario: nao criar outro evento nesse caso
+        if exc.status != 410 or tentativas >= 3:
+            raise
+        #alguns eventos excluidos respondem sem erro, mas continuam na lixeira
+        proximo = 'elo' + hashlib.sha256((identificador + ':recriado').encode()).hexdigest()
+        return enviar_atividade(conexao, atividade, proximo, tentativas + 1)
     return identificador
 
 

@@ -1,3 +1,6 @@
+--configuracao do banco de dados
+---------------------------------------------------------------------------------------
+
 /*
     PROJETO ELO - CONSULTAS DE EXEMPLO
 
@@ -67,3 +70,4 @@ INNER JOIN aluno AS a ON a.id_aluno = f.id_aluno
 INNER JOIN professor AS p ON p.id_professor = f.id_professor
 WHERE a.usuario = 'maria.oliveira'
 ORDER BY f.data_acompanhamento DESC;
+---------------------------------------------------------------------------------------
