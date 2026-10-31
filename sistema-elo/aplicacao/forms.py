@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import Q
 from .models import RegistroAuditoria
 
 
@@ -28,6 +29,29 @@ class FiltroAuditoria(forms.Form):
 
 
 from .models import Aluno, Atividade, Conteudo, Frequencia, Meta, Professor, Responsavel, Usuario, Vinculo
+from .models import Disciplina
+
+
+#-------------------------------------------------------------------------------------
+
+#intervalo e ordem de chegada das solicitacoes
+class FiltroAprovacoes(forms.Form):
+    inicio = forms.DateField(required=False, label='Solicitações de',
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'data-filtro-automatico': '', 'class': 'campo-formulario'}))
+    fim = forms.DateField(required=False, label='Solicitações até',
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'data-filtro-automatico': '', 'class': 'campo-formulario'}))
+    ordem = forms.ChoiceField(label='Ordem de chegada', choices=[
+        ('recentes', 'Mais recentes primeiro'), ('antigas', 'Mais antigas primeiro')],
+        widget=forms.Select(attrs={'data-filtro-automatico': '', 'class': 'campo-formulario'}))
+
+    #-------------------------------------------------------------------------------------
+
+    #validacao do intervalo de datas
+    def clean(self):
+        dados = super().clean()
+        if dados.get('inicio') and dados.get('fim') and dados['inicio'] > dados['fim']:
+            raise forms.ValidationError('A data inicial deve ser anterior ou igual à data final.')
+        return dados
 
 
 #-------------------------------------------------------------------------------------
@@ -42,6 +66,11 @@ class FormularioBase(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for campo in self.fields.values():
             campo.widget.attrs.setdefault("class", "campo-formulario")
+            if isinstance(campo, forms.ModelChoiceField):
+                campo.empty_label = 'Selecione uma opção' if campo.required else 'Não definido'
+        for nome, rotulo in {'titulo': 'Título', 'descricao': 'Descrição', 'situacao': 'Situação'}.items():
+            if nome in self.fields:
+                self.fields[nome].label = rotulo
 
 
 #-------------------------------------------------------------------------------------
@@ -158,7 +187,7 @@ class FormularioAluno(FormularioPessoaBase):
     class Meta:
         model = Aluno
         fields = ["nome", "sobrenome", "nome_usuario", "data_nascimento", "ativo"]
-        widgets = {"data_nascimento": forms.DateInput(attrs={"type": "date"})}
+        widgets = {"data_nascimento": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 
 #-------------------------------------------------------------------------------------
@@ -172,7 +201,7 @@ class FormularioVinculo(FormularioBase):
     class Meta:
         model = Vinculo
         fields = ["aluno", "professor", "responsavel", "data_vinculo", "ativo"]
-        widgets = {"data_vinculo": forms.DateInput(attrs={"type": "date"})}
+        widgets = {"data_vinculo": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 
 #-------------------------------------------------------------------------------------
@@ -182,15 +211,36 @@ class FormularioMeta(FormularioBase):
 
     #-------------------------------------------------------------------------------------
 
+    #campos e orientacoes dos periodos de metas
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['data_inicio'].label = 'Data de referência'
+        self.fields['data_inicio'].help_text = 'A semana vai de segunda a domingo; os demais períodos seguem os meses do calendário.'
+        self.fields['disciplina'].help_text = 'Deixe em branco para contar atividades de todos os conteúdos.'
+        self.fields['disciplina'].empty_label = 'Todos os conteúdos'
+        self.fields['quantidade_alvo'].help_text = 'Quantidade de atividades aprovadas que o aluno deve alcançar no período.'
+        self.fields['disciplina'].queryset = Disciplina.objects.filter(ativo=True)
+        if self.instance.disciplina_id:
+            self.fields['disciplina'].queryset = Disciplina.objects.filter(
+                Q(ativo=True) | Q(pk=self.instance.disciplina_id))
+        if not self.instance.pk or self.instance.periodo != Meta.Periodo.PERSONALIZADO:
+            self.fields['periodo'].choices = [c for c in Meta.Periodo.choices if c[0] != 'PERSONALIZADO']
+            self.fields['periodo'].initial = Meta.Periodo.SEMANAL
+            self.fields.pop('data_prazo')
+            self.fields['situacao'].choices = [('EM_ANDAMENTO', 'Ativa'), ('CANCELADA', 'Cancelada')]
+            self.fields['situacao'].help_text = 'O alcance da meta é calculado automaticamente pelas atividades aprovadas.'
+
+    #-------------------------------------------------------------------------------------
+
     #metadados do modelo
     class Meta:
         model = Meta
-        fields = ["aluno", "professor", "titulo", "descricao",
-                  "data_inicio", "data_prazo", "situacao"]
+        fields = ["aluno", "professor", "titulo", "descricao", "periodo", "disciplina",
+                  "quantidade_alvo", "data_inicio", "data_prazo", "situacao"]
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 4}),
-            "data_inicio": forms.DateInput(attrs={"type": "date"}),
-            "data_prazo": forms.DateInput(attrs={"type": "date"}),
+            "data_inicio": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+            "data_prazo": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
         }
 
 
@@ -201,13 +251,33 @@ class FormularioAtividade(FormularioBase):
 
     #-------------------------------------------------------------------------------------
 
+    #conteudo obrigatorio e metas limitadas ao aluno selecionado
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from django.db.models import Q
+        self.fields['disciplina'].required = True
+        self.fields['data_entrega'].required = True
+        self.fields['disciplina'].queryset = Disciplina.objects.filter(Q(ativo=True) | Q(pk=self.instance.disciplina_id))
+        self.fields['descricao'].label = 'Descrição / orientações'
+        self.fields['meta'].help_text = 'Opcional. As metas por período também contam atividades automaticamente pela data de entrega.'
+        self.fields['meta'].empty_label = 'Sem meta específica'
+        self.fields['situacao'].help_text = 'Solicitações dos alunos e responsáveis são avaliadas na página Aprovações.'
+        if self.instance.situacao != 'CONCLUIDA':
+            self.fields['situacao'].choices = [('PENDENTE', 'Pendente'), ('CANCELADA', 'Cancelada')]
+        aluno = self.data.get('aluno') if self.is_bound else self.instance.aluno_id
+        self.fields['meta'].queryset = Meta.objects.filter(aluno_id=aluno) if str(aluno or '').isdigit() else Meta.objects.none()
+        for nome in ('aluno', 'meta', 'disciplina'):
+            self.fields[nome].widget.attrs['data-' + nome] = ''
+
+    #-------------------------------------------------------------------------------------
+
     #metadados do modelo
     class Meta:
         model = Atividade
-        fields = ["aluno", "professor", "meta", "titulo", "descricao", "data_entrega", "situacao"]
+        fields = ["aluno", "professor", "disciplina", "meta", "titulo", "descricao", "data_entrega", "situacao"]
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 4}),
-            "data_entrega": forms.DateInput(attrs={"type": "date"}),
+            "data_entrega": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
         }
 
 
@@ -236,5 +306,30 @@ class FormularioFrequencia(FormularioBase):
     class Meta:
         model = Frequencia
         fields = ["aluno", "professor", "data_acompanhamento", "compareceu", "observacao"]
-        widgets = {"data_acompanhamento": forms.DateInput(attrs={"type": "date"})}
+        widgets = {"data_acompanhamento": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
+
+
+#-------------------------------------------------------------------------------------
+
+#cadastro do catalogo de conteudos
+class FormularioDisciplina(FormularioBase):
+    class Meta:
+        model = Disciplina
+        fields = ['nome', 'descricao', 'ativo']
+        widgets = {'descricao': forms.Textarea(attrs={'rows': 3})}
+
+
+#-------------------------------------------------------------------------------------
+
+#percentual minimo de atividades realizadas por aluno
+class FormularioFrequenciaMinima(forms.Form):
+    aluno = forms.ModelChoiceField(queryset=Aluno.objects.all(), label='Aluno')
+    frequencia_minima = forms.DecimalField(label='Frequência mínima (%)', max_digits=5,
+        decimal_places=2, min_value=0, max_value=100, required=False,
+        help_text='De 0 a 100. Deixe vazio para remover o mínimo. A realização depende da aprovação do professor.')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for campo in self.fields.values():
+            campo.widget.attrs['class'] = 'campo-formulario'
 #-------------------------------------------------------------------------------------

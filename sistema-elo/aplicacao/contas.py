@@ -292,5 +292,5 @@ def inicio(request):
         return redirect('pagina-inicial')
     if perfil.tipo_perfil == 'ALUNO':
         return redirect('aluno-inicio', pk=perfil.aluno_perfil.pk)
-    return render(request, 'aplicacao/portal.html', {'alunos': alunos_permitidos(perfil)})
+    return render(request, 'aplicacao/portal.html', {'alunos': alunos_permitidos(perfil), 'pagina_ativa': 'inicio'})
 #-------------------------------------------------------------------------------------
