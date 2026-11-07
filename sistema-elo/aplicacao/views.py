@@ -242,6 +242,7 @@ def alunos(request):
             "url_editar": reverse("aluno-editar", args=[aluno.pk]),
             "url_excluir": reverse("aluno-excluir", args=[aluno.pk]),
             "url_senha": reverse('usuario-redefinir-senha', args=[aluno.usuario_id]) if aluno.usuario.conta_id else None,
+            "url_ativar": reverse('usuario-ativar-acesso', args=[aluno.usuario_id]) if not aluno.usuario.conta_id and aluno.ativo else None,
             "url_extra": reverse("aluno-inicio", args=[aluno.pk]),
             "texto_extra": "Ver painel",
         }
@@ -283,6 +284,7 @@ def responsaveis(request):
             "url_editar": reverse("responsavel-editar", args=[responsavel.pk]),
             "url_excluir": reverse("responsavel-excluir", args=[responsavel.pk]),
             "url_senha": reverse('usuario-redefinir-senha', args=[responsavel.usuario_id]) if responsavel.usuario.conta_id else None,
+            "url_ativar": reverse('usuario-ativar-acesso', args=[responsavel.usuario_id]) if not responsavel.usuario.conta_id and responsavel.ativo else None,
         }
         for responsavel in pagina
     ]

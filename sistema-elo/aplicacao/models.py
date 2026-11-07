@@ -44,6 +44,28 @@ class RegistroAuditoria(models.Model):
         verbose_name_plural = 'registros de auditoria'
 
 
+class SolicitacaoSenha(models.Model):
+    class Situacao(models.TextChoices):
+        PENDENTE = 'PENDENTE', 'Pendente'
+        ATENDIDA = 'ATENDIDA', 'Atendida'
+
+    aluno = models.ForeignKey('Aluno', on_delete=models.PROTECT, related_name='solicitacoes_senha')
+    professor = models.ForeignKey('Professor', on_delete=models.PROTECT, related_name='solicitacoes_senha')
+    situacao = models.CharField(max_length=12, choices=Situacao.choices, default=Situacao.PENDENTE, db_index=True)
+    criada_em = models.DateTimeField(auto_now_add=True, db_index=True)
+    atendida_em = models.DateTimeField(null=True, blank=True)
+    origem_hash = models.CharField(max_length=64, blank=True, db_index=True)
+
+    class Meta:
+        db_table = 'solicitacao_senha'
+        ordering = ['-criada_em', '-pk']
+        verbose_name = 'solicitação de senha'
+        verbose_name_plural = 'solicitações de senha'
+
+    def __str__(self):
+        return f'Solicitação de acesso - {self.aluno} ({self.get_situacao_display()})'
+
+
 class LimiteLogin(models.Model):
     chave = models.CharField(max_length=64, unique=True)
     falhas = models.PositiveIntegerField(default=0)
