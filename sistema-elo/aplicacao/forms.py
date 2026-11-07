@@ -1,4 +1,4 @@
-#importacoes
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -6,9 +6,6 @@ from django.db.models import Q
 from .models import RegistroAuditoria
 
 
-#-------------------------------------------------------------------------------------
-
-#filtros da auditoria
 class FiltroAuditoria(forms.Form):
     acao = forms.ChoiceField(label='Ação', required=False,
                              choices=[('', 'Todas')] + list(RegistroAuditoria.Acao.choices))
@@ -18,9 +15,7 @@ class FiltroAuditoria(forms.Form):
     fim = forms.DateField(label='Até', required=False,
                           widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}))
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao dos dados
     def clean(self):
         dados = super().clean()
         if dados.get('inicio') and dados.get('fim') and dados['inicio'] > dados['fim']:
@@ -32,9 +27,6 @@ from .models import Aluno, Atividade, Conteudo, Frequencia, Meta, Professor, Res
 from .models import Disciplina
 
 
-#-------------------------------------------------------------------------------------
-
-#intervalo e ordem de chegada das solicitacoes
 class FiltroAprovacoes(forms.Form):
     inicio = forms.DateField(required=False, label='Solicitações de',
         widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'data-filtro-automatico': '', 'class': 'campo-formulario'}))
@@ -44,9 +36,7 @@ class FiltroAprovacoes(forms.Form):
         ('recentes', 'Mais recentes primeiro'), ('antigas', 'Mais antigas primeiro')],
         widget=forms.Select(attrs={'data-filtro-automatico': '', 'class': 'campo-formulario'}))
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do intervalo de datas
     def clean(self):
         dados = super().clean()
         if dados.get('inicio') and dados.get('fim') and dados['inicio'] > dados['fim']:
@@ -54,14 +44,9 @@ class FiltroAprovacoes(forms.Form):
         return dados
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario base
 class FormularioBase(forms.ModelForm):
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for campo in self.fields.values():
@@ -73,9 +58,6 @@ class FormularioBase(forms.ModelForm):
                 self.fields[nome].label = rotulo
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario pessoa base
 class FormularioPessoaBase(FormularioBase):
     nome_usuario = forms.CharField(
         label="Usuário",
@@ -84,18 +66,14 @@ class FormularioPessoaBase(FormularioBase):
     )
     tipo_perfil = None
 
-    #-------------------------------------------------------------------------------------
 
-    #inicializacao
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self.instance.pk and self.instance.usuario_id:
             self.fields["nome_usuario"].initial = self.instance.usuario.usuario
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do nome de usuario
     def clean_nome_usuario(self):
         nome_usuario = self.cleaned_data["nome_usuario"].strip().lower()
         contas = Usuario.objects.filter(usuario__iexact=nome_usuario)
@@ -113,9 +91,7 @@ class FormularioPessoaBase(FormularioBase):
 
         return nome_usuario
 
-    #-------------------------------------------------------------------------------------
 
-    #salvar registro
     def save(self, commit=True):
         perfil = super().save(commit=False)
 
@@ -147,71 +123,46 @@ class FormularioPessoaBase(FormularioBase):
         return perfil
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario professor
 class FormularioProfessor(FormularioPessoaBase):
     tipo_perfil = Usuario.TipoPerfil.PROFESSOR
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Professor
         fields = ["nome", "sobrenome", "nome_usuario", "ativo"]
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario responsavel
 class FormularioResponsavel(FormularioPessoaBase):
     tipo_perfil = Usuario.TipoPerfil.RESPONSAVEL
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Responsavel
         fields = ["nome", "sobrenome", "nome_usuario", "ativo"]
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario aluno
 class FormularioAluno(FormularioPessoaBase):
     tipo_perfil = Usuario.TipoPerfil.ALUNO
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Aluno
         fields = ["nome", "sobrenome", "nome_usuario", "data_nascimento", "ativo"]
         widgets = {"data_nascimento": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario vinculo
 class FormularioVinculo(FormularioBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Vinculo
         fields = ["aluno", "professor", "responsavel", "data_vinculo", "ativo"]
         widgets = {"data_vinculo": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario meta
 class FormularioMeta(FormularioBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #campos e orientacoes dos periodos de metas
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['data_inicio'].label = 'Data de referência'
@@ -230,9 +181,7 @@ class FormularioMeta(FormularioBase):
             self.fields['situacao'].choices = [('EM_ANDAMENTO', 'Ativa'), ('CANCELADA', 'Cancelada')]
             self.fields['situacao'].help_text = 'O alcance da meta é calculado automaticamente pelas atividades aprovadas.'
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Meta
         fields = ["aluno", "professor", "titulo", "descricao", "periodo", "disciplina",
@@ -244,14 +193,9 @@ class FormularioMeta(FormularioBase):
         }
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario atividade
 class FormularioAtividade(FormularioBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #conteudo obrigatorio e metas limitadas ao aluno selecionado
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from django.db.models import Q
@@ -269,9 +213,7 @@ class FormularioAtividade(FormularioBase):
         for nome in ('aluno', 'meta', 'disciplina'):
             self.fields[nome].widget.attrs['data-' + nome] = ''
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Atividade
         fields = ["aluno", "professor", "disciplina", "meta", "titulo", "descricao", "data_entrega", "situacao"]
@@ -281,37 +223,24 @@ class FormularioAtividade(FormularioBase):
         }
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario conteudo
 class FormularioConteudo(FormularioBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Conteudo
         fields = ["aluno", "professor", "atividade", "titulo", "descricao", "tipo_conteudo"]
         widgets = {"descricao": forms.Textarea(attrs={"rows": 4})}
 
 
-#-------------------------------------------------------------------------------------
-
-#formulario frequencia
 class FormularioFrequencia(FormularioBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         model = Frequencia
         fields = ["aluno", "professor", "data_acompanhamento", "compareceu", "observacao"]
         widgets = {"data_acompanhamento": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 
-#-------------------------------------------------------------------------------------
-
-#cadastro do catalogo de conteudos
 class FormularioDisciplina(FormularioBase):
     class Meta:
         model = Disciplina
@@ -319,9 +248,6 @@ class FormularioDisciplina(FormularioBase):
         widgets = {'descricao': forms.Textarea(attrs={'rows': 3})}
 
 
-#-------------------------------------------------------------------------------------
-
-#percentual minimo de atividades realizadas por aluno
 class FormularioFrequenciaMinima(forms.Form):
     aluno = forms.ModelChoiceField(queryset=Aluno.objects.all(), label='Aluno')
     frequencia_minima = forms.DecimalField(label='Frequência mínima (%)', max_digits=5,
@@ -332,4 +258,4 @@ class FormularioFrequenciaMinima(forms.Form):
         super().__init__(*args, **kwargs)
         for campo in self.fields.values():
             campo.widget.attrs['class'] = 'campo-formulario'
-#-------------------------------------------------------------------------------------
+

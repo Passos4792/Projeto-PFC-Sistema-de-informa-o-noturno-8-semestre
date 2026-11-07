@@ -4,9 +4,7 @@
 
 {% block conteudo %}
 
-{#-------------------------------------------------------------------------------------#}
 
-{#area de conteudo#}
     <section class="painel painel-confirmacao">
         <span class="icone-confirmacao" aria-hidden="true">!</span>
 
@@ -27,10 +25,6 @@
         </p>
 
 
-
-{#-------------------------------------------------------------------------------------#}
-
-{#formulario#}
         <form method="post" class="acoes-formulario">
             {% csrf_token %}
             <a class="botao-secundario" href="{{ url_voltar }}">Cancelar</a>

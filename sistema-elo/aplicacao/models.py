@@ -1,4 +1,4 @@
-#importacoes
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -7,14 +7,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
 
-#-------------------------------------------------------------------------------------
-
-#registros de auditoria
 class RegistroAuditoria(models.Model):
 
-    #-------------------------------------------------------------------------------------
 
-    #tipos de acao
     class Acao(models.TextChoices):
         LOGIN = 'LOGIN', 'Entrada no sistema'
         SAIDA = 'SAIDA', 'Saída do sistema'
@@ -41,9 +36,7 @@ class RegistroAuditoria(models.Model):
     objeto_id = models.CharField(max_length=64, blank=True)
     detalhes = models.CharField(max_length=500, blank=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = 'registro_auditoria'
         ordering = ['-criado_em', '-pk']
@@ -51,30 +44,20 @@ class RegistroAuditoria(models.Model):
         verbose_name_plural = 'registros de auditoria'
 
 
-#-------------------------------------------------------------------------------------
-
-#controle de tentativas de login
 class LimiteLogin(models.Model):
     chave = models.CharField(max_length=64, unique=True)
     falhas = models.PositiveIntegerField(default=0)
     inicio = models.DateTimeField()
     bloqueado_ate = models.DateTimeField(null=True, blank=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = 'limite_login'
 
 
-#-------------------------------------------------------------------------------------
-
-#usuarios
 class Usuario(models.Model):
 
-    #-------------------------------------------------------------------------------------
 
-    #tipos de perfil
     class TipoPerfil(models.TextChoices):
         PROFESSOR = "PROFESSOR", "Professor"
         ALUNO = "ALUNO", "Aluno"
@@ -85,7 +68,7 @@ class Usuario(models.Model):
     professor_principal = models.BooleanField(default=False)
     troca_senha_obrigatoria = models.BooleanField(default=True)
 
-    # Registro do aceite das versões vigentes dos documentos legais.
+
     documentos_aceitos_em = models.DateTimeField(null=True, blank=True)
     versao_termos_aceita = models.CharField(max_length=20, blank=True)
     versao_privacidade_ciente = models.CharField(max_length=20, blank=True)
@@ -95,25 +78,18 @@ class Usuario(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "usuario"
         ordering = ["usuario"]
         verbose_name = "usuário"
         verbose_name_plural = "usuários"
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.usuario
 
 
-#-------------------------------------------------------------------------------------
-
-#dados comuns das pessoas
 class PessoaBase(models.Model):
     nome = models.CharField(max_length=80)
     sobrenome = models.CharField(max_length=120)
@@ -126,28 +102,20 @@ class PessoaBase(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         abstract = True
 
-    #-------------------------------------------------------------------------------------
 
-    #nome completo
     @property
     def nome_completo(self):
         return f"{self.nome} {self.sobrenome}"
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.nome_completo
 
-    #-------------------------------------------------------------------------------------
 
-    #excluir registro
     def delete(self, *args, **kwargs):
         conta = self.usuario
         resultado = super().delete(*args, **kwargs)
@@ -155,14 +123,9 @@ class PessoaBase(models.Model):
         return resultado
 
 
-#-------------------------------------------------------------------------------------
-
-#professores
 class Professor(PessoaBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "professor"
         ordering = ["nome", "sobrenome"]
@@ -170,14 +133,9 @@ class Professor(PessoaBase):
         verbose_name_plural = "professores"
 
 
-#-------------------------------------------------------------------------------------
-
-#responsaveis
 class Responsavel(PessoaBase):
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "responsavel"
         ordering = ["nome", "sobrenome"]
@@ -185,18 +143,13 @@ class Responsavel(PessoaBase):
         verbose_name_plural = "responsáveis"
 
 
-#-------------------------------------------------------------------------------------
-
-#alunos
 class Aluno(PessoaBase):
     data_nascimento = models.DateField(blank=True, null=True)
     frequencia_minima = models.DecimalField(
         'Frequência mínima (%)', max_digits=5, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0), MaxValueValidator(100)])
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "aluno"
         ordering = ["nome", "sobrenome"]
@@ -207,27 +160,20 @@ class Aluno(PessoaBase):
             name='aluno_frequencia_entre_0_100')]
 
 
-#-------------------------------------------------------------------------------------
-
-#catalogo de conteudos curriculares compartilhado pelas atividades
 class Disciplina(models.Model):
     nome = models.CharField('Conteúdo', max_length=100, unique=True)
     descricao = models.TextField('Descrição', blank=True)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = 'disciplina'
         ordering = ['nome']
         verbose_name = 'conteúdo curricular'
         verbose_name_plural = 'conteúdos curriculares'
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do nome sem repeticoes de maiusculas e espacos
     def clean(self):
         super().clean()
         self.nome = ' '.join(self.nome.split())
@@ -236,16 +182,11 @@ class Disciplina(models.Model):
         if Disciplina.objects.filter(nome__iexact=self.nome).exclude(pk=self.pk).exists():
             raise ValidationError({'nome': 'Este conteúdo já está cadastrado.'})
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.nome
 
 
-#-------------------------------------------------------------------------------------
-
-#vinculos
 class Vinculo(models.Model):
     aluno = models.OneToOneField(Aluno, on_delete=models.PROTECT, related_name="vinculo")
     professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="vinculos")
@@ -253,30 +194,21 @@ class Vinculo(models.Model):
     data_vinculo = models.DateField()
     ativo = models.BooleanField(default=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "vinculo"
         ordering = ["aluno__nome"]
         verbose_name = "vínculo"
         verbose_name_plural = "vínculos"
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return f"{self.aluno} - {self.professor}"
 
 
-#-------------------------------------------------------------------------------------
-
-#metas
 class Meta(models.Model):
 
-    #-------------------------------------------------------------------------------------
 
-    #periodos do acompanhamento
     class Periodo(models.TextChoices):
         SEMANAL = 'SEMANAL', 'Semanal'
         MENSAL = 'MENSAL', 'Mensal'
@@ -284,9 +216,7 @@ class Meta(models.Model):
         SEMESTRAL = 'SEMESTRAL', 'Semestral'
         PERSONALIZADO = 'PERSONALIZADO', 'Registro anterior'
 
-    #-------------------------------------------------------------------------------------
 
-    #situacoes disponiveis
     class Situacao(models.TextChoices):
         EM_ANDAMENTO = "EM_ANDAMENTO", "Em andamento"
         CONCLUIDA = "CONCLUIDA", "Concluída"
@@ -310,9 +240,7 @@ class Meta(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "meta"
         ordering = ["data_prazo", "titulo"]
@@ -324,9 +252,7 @@ class Meta(models.Model):
             models.CheckConstraint(condition=Q(quantidade_alvo__gte=1), name='meta_alvo_positivo'),
         ]
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do periodo e da quantidade planejada
     def clean(self):
         super().clean()
         if self.data_inicio and self.periodo in ('SEMANAL', 'MENSAL', 'TRIMESTRAL', 'SEMESTRAL'):
@@ -335,21 +261,14 @@ class Meta(models.Model):
         if self.data_inicio and self.data_prazo and self.data_prazo < self.data_inicio:
             raise ValidationError({'data_prazo': 'O prazo não pode ser anterior ao início.'})
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.titulo
 
 
-#-------------------------------------------------------------------------------------
-
-#atividades
 class Atividade(models.Model):
 
-    #-------------------------------------------------------------------------------------
 
-    #situacoes disponiveis
     class Situacao(models.TextChoices):
         PENDENTE = "PENDENTE", "Pendente"
         CONCLUIDA = "CONCLUIDA", "Concluída"
@@ -373,9 +292,7 @@ class Atividade(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
     concluida_em = models.DateTimeField(blank=True, null=True, editable=False)
 
-    #-------------------------------------------------------------------------------------
 
-    #consistencia entre aluno, conteudo e meta opcional
     def clean(self):
         super().clean()
         if self.meta_id:
@@ -396,9 +313,7 @@ class Atividade(models.Model):
             if anterior and anterior['aluno_id'] != self.aluno_id:
                 raise ValidationError({'aluno': 'Uma realização confirmada não pode ser transferida para outro aluno.'})
 
-    #-------------------------------------------------------------------------------------
 
-    #registro da conclusao validada pelo professor
     def save(self, *args, **kwargs):
         if self.situacao == self.Situacao.CONCLUIDA and not self.concluida_em:
             self.concluida_em = timezone.now()
@@ -408,23 +323,16 @@ class Atividade(models.Model):
             kwargs['update_fields'] = set(kwargs['update_fields']) | {'concluida_em'}
         return super().save(*args, **kwargs)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "atividade"
         ordering = ["data_entrega", "titulo"]
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.titulo
 
 
-#-------------------------------------------------------------------------------------
-
-#solicitacoes de conclusao e decisoes do professor
 class SolicitacaoConclusao(models.Model):
     atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE, related_name='solicitacoes')
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name='solicitacoes')
@@ -438,17 +346,13 @@ class SolicitacaoConclusao(models.Model):
     solicitado_em = models.DateTimeField(auto_now_add=True)
     respondido_em = models.DateTimeField(null=True, blank=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #historico das solicitacoes de conclusao
     class Meta:
         db_table = 'solicitacao_conclusao'
         ordering = ['-solicitado_em', '-pk']
 
 
-#-------------------------------------------------------------------------------------
-
-#registros de conteudos da versao anterior, preservados para consulta
+# Modelo legado mantido para preservar consultas históricas.
 class Conteudo(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="conteudos")
     professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="conteudos")
@@ -464,23 +368,16 @@ class Conteudo(models.Model):
     tipo_conteudo = models.CharField(max_length=40, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "conteudo"
         ordering = ["titulo"]
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         return self.titulo
 
 
-#-------------------------------------------------------------------------------------
-
-#conexao e credenciais da conta Google
 class ConexaoGoogle(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='conexao_google')
     identidade = models.CharField(max_length=64)
@@ -488,16 +385,10 @@ class ConexaoGoogle(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
 
-    #-------------------------------------------------------------------------------------
-
-    #metadados do modelo
     class Meta:
         db_table = 'conexao_google'
 
 
-#-------------------------------------------------------------------------------------
-
-#registro dos eventos sincronizados com o Google
 class SincronizacaoGoogle(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE)
@@ -506,18 +397,12 @@ class SincronizacaoGoogle(models.Model):
     sincronizado_em = models.DateTimeField(null=True, blank=True)
 
 
-    #-------------------------------------------------------------------------------------
-
-    #metadados do modelo
     class Meta:
         db_table = 'sincronizacao_google'
         constraints = [models.UniqueConstraint(
             fields=['usuario', 'atividade', 'identidade'], name='google_evento_usuario_atividade')]
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencias
 class Frequencia(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="frequencias")
     professor = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="frequencias")
@@ -526,19 +411,15 @@ class Frequencia(models.Model):
     observacao = models.CharField(max_length=255, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
-    #-------------------------------------------------------------------------------------
 
-    #metadados do modelo
     class Meta:
         db_table = "frequencia"
         ordering = ["-data_acompanhamento"]
         verbose_name = "frequência"
         verbose_name_plural = "frequências"
 
-    #-------------------------------------------------------------------------------------
 
-    #representacao do registro
     def __str__(self):
         situacao = "Presente" if self.compareceu else "Ausente"
         return f"{self.aluno} - {self.data_acompanhamento} - {situacao}"
-#-------------------------------------------------------------------------------------
+

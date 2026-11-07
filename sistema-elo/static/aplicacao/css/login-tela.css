@@ -1,7 +1,5 @@
-/* Paleta baseada no protótipo enviado para a tela de login do ELO. */
-/*-------------------------------------------------------------------------------------*/
 
-/*cores do projeto*/
+
 :root {
     --azul: #79a1ef;
     --azul-claro: #91b5f7;
@@ -15,24 +13,18 @@
     --borda: #8c8985;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*configuracao geral*/
 * {
     box-sizing: border-box;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estrutura da pagina*/
 html,
 body {
     min-height: 100%;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*pagina*/
 body {
     margin: 0;
     background: var(--fundo);
@@ -40,17 +32,13 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: button,*/
 button,
 input {
     font: inherit;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estrutura do login*/
 .pagina-login {
     display: grid;
     grid-template-columns: 53% 47%;
@@ -58,10 +46,7 @@ input {
     overflow: hidden;
 }
 
-/* Lado esquerdo: marca e elementos decorativos. */
-/*-------------------------------------------------------------------------------------*/
 
-/*apresentacao do ELO*/
 .apresentacao {
     position: relative;
     display: grid;
@@ -70,21 +55,17 @@ input {
     padding: 40px 40px 150px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .marca*/
 .marca {
     position: relative;
     z-index: 2;
     width: min(100%, 390px);
     text-align: center;
-    /* Compensa a extensão das ondas para a direita e centraliza o conjunto sobre elas. */
+
     transform: translateX(8%);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .simbolo-elo*/
 .simbolo-elo {
     display: block;
     width: 280px;
@@ -92,9 +73,7 @@ input {
     margin: 0 auto 20px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .nome-elo*/
 .nome-elo {
     display: flex;
     justify-content: center;
@@ -105,9 +84,7 @@ input {
     line-height: 1;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .descricao-elo*/
 .descricao-elo {
     width: fit-content;
     margin: 26px auto 0;
@@ -118,9 +95,7 @@ input {
     text-transform: uppercase;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-conheca {
     display: flex;
     width: fit-content;
@@ -137,17 +112,13 @@ input {
     text-transform: uppercase;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-conheca span {
     font-size: 28px;
     line-height: 16px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*imagens decorativas*/
 .ondas {
     position: absolute;
     z-index: 1;
@@ -157,9 +128,7 @@ input {
     pointer-events: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*imagens*/
 .imagem-ondas {
     position: relative;
     z-index: 2;
@@ -168,10 +137,7 @@ input {
     height: auto;
 }
 
-/* Lado direito: cartão do formulário. */
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .area-formulario*/
 .area-formulario {
     display: grid;
     min-height: 720px;
@@ -179,9 +145,7 @@ input {
     padding: 48px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-login {
     width: min(100%, 490px);
     padding: 52px 40px 38px;
@@ -189,58 +153,44 @@ input {
     background: var(--cartao);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-login*/
 .cabecalho-login {
     margin-bottom: 50px;
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-login h1*/
 .cabecalho-login h1 {
     margin: 0;
     font-size: 32px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .cabecalho-login p*/
 .cabecalho-login p {
     margin: 3px 0 0;
     color: var(--azul);
     font-size: 21px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-login {
     display: grid;
     gap: 42px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo {
     display: grid;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo label {
     margin: 0 0 5px 9px;
     font-size: 25px;
     font-weight: 700;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo input {
     width: 100%;
     height: 57px;
@@ -251,39 +201,29 @@ input {
     outline: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo input::placeholder {
     color: var(--azul);
     opacity: 1;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos do formulario*/
 .grupo-campo input:focus {
     border-color: var(--azul);
     box-shadow: 0 0 0 3px rgba(121, 161, 239, 0.18);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-senha {
     position: relative;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*campos de entrada*/
 .campo-senha input {
     padding-right: 65px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-olho {
     position: absolute;
     top: 50%;
@@ -296,9 +236,7 @@ input {
     transform: translateY(-50%);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .icone-olho*/
 .icone-olho {
     position: absolute;
     top: 50%;
@@ -310,9 +248,7 @@ input {
     transform: translate(-50%, -50%);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .icone-olho::after*/
 .icone-olho::after {
     position: absolute;
     top: 50%;
@@ -325,9 +261,7 @@ input {
     transform: translate(-50%, -50%);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .esqueci-senha*/
 .esqueci-senha {
     margin: 5px 7px 0 0;
     color: var(--azul);
@@ -336,9 +270,7 @@ input {
     text-decoration: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-entrar {
     width: 255px;
     margin: -10px auto 0;
@@ -353,17 +285,12 @@ input {
     cursor: pointer;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-entrar:hover {
     background: #638ddd;
 }
 
-/* Adaptação da tela para tablets. */
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 1000px) {
     .pagina-login {
         grid-template-columns: 45% 55%;
@@ -387,10 +314,7 @@ input {
     }
 }
 
-/* Em celulares, o formulário aparece abaixo da marca. */
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 760px) {
     .pagina-login {
         grid-template-columns: 1fr;
@@ -457,32 +381,23 @@ input {
     }
 }
 
-/* Ajustes de leitura e estados de interação. */
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-entrar {
     background: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-entrar:hover {
     background: #3f639e;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*cartoes*/
 .cartao-login {
     border: 1px solid #e2ddd5;
     box-shadow: 0 12px 40px rgba(73, 87, 111, .06);
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-login [role="alert"] {
     padding: 14px;
     border-radius: 12px;
@@ -492,41 +407,31 @@ input {
     line-height: 1.5;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*formularios*/
 .formulario-login .errorlist {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*botoes*/
 .botao-olho {
     cursor: pointer;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: :focus-visible*/
 :focus-visible {
     outline: 3px solid #527ab9;
     outline-offset: 4px;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*estilo: .esqueci-senha,*/
 .esqueci-senha,
 .cabecalho-login p {
     color: #527ab9;
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 760px) {
     .apresentacao {
         min-height: 310px;
@@ -564,9 +469,7 @@ input {
     }
 }
 
-/*-------------------------------------------------------------------------------------*/
 
-/*adaptacao para diferentes tamanhos de tela*/
 @media (max-width: 760px) {
     .apresentacao {
         overflow: hidden;
@@ -576,10 +479,8 @@ input {
         right: 0;
     }
 }
-/*-------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------*/
-/*links de privacidade e termos na tela de login*/
+
 .acoes-login {
     display: grid;
     justify-items: center;

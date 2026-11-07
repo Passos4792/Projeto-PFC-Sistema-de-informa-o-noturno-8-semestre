@@ -5,6 +5,8 @@
     const results = document.querySelector('[data-resultados-lista]');
     const count = document.querySelector('[data-contagem-lista]');
     const error = form.querySelector('[data-erro-busca]');
+
+    const filters = form.querySelectorAll('[data-filtro-automatico]');
     let timer;
     let controller;
     let revision = 0;
@@ -13,6 +15,7 @@
         controller = new AbortController();
         const url = new URL(window.location.href);
         url.searchParams.delete('pagina');
+        filters.forEach(field => url.searchParams.set(field.name, field.value));
         const term = input.value.trim();
         const filterSearch = document.querySelector('[data-busca-filtros]');
         if (filterSearch) filterSearch.value = term;
@@ -46,5 +49,6 @@
         timer = setTimeout(() => search(current), delay);
     }
     input.addEventListener('input', () => schedule(250));
+    filters.forEach(field => field.addEventListener('change', () => schedule(0)));
     form.addEventListener('submit', event => { event.preventDefault(); schedule(0); });
 })();

@@ -34,8 +34,9 @@
         <a href="{% url 'vinculo-listar' %}"><strong>Vínculos</strong><span>Alunos, professores e responsáveis →</span></a>
         <a href="{% url 'meta-listar' %}"><strong>Metas</strong><span>Objetivos e progresso →</span></a>
         <a href="{% url 'atividade-listar' %}"><strong>Atividades</strong><span>Tarefas e prazos →</span></a>
-        <a href="{% url 'conteudo-listar' %}"><strong>Conteúdos</strong><span>Materiais de apoio →</span></a>
-        <a href="{% url 'frequencia-listar' %}"><strong>Frequência</strong><span>Presenças nos acompanhamentos →</span></a>
+        <a href="{% url 'conteudo-listar' %}"><strong>Conteúdos</strong><span>Catálogo e atividades por conteúdo →</span></a>
+        <a href="{% url 'frequencia-listar' %}"><strong>Frequência</strong><span>Realização e mínimo por aluno →</span></a>
+        <a href="{% url 'aprovacoes' %}"><strong>Aprovações</strong><span>{{ aprovacoes_pendentes }} solicitação(ões) aguardando análise →</span></a>
     </div>
 </section>
 {% endblock %}

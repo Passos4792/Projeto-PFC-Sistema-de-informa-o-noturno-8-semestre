@@ -1,4 +1,4 @@
-#importacoes
+
 from datetime import datetime, time
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -15,9 +15,6 @@ from .indicadores import FiltroPainel, dados_painel, dados_frequencia, dados_con
 from .models import Aluno, Conteudo, Disciplina
 
 
-#-------------------------------------------------------------------------------------
-
-#painel compartilhado, com dados calculados pelo mesmo servico usado na API
 def mostrar_painel(request, secao, aluno=None):
     parametros = request.GET.copy()
     if secao in ('frequencias', 'conteudos'):
@@ -32,7 +29,7 @@ def mostrar_painel(request, secao, aluno=None):
     valido = formulario.is_valid()
     calcular = {'frequencias': dados_frequencia, 'conteudos': dados_conteudos, 'metas': dados_metas}.get(secao, dados_painel)
     dados = calcular(request.perfil_elo, formulario.cleaned_data) if valido else None
-    #Pagina somente a lista; os indicadores continuam considerando todo o filtro.
+
     frequencias_lista = dados.get('frequencias', []) if dados else []
     conteudos_lista = dados.get('conteudos', []) if dados else []
     pagina_conteudos = None
@@ -66,63 +63,39 @@ def mostrar_painel(request, secao, aluno=None):
     }, status=200 if valido else 400)
 
 
-#-------------------------------------------------------------------------------------
-
-#metas semanais, mensais, trimestrais e semestrais
 def metas(request):
     return mostrar_painel(request, 'metas')
 
 
-#-------------------------------------------------------------------------------------
-
-#catalogo e indicadores por conteudo
 def conteudos(request):
     return mostrar_painel(request, 'conteudos')
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencia de realizacao de atividades
 def frequencias(request):
     return mostrar_painel(request, 'frequencias')
 
 
-#-------------------------------------------------------------------------------------
-
-#painel individual autorizado
 def aluno_inicio(request, pk):
     aluno = get_object_or_404(alunos_permitidos(request.perfil_elo), pk=pk)
     return mostrar_painel(request, 'acompanhamento', aluno=aluno)
 
 
-#-------------------------------------------------------------------------------------
-
-#criacao de conteudo curricular
 def conteudo_criar(request):
     from .views import _salvar
     return _salvar(request, FormularioDisciplina, 'Novo conteúdo', 'conteudos', 'conteudo-listar')
 
 
-#-------------------------------------------------------------------------------------
-
-#edicao de conteudo curricular
 def conteudo_editar(request, pk):
     from .views import _salvar
     return _salvar(request, FormularioDisciplina, 'Editar conteúdo', 'conteudos', 'conteudo-listar',
                    get_object_or_404(Disciplina, pk=pk))
 
 
-#-------------------------------------------------------------------------------------
-
-#exclusao protegida de conteudos utilizados em atividades ou metas
 def conteudo_excluir(request, pk):
     from .views import _excluir
     return _excluir(request, Disciplina, pk, 'Excluir conteúdo', 'conteudos', 'conteudo-listar')
 
 
-#-------------------------------------------------------------------------------------
-
-#configuracao da frequencia minima individual
 def frequencia_configurar(request, pk=None):
     if request.perfil_elo.tipo_perfil != 'PROFESSOR':
         raise PermissionDenied
@@ -148,9 +121,6 @@ def frequencia_configurar(request, pk=None):
         'url_voltar': reverse('frequencia-listar')})
 
 
-#-------------------------------------------------------------------------------------
-
-#fila de aprovacao e historico de decisoes
 def aprovacoes(request):
     if request.perfil_elo.tipo_perfil != 'PROFESSOR':
         raise PermissionDenied
@@ -173,7 +143,7 @@ def aprovacoes(request):
     formulario = FiltroAprovacoes(parametros)
     if formulario.is_valid():
         filtros = formulario.cleaned_data
-        #limites no fuso local incluem o dia final inteiro, sem conversao de data no MySQL
+
         if filtros['inicio']:
             registros = registros.filter(solicitado_em__gte=timezone.make_aware(
                 datetime.combine(filtros['inicio'], time.min)))

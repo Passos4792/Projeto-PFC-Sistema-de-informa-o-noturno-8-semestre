@@ -2,33 +2,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-{#-------------------------------------------------------------------------------------#}
 
-{#configuracoes da pagina#}
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ELO - Login</title>
 
-<!--chamada do arquivo de estilo-->
+
         <link rel="stylesheet" href="{% static 'aplicacao/css/login-tela.css' %}">
     </head>
 
-{#-------------------------------------------------------------------------------------#}
 
-{#pagina#}
     <body>
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#conteudo principal#}
         <main class="pagina-login">
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
             <section class="apresentacao" aria-label="Apresentação do ELO">
 
                 <div class="marca">
@@ -65,17 +55,11 @@
             </section>
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
             <section class="area-formulario">
 
                 <div class="cartao-login">
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#cabecalho#}
                     <header class="cabecalho-login">
 
                         <h1>
@@ -89,10 +73,6 @@
                     </header>
 
 
-
-{#-------------------------------------------------------------------------------------#}
-
-{#formulario#}
                     <form class="formulario-login" method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ next }}">
@@ -159,7 +139,7 @@
 
         </main>
 
-<!--chamada do script-->
+
         <script src="{% static 'aplicacao/js/login.js' %}"></script>
     </body>
 </html>

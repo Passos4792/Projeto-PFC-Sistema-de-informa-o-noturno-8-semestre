@@ -1,4 +1,4 @@
-#importacoes
+
 import secrets
 import time
 
@@ -18,17 +18,11 @@ from .auditoria import registrar
 from .models import Atividade, ConexaoGoogle, SincronizacaoGoogle, SolicitacaoConclusao
 
 
-#-------------------------------------------------------------------------------------
-
-#verificacao do perfil para acesso ao calendario
 def conferir_perfil(request):
     if request.perfil_elo.tipo_perfil not in ('ALUNO', 'RESPONSAVEL'):
         raise PermissionDenied
 
 
-#-------------------------------------------------------------------------------------
-
-#listagem e pesquisa das atividades do usuario
 @require_GET
 @never_cache
 def minhas_atividades(request):
@@ -62,9 +56,6 @@ def minhas_atividades(request):
     })
 
 
-#-------------------------------------------------------------------------------------
-
-#conexao da conta Google
 @require_POST
 @never_cache
 def conectar(request):
@@ -75,9 +66,6 @@ def conectar(request):
     return redirect(google.iniciar_oauth(request))
 
 
-#-------------------------------------------------------------------------------------
-
-#retorno da autorizacao do Google
 @require_GET
 @never_cache
 @sensitive_variables()
@@ -109,7 +97,7 @@ def retorno(request):
         messages.success(request, 'Google Agenda conectado. Escolha as atividades que deseja sincronizar.')
     except google.PermissaoCalendarioPendente as exc:
         if not fluxo.get('conta_google'):
-            #completa a autorizacao parcial uma unica vez, sem reiniciar pelo painel
+
             return redirect(google.iniciar_oauth(request, conta_google=exc.identidade))
         messages.error(request, str(exc))
     except google.GoogleErro as exc:
@@ -117,9 +105,6 @@ def retorno(request):
     return redirect('minhas-atividades')
 
 
-#-------------------------------------------------------------------------------------
-
-#sincronizacao da atividade com o Google Agenda
 @require_POST
 def sincronizar(request, pk):
     conferir_perfil(request)
@@ -136,7 +121,7 @@ def sincronizar(request, pk):
             conexao = ConexaoGoogle.objects.select_for_update().filter(usuario=request.perfil_elo).first()
             if not conexao:
                 raise google.ReconectarGoogle('Conecte sua conta Google antes de sincronizar.')
-            #releitura apos aguardar outra sincronizacao, usando os dados atuais do painel
+            # Releitura sob bloqueio evita sincronizar uma atividade alterada em paralelo.
             atividade = get_object_or_404(Atividade.objects.select_for_update().select_related('aluno'),
                                          pk=pk, aluno__in=alunos_permitidos(request.perfil_elo))
             if not atividade.data_entrega or atividade.situacao == 'CANCELADA':
@@ -159,9 +144,6 @@ def sincronizar(request, pk):
     return redirect('minhas-atividades')
 
 
-#-------------------------------------------------------------------------------------
-
-#desconexao da conta Google
 @require_POST
 def desconectar(request):
     conferir_perfil(request)

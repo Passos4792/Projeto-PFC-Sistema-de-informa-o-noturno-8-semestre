@@ -1,0 +1,51 @@
+{% extends 'aplicacao/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Aprovações{% endblock %}
+{% block conteudo %}
+
+
+<header class="topo-pagina"><div><p class="caminho">Acompanhamento / Aprovações</p><h1>Aprovações de atividades</h1><p class="subtitulo">Confira a realização com o aluno e aprove ou envie uma orientação.</p></div><span class="etiqueta">{{ pendentes }} aguardando análise</span></header>
+<form class="painel filtros-painel" method="get" data-busca-automatica>
+    <div class="grupo-campo"><label for="situacao">Situação</label><select class="campo-formulario" name="situacao" id="situacao" data-filtro-automatico>
+        <option value="PENDENTE" {% if situacao == 'PENDENTE' %}selected{% endif %}>Aguardando análise</option>
+        <option value="APROVADA" {% if situacao == 'APROVADA' %}selected{% endif %}>Aprovadas</option>
+        <option value="RECUSADA" {% if situacao == 'RECUSADA' %}selected{% endif %}>Recusadas</option>
+        <option value="" {% if situacao == '' %}selected{% endif %}>Todas</option>
+    </select></div>
+    <div class="grupo-campo"><label for="busca-aprovacao">Aluno ou atividade</label><input class="campo-formulario" name="busca" id="busca-aprovacao" value="{{ busca }}"></div>
+    {% for campo in formulario_filtros %}
+    <div class="grupo-campo">{{ campo.label_tag }}{{ campo }}</div>
+    {% endfor %}
+    <noscript><button class="botao-secundario">Filtrar</button></noscript>
+    <small data-erro-busca role="alert" hidden>Não foi possível atualizar. Pressione Enter para tentar novamente.</small>
+</form>
+<p class="nota-painel" data-contagem-lista role="status">{{ pagina.paginator.count }} solicitação(ões) encontrada(s).</p>
+<div data-resultados-lista>
+{% if formulario_filtros.errors %}<div class="erro-campo" role="alert">{{ formulario_filtros.errors }}</div>{% endif %}
+<div class="grade-metas">
+{% for solicitacao in pagina %}
+<article class="painel cartao-meta">
+    <span class="etiqueta">{{ solicitacao.get_situacao_display }}</span>
+    <h2>{{ solicitacao.atividade.titulo }}</h2><p class="aluno-meta">{{ solicitacao.aluno.nome_completo }}</p>
+    <p class="nota-painel">Solicitada em {{ solicitacao.solicitado_em|date:'d/m/Y H:i' }} por {{ solicitacao.solicitante|default:'Conta removida' }}.</p>
+    {% if solicitacao.mensagem %}<p>{{ solicitacao.mensagem }}</p>{% endif %}
+    {% if solicitacao.situacao == 'PENDENTE' %}
+    <form data-decisao action="{% url 'api-decidir-conclusao' solicitacao.pk %}" method="post">{% csrf_token %}
+        <label for="resposta-{{ solicitacao.pk }}">Orientação ao aluno (obrigatória para recusar)</label>
+        <textarea class="campo-formulario" id="resposta-{{ solicitacao.pk }}" name="resposta" rows="3" maxlength="500"></textarea>
+        <div class="acoes-cartao"><button class="botao-principal" name="decisao" value="APROVADA">Aprovar realização</button><button class="botao-secundario" name="decisao" value="RECUSADA">Pedir revisão</button></div>
+        <p data-retorno role="status"></p>
+    </form>
+    {% else %}<p>{{ solicitacao.resposta|default:'Realização confirmada pelo professor.' }}</p><p class="nota-painel">{{ solicitacao.professor|default:'Professor' }} · {{ solicitacao.respondido_em|date:'d/m/Y H:i' }}</p>{% endif %}
+</article>
+{% empty %}<div class="painel vazio-painel"><h2>Nenhuma solicitação encontrada</h2><p>As solicitações dos alunos e responsáveis aparecerão aqui. Professores comuns avaliam as atividades atribuídas a eles; o professor principal pode avaliar todas.</p></div>{% endfor %}
+</div>
+<nav class="rodape-painel" aria-label="Paginação">
+{% if pagina.has_previous %}<a href="?{{ filtros }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+{% if pagina.has_next %}<a href="?{{ filtros }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+</nav>
+</div>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>
+<script src="{% static 'aplicacao/js/solicitacoes.js' %}" defer></script>
+{% endblock %}

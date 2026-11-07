@@ -1,4 +1,4 @@
-#importacoes
+
 from getpass import getpass
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -8,22 +8,15 @@ from django.db import transaction
 from aplicacao.models import Usuario, Professor
 
 
-#-------------------------------------------------------------------------------------
-
-#comando de gerenciamento
 class Command(BaseCommand):
     help = 'Ativa uma conta existente ou cria o primeiro professor principal, com senha solicitada no terminal.'
 
-    #-------------------------------------------------------------------------------------
 
-    #argumentos do comando
     def add_arguments(self, parser):
         parser.add_argument('usuario')
         parser.add_argument('--principal', action='store_true')
 
-    #-------------------------------------------------------------------------------------
 
-    #execucao do comando
     @transaction.atomic
     def handle(self, *args, **options):
         nome = options['usuario'].strip().lower()
@@ -32,7 +25,7 @@ class Command(BaseCommand):
         try:
             candidato.full_clean(exclude=['password'])
         except ValidationError as exc:
-            # Existing linked accounts are allowed for password resets.
+
             if not Usuario.objects.filter(usuario=nome, conta__username=nome).exists():
                 raise CommandError(str(exc))
         perfil = Usuario.objects.filter(usuario__iexact=nome).first()
@@ -74,4 +67,4 @@ class Command(BaseCommand):
                       detalhes='Professor principal definido pelo comando local.')
         self.stdout.write(self.style.SUCCESS(
             'Conta configurada. O estado ativo do cadastro foi preservado.'))
-#-------------------------------------------------------------------------------------
+

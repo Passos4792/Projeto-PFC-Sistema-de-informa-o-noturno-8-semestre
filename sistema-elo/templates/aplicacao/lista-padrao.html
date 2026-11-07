@@ -5,9 +5,7 @@
 
 {% block conteudo %}
 
-{#-------------------------------------------------------------------------------------#}
 
-{#cabecalho#}
     <header class="topo-pagina">
 
         <div>
@@ -25,13 +23,10 @@
             </p>
 
         </div>
-        <a class="botao-principal" href="{{ url_novo }}">+ Novo registro</a>
+        {% if url_novo %}<a class="botao-principal" href="{{ url_novo }}">+ Novo registro</a>{% endif %}
     </header>
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#area de conteudo#}
     <section class="painel painel-lista">
 
         <div class="painel-cabecalho cabecalho-registros">
@@ -41,7 +36,7 @@
                     Registros de {{ titulo|lower }}
                 </h2>
                 <p data-contagem-lista aria-live="polite">
-                    {{ linhas|length }} registro(s) nesta lista.
+                    {% if pagina %}{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ linhas|length }} nesta página.{% else %}{{ linhas|length }} registro(s) nesta lista.{% endif %}
                 </p>
             </div>
             {% if busca_habilitada %}
@@ -54,12 +49,10 @@
             {% endif %}
         </div>
 
-        <div class="tabela-responsiva" data-resultados-lista>
+        <div data-resultados-lista>
+        <div class="tabela-responsiva">
 
 
-{#-------------------------------------------------------------------------------------#}
-
-{#tabela de registros#}
             <table>
 
                 <thead>
@@ -95,7 +88,7 @@
                                 {% else %}
                                 <span class="icone-vazio" aria-hidden="true">＋</span><strong>Ainda não há registros</strong>
                                 <p>
-                                    Comece pelo botão “Novo registro” no topo da página.
+                                    {% if url_novo %}Comece pelo botão “Novo registro” no topo da página.{% else %}Para adicionar usuários, acesse “Cadastrar usuário” no menu lateral.{% endif %}
                                 </p>
                                 {% endif %}
                             </td>
@@ -106,6 +99,14 @@
 
             </table>
 
+        </div>
+        {% if pagina.paginator.num_pages > 1 %}
+        <nav class="rodape-painel acoes-cartao" aria-label="Páginas de {{ titulo|lower }}">
+            {% if pagina.has_previous %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+            {% if pagina.has_next %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+        </nav>
+        {% endif %}
         </div>
     </section>
     {% if busca_habilitada %}<script src="{% static 'aplicacao/js/busca-lista.js' %}" defer></script>{% endif %}

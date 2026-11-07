@@ -1,4 +1,4 @@
-#importacoes
+
 from decimal import Decimal
 from collections import defaultdict
 from django import forms
@@ -8,9 +8,6 @@ from .acesso import alunos_permitidos
 from .models import Atividade, Disciplina, Meta, SolicitacaoConclusao
 
 
-#-------------------------------------------------------------------------------------
-
-#filtros compartilhados pelas paginas e pela API
 class FiltroPainel(forms.Form):
     aluno = forms.ModelChoiceField(queryset=None, required=False, label='Aluno')
     periodo = forms.ChoiceField(required=False, label='Período da meta',
@@ -21,9 +18,7 @@ class FiltroPainel(forms.Form):
         widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}))
     busca = forms.CharField(required=False, max_length=100, label='Pesquisar')
 
-    #-------------------------------------------------------------------------------------
 
-    #somente alunos que o perfil pode consultar
     def __init__(self, *args, perfil, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['aluno'].queryset = alunos_permitidos(perfil)
@@ -31,9 +26,7 @@ class FiltroPainel(forms.Form):
         for campo in self.fields.values():
             campo.widget.attrs['class'] = 'campo-formulario'
 
-    #-------------------------------------------------------------------------------------
 
-    #validacao do intervalo de entregas
     def clean(self):
         dados = super().clean()
         if dados.get('inicio') and dados.get('fim') and dados['inicio'] > dados['fim']:
@@ -41,16 +34,13 @@ class FiltroPainel(forms.Form):
         return dados
 
 
-#-------------------------------------------------------------------------------------
-
-#frequencia calculada diretamente no banco, sem carregar outras areas
 def dados_frequencia(perfil, filtros):
     hoje = timezone.localdate()
     alunos = alunos_permitidos(perfil)
     if filtros.get('aluno'):
         alunos = alunos.filter(pk=filtros['aluno'].pk)
     alunos = list(alunos.only('pk', 'nome', 'sobrenome', 'frequencia_minima').order_by('nome', 'sobrenome', 'pk'))
-    #O banco conta por aluno; nao carrega atividades, metas ou solicitacoes na memoria.
+
     contagens = Atividade.objects.filter(aluno_id__in=[a.pk for a in alunos]).exclude(
         situacao='CANCELADA').order_by().values('aluno_id').annotate(
             total=Count('pk'),
@@ -80,9 +70,6 @@ def dados_frequencia(perfil, filtros):
     return {'hoje': hoje.isoformat(), 'frequencias': frequencias, 'resumo': resumo}
 
 
-#-------------------------------------------------------------------------------------
-
-#conteudos contados no banco, respeitando os alunos permitidos
 def dados_conteudos(perfil, filtros):
     alunos = alunos_permitidos(perfil)
     if filtros.get('aluno'):
@@ -111,16 +98,10 @@ def dados_conteudos(perfil, filtros):
             'pendentes': sum(c['pendentes'] for c in conteudos)}}
 
 
-#-------------------------------------------------------------------------------------
-
-#indicadores completos das demais telas de acompanhamento
 def dados_metas(perfil, filtros):
     return dados_painel(perfil, filtros, somente_metas=True)
 
 
-#-------------------------------------------------------------------------------------
-
-#calculo compartilhado do progresso, com consulta reduzida para a tela de metas
 def dados_painel(perfil, filtros, somente_metas=False):
     hoje = timezone.localdate()
     alunos = alunos_permitidos(perfil).select_related('usuario')
@@ -141,7 +122,7 @@ def dados_painel(perfil, filtros, somente_metas=False):
     for solicitacao in solicitacoes:
         recentes.setdefault(solicitacao.atividade_id, solicitacao)
 
-    #as metas usam o periodo completo; filtros de entregas afetam atividades e frequencia
+
     progresso_metas = []
     por_aluno, por_meta = defaultdict(list), defaultdict(list)
     for atividade in atividades:

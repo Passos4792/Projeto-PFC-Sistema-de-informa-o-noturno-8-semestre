@@ -1,4 +1,4 @@
-#importacoes
+
 from datetime import timedelta
 from math import ceil
 import unicodedata
@@ -10,9 +10,6 @@ from django.utils.crypto import salted_hmac
 from .models import LimiteLogin
 
 
-#-------------------------------------------------------------------------------------
-
-#autenticar com limite
 def autenticar_com_limite(request, username, autenticar):
     """Serialize attempts in the database, shared by all server processes.
 
@@ -46,7 +43,7 @@ def autenticar_com_limite(request, username, autenticar):
         user = autenticar(username)
         for registro in registros:
             if user is not None:
-                # A valid account must not reset an IP's failures against other accounts.
+
                 if registro.chave == chave_usuario:
                     registro.falhas = 0
                     registro.inicio = agora
@@ -59,4 +56,4 @@ def autenticar_com_limite(request, username, autenticar):
                         request.login_espera = settings.LOGIN_BLOQUEIO_SEGUNDOS
             registro.save()
         return user
-#-------------------------------------------------------------------------------------
+
