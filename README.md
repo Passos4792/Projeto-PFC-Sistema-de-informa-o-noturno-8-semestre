@@ -1,7 +1,8 @@
 # Projeto-PFC-Sistema-de-informa-o-noturno-8-semestre
-Projeto final do curso de sistema de informação noturno realizado na Universidade Mogi das Cruzes no segundo semestre do ano de 2026.
 
-Auxiliador de acompanhamento de crianças atípicas para escola e responsável.
+Projeto final do curso de Sistemas de Informação (noturno), desenvolvido na Universidade de Mogi das Cruzes no segundo semestre de 2026.
+
+O Sistema ELO auxilia no acompanhamento educacional de crianças atípicas por professores e responsáveis.
 
 ## Tecnologias utilizadas
 
@@ -15,7 +16,7 @@ Auxiliador de acompanhamento de crianças atípicas para escola e responsável.
 ## Estrutura do projeto
 
 ```text
-Projeto-PFC
+Projeto-PFC/
 │
 ├── banco-de-dados-projeto/
 │   └── Criar Banco.sql
@@ -27,7 +28,6 @@ Projeto-PFC
 │   │   ├── apps.py
 │   │   ├── forms.py
 │   │   ├── models.py
-│   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
 │   │
@@ -38,9 +38,10 @@ Projeto-PFC
 │   │   └── wsgi.py
 │   │
 │   ├── static/
-│   │   ├── css/
-│   │   ├── imagens/
-│   │   └── js/
+│   │   └── aplicacao/
+│   │       ├── css/
+│   │       ├── imagens/
+│   │       └── js/
 │   │
 │   ├── templates/
 │   └── manage.py
@@ -48,3 +49,4 @@ Projeto-PFC
 ├── .env.example
 ├── .gitignore
 └── README.md
+```
