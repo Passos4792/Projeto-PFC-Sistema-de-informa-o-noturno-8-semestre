@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block titulo_pagina %}ELO{% endblock %}
+        </title>
+
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/fundamentos.css' %}?v=20261110-organizacao">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/estrutura.css' %}?v=20261112-links-voltar">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/publico.css' %}?v=20261110-organizacao">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/interface.css' %}?v=20261112-senha-cadastro">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/acompanhamento.css' %}?v=20261112-progresso">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/registros.css' %}?v=20261112-busca-padrao-3">
+        {% block estilos_pagina %}{% endblock %}
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/tema.css' %}?v=20261112-icones-outline">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/perfil.css' %}?v=20261112-menu-fixo">
+        {% block estilos_finais %}{% endblock %}
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/selecao-pesquisavel.css' %}?v=20261113-busca-select">
+    </head>
+
+    <body>
+        {% include "aplicacao/partials/icones-contorno.html" %}
+        <a class="pular-conteudo" href="#conteudo-principal">Ir para o conteúdo</a>
+
+        <div class="estrutura-pagina">
+            <header class="barra-superior" aria-label="Barra superior do ELO">
+                <a class="marca-superior" href="{% url 'pagina-inicial' %}" aria-label="ELO - página inicial">
+                    <img src="{% static 'aplicacao/imagens/logo-elo.png' %}" alt="ELO">
+                </a>
+                <div class="acoes-superiores">
+                    <details class="menu-perfil" id="menu-perfil">
+                        <summary aria-label="Abrir perfil de {{ perfil_nome }}">
+                            <span class="avatar-perfil">
+                                {% if perfil_tem_foto %}<img src="{% url 'foto-perfil' %}" alt="" width="38" height="38">{% else %}{{ perfil_iniciais }}{% endif %}
+                            </span>
+                            <span class="nome-perfil-topo">{{ perfil_nome }}</span>
+                            <svg class="elo-icone seta-perfil" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg>
+                        </summary>
+                        <div class="opcoes-perfil">
+                            <p class="opcoes-perfil-nome"><strong>{{ perfil_nome }}</strong><small>{{ request.perfil_elo.get_tipo_perfil_display }}</small></p>
+                            <a href="{% url 'meus-dados' %}"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-user"></use></svg><span>Meus dados</span></a>
+                            <a href="{% url 'trocar-senha' %}"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-lock"></use></svg><span>Alterar senha</span></a>
+                        </div>
+                    </details>
+                    <form class="sair-superior" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}<button type="submit" title="Sair da conta" aria-label="Sair da conta"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-log-out"></use></svg><span class="sair-rotulo">Sair</span></button>
+                    </form>
+                </div>
+            </header>
+            <aside class="menu-lateral">
+
+                <nav class="menu-navegacao">
+                    <p>Início</p>
+                    <a href="{% url 'pagina-inicial' %}" class="{% if pagina_ativa == 'pagina-inicial' %}ativo{% endif %}" data-elo-cor="azul"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-dashboard"></use></svg></span><b>Página inicial</b></a>
+                    {% if request.perfil_elo.tipo_perfil == 'PROFESSOR' and not request.perfil_elo.gestor and not tem_vinculo_aee %}
+                        <p>Meu acompanhamento</p>
+                        <a href="{% url 'profissional-estudantes' %}" class="{% if pagina_ativa == 'profissional-estudantes' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Meus alunos</b></a>
+                        <a href="{% url 'documentos-lista' %}" class="{% if pagina_ativa == 'documentos' %}ativo{% endif %}" data-elo-cor="verde"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-file-text"></use></svg></span><b>Documentos e relatórios</b></a>
+                    {% elif request.perfil_elo.tipo_perfil == 'PROFESSOR' %}
+
+                        {% if not request.perfil_elo.gestor %}
+                        <p>Meu acompanhamento</p>
+                        <a href="{% url 'profissional-estudantes' %}" class="{% if pagina_ativa == 'profissional-estudantes' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Meus alunos</b></a>
+                        {% endif %}
+                        {% if not request.perfil_elo.gestor %}
+                        <a href="{% url 'aluno-listar' %}" data-elo-cor="azul"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Cadastros dos meus alunos</b></a>
+                        <a href="{% url 'solicitacao-senha-listar' %}" data-elo-cor="amarelo"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-key"></use></svg></span><b>Pedidos de senha {% if pedidos_senha_pendentes %}({{ pedidos_senha_pendentes }}){% endif %}</b></a>
+                        {% endif %}
+                        {% if request.perfil_elo.gestor %}
+                        <p>
+                            Cadastros e vínculos
+                        </p>
+                        {% if request.perfil_elo.gestor %}
+                            <a href="{% url 'auditoria' %}" class="{% if pagina_ativa == 'auditoria' %}ativo{% endif %}" data-elo-cor="azul"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-list-check"></use></svg></span><b>Auditoria</b></a>
+                        {% endif %}
+                        <a href="{% url 'usuario-criar' %}" class="{% if pagina_ativa == 'usuarios' %}ativo{% endif %}" data-elo-cor="amarelo"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-user-plus"></use></svg></span><b>Cadastrar usuário</b></a>
+                        <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Alunos</b></a>
+                        <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-presentation"></use></svg></span><b>Professores</b></a>
+                        <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-users"></use></svg></span><b>Responsáveis</b></a>
+                        {% if request.perfil_elo.gestor %}
+                        <a href="{% url 'solicitacao-senha-listar' %}" class="{% if pagina_ativa == 'solicitacoes-senha' %}ativo{% endif %}" data-elo-cor="amarelo"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-key"></use></svg></span><b>Pedidos de senha {% if pedidos_senha_pendentes %}({{ pedidos_senha_pendentes }}){% endif %}</b></a>
+                        <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-link"></use></svg></span><b>Vínculos dos alunos</b></a>
+                        {% endif %}
+
+                        {% endif %}
+                        <p>
+                            Acompanhamento
+                        </p>
+                        <a href="{% url 'meta-listar' %}" class="{% if pagina_ativa == 'metas' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-target"></use></svg></span><b>Metas</b></a>
+                        <a href="{% url 'atividade-listar' %}" class="{% if pagina_ativa == 'atividades' %}ativo{% endif %}" data-elo-cor="coral"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-clipboard-check"></use></svg></span><b>Atividades{% if aprovacoes_pendentes %} ({{ aprovacoes_pendentes }}){% endif %}</b></a>
+                        <a href="{% url 'documentos-lista' %}" class="{% if pagina_ativa == 'documentos' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-file-text"></use></svg></span><b>Documentos e relatórios</b></a>
+
+                    {% else %}
+
+                        <p>
+                            Meu acompanhamento
+                        </p>
+                        {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+                        <a href="{% url 'familia-estudantes' %}" class="{% if pagina_ativa == 'familia' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-users"></use></svg></span><b>Meus filhos</b></a>
+                        {% endif %}
+                        {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+                        <a href="{% url 'documentos-lista' %}" class="{% if pagina_ativa == 'documentos' %}ativo{% endif %}" data-elo-cor="verde"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-file-text"></use></svg></span><b>Documentos disponíveis</b></a>
+                        {% endif %}
+                        {% if request.perfil_elo.tipo_perfil == 'ALUNO' or tem_area_estudante %}
+                        <a href="{% url 'minhas-atividades' %}" class="{% if pagina_ativa == 'minhas-atividades' %}ativo{% endif %}" data-elo-cor="coral"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-clipboard-check"></use></svg></span><b>Atividades</b></a>
+                        {% endif %}
+                        <a href="{% url 'meta-listar' %}" class="{% if pagina_ativa == 'metas' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-target"></use></svg></span><b>Metas</b></a>
+                    {% endif %}
+
+                </nav>
+
+                <nav class="links-legais-menu" aria-label="Documentos legais">
+                    <a href="{% url 'termos-uso' %}">Termos de Uso</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="{% url 'politica-privacidade' %}">Privacidade</a>
+                </nav>
+
+            </aside>
+
+            <button id="alternar-menu" class="alternar-menu" type="button" aria-label="Minimizar menu" aria-expanded="true">
+                <svg class="icone-alternar-menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+            </button>
+
+            <main class="conteudo" id="conteudo-principal">
+                {% if messages %}
+
+                    <div class="mensagens" role="status">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}">
+                                {{ message }}
+                            </p>
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
+                {% block conteudo %}
+                {% endblock %}
+
+            </main>
+
+        </div>
+
+        <script src="{% static 'aplicacao/js/menu-lateral.js' %}?v=20261112-seta-centralizada"></script>
+        <script src="{% static 'aplicacao/js/acoes-formulario.js' %}?v=20261112-dialogo-documentos"></script>
+        <script src="{% static 'aplicacao/js/selecao-pesquisavel.js' %}?v=20261113-busca-select"></script>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261112-requisitos">
+{% endblock %}
+{% block titulo_pagina %}ELO - Solicitar recuperação de senha{% endblock %}
+{% block conteudo %}
+<section class="painel cartao-publico">
+    <span class="icone-vazio" aria-hidden="true">🔑</span>
+    <p class="caminho">Cuidando do seu acesso</p>
+    <h1>Esqueceu sua senha?</h1>
+    <p class="subtitulo">Solicite ajuda para recuperar seu acesso ao ELO.</p>
+    {% if enviado %}
+        <div class="aviso-informativo" role="status">
+            <h2>Solicitação recebida</h2>
+            <p>Se o usuário estiver cadastrado e elegível, a solicitação será encaminhada aos profissionais autorizados.</p>
+            <p>Entre em contato com a escola para confirmar sua identidade e receber uma senha temporária. Nunca compartilhe sua senha definitiva.</p>
+        </div>
+    {% else %}
+        <form method="post" class="formulario-senha formulario-recuperacao" novalidate>
+            {% csrf_token %}
+            {% for erro in formulario.non_field_errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+            <div class="grupo-campo">
+                <label for="{{ formulario.usuario.id_for_label }}">{{ formulario.usuario.label }}</label>
+                {{ formulario.usuario }}
+                {% for erro in formulario.usuario.errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+            </div>
+            <button class="botao-principal" type="submit">Solicitar redefinição de senha</button>
+        </form>
+        <div class="aviso-informativo">
+            <h2>Como funciona?</h2>
+            <p>Pedidos de alunos e responsáveis são vistos pelo professor AEE vinculado e pelo gestor. Pedidos de professores são vistos apenas pelo gestor.</p>
+            <p>Se você não conseguir solicitar pelo sistema, procure a escola para confirmar sua identidade.</p>
+        </div>
+    {% endif %}
+    <p><a href="{% url 'admin-recuperar-senha' %}">Administrador? Recupere a senha com o Microsoft Authenticator</a></p>
+    <a class="sair-senha" href="{% url 'login' %}">Voltar para entrar</a>
+</section>
+{% endblock %}

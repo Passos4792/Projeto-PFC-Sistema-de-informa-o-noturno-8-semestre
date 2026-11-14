@@ -1,0 +1,139 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Atividades{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Acompanhamento / Atividades</p>
+        <h1>Atividades</h1>
+        <p class="subtitulo">Cadastre atividades para casa, acompanhe entregas e avalie as solicitações em um só lugar.</p>
+    </div>
+    <a class="botao-principal" href="{% url 'atividade-criar' %}">+ Nova atividade</a>
+</header>
+
+<div class="elo-google-aviso-compacto" role="note">
+    <svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-calendar"></use></svg>
+    <span><strong>Google Agenda automático:</strong> atividades com prazo são enviadas aos alunos e responsáveis que conectaram suas contas. A conexão é feita por eles em Atividades ou Meus dados.</span>
+</div>
+
+<nav class="abas-atividades" aria-label="Filtrar atividades" data-sincronizar-busca>
+    <a href="{% url 'atividade-listar' %}?filtro=todas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'todas' %}aria-current="page"{% endif %}>Todas</a>
+    <a href="{% url 'atividade-listar' %}?filtro=pendentes{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'pendentes' %}aria-current="page"{% endif %}>Pendentes</a>
+    <a href="{% url 'atividade-listar' %}?filtro=aprovacoes{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'aprovacoes' %}aria-current="page"{% endif %}>Aguardando avaliação{% if pendentes %} ({{ pendentes }}){% endif %}</a>
+    <a href="{% url 'atividade-listar' %}?filtro=concluidas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'concluidas' %}aria-current="page"{% endif %}>Concluídas</a>
+    <a href="{% url 'atividade-listar' %}?filtro=canceladas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'canceladas' %}aria-current="page"{% endif %}>Canceladas</a>
+    <a href="{% url 'atividade-listar' %}?filtro=historico{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'historico' %}aria-current="page"{% endif %}>Histórico</a>
+</nav>
+
+<form method="get" class="painel filtros-painel filtros-atividades" id="busca-atividades" role="search" aria-label="Pesquisar e filtrar atividades" data-busca-automatica>
+    <input type="hidden" name="filtro" value="{{ visao }}">
+    {% if aluno_selecionado_pk %}<input type="hidden" name="aluno" value="{{ aluno_selecionado_pk }}">{% endif %}
+    <div class="grupo-campo filtro-busca">
+        <label for="filtro-busca">Pesquisar</label>
+        <input class="campo-formulario" type="search" name="busca" id="filtro-busca" value="{{ busca }}" maxlength="100" placeholder="Digite o nome do aluno, da atividade ou do conteúdo">
+    </div>
+    {% if visao == 'historico' %}
+    <div class="grupo-campo">
+        <label for="filtro-situacao">Situação</label>
+        <select class="campo-formulario" name="situacao" id="filtro-situacao" data-filtro-automatico>
+            <option value="" {% if not situacao %}selected{% endif %}>Todas</option>
+            <option value="PENDENTE" {% if situacao == 'PENDENTE' %}selected{% endif %}>Pendente</option>
+            <option value="CONCLUIDA" {% if situacao == 'CONCLUIDA' %}selected{% endif %}>Concluída</option>
+            <option value="CANCELADA" {% if situacao == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+        </select>
+    </div>
+    <div class="grupo-campo"><label for="filtro-ano">Ano</label><input class="campo-formulario" id="filtro-ano" type="number" min="2000" max="2100" step="1" name="ano" value="{{ ano }}" placeholder="Todos" data-filtro-automatico></div>
+    {% elif visao == 'aprovacoes' %}
+    <div class="grupo-campo">
+        <label for="filtro-situacao">Situação da entrega</label>
+        <select class="campo-formulario" id="filtro-situacao" name="situacao" data-filtro-automatico>
+            <option value="PENDENTE" {% if situacao == 'PENDENTE' %}selected{% endif %}>Aguardando avaliação</option>
+            <option value="APROVADA" {% if situacao == 'APROVADA' %}selected{% endif %}>Aprovadas</option>
+            <option value="RECUSADA" {% if situacao == 'RECUSADA' %}selected{% endif %}>Recusadas</option>
+            <option value="" {% if situacao == '' %}selected{% endif %}>Todas</option>
+        </select>
+    </div>
+    {% for campo in formulario_filtros %}
+    <div class="grupo-campo">{{ campo.label_tag }}{{ campo }}</div>
+    {% endfor %}
+    {% endif %}
+    <noscript><button class="botao-secundario" type="submit">Filtrar</button></noscript>
+    <a class="limpar-filtros" href="{% url 'atividade-listar' %}?filtro={{ visao }}">Limpar filtros</a>
+    <small data-erro-busca role="alert" hidden>Não foi possível atualizar a lista. Pressione Enter para tentar novamente.</small>
+    {% for aluno in alunos_disponiveis %}{% if aluno.pk == aluno_selecionado_pk %}
+    <p class="nota-painel">Mostrando só as atividades de <strong>{{ aluno.nome_completo }}</strong>. <a href="{% url 'atividade-listar' %}?filtro={{ visao }}">Ver todos os alunos</a></p>
+    {% endif %}{% endfor %}
+</form>
+
+<section class="painel painel-lista">
+    <div class="painel-cabecalho cabecalho-registros">
+        <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>{% if visao == 'aprovacoes' %}solicitações{% else %}atividades{% endif %}</span></div>
+        <div>
+            <h2>{% if visao == 'aprovacoes' %}Avaliação das entregas{% elif visao == 'historico' %}Histórico de atividades{% else %}Atividades dos alunos{% endif %}</h2>
+            <p data-contagem-lista role="status">{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ pagina|length }} nesta página.</p>
+        </div>
+    </div>
+    <div data-resultados-lista>
+        {% if formulario_filtros.errors %}<div class="erro-campo" role="alert">{{ formulario_filtros.errors }}</div>{% endif %}
+        {% if visao == 'aprovacoes' %}
+        <div class="grade-metas grade-aprovacoes">
+            {% for solicitacao in pagina %}
+            <article class="painel cartao-meta">
+                <span class="etiqueta">{{ solicitacao.get_situacao_display }}</span>
+                <h3>{{ solicitacao.atividade.titulo }}</h3>
+                <p class="aluno-meta">{{ solicitacao.aluno.nome_completo }}</p>
+                <p class="nota-painel">Solicitada em {{ solicitacao.solicitado_em|date:'d/m/Y H:i' }} por {{ solicitacao.solicitante|default:'Conta removida' }}.</p>
+                {% if solicitacao.mensagem %}<p><strong>Mensagem:</strong> {{ solicitacao.mensagem }}</p>{% endif %}
+                {% if solicitacao.resposta_aluno %}<div class="resposta-entrega"><strong>Resposta do aluno:</strong><p>{{ solicitacao.resposta_aluno|linebreaksbr }}</p></div>{% endif %}
+                {% if solicitacao.anexo %}<p><a class="botao-secundario" href="{% url 'entrega-anexo' solicitacao.pk %}">Baixar anexo enviado</a></p>{% endif %}
+                {% if solicitacao.situacao == 'PENDENTE' %}
+                <form data-decisao action="{% url 'api-decidir-conclusao' solicitacao.pk %}" method="post">{% csrf_token %}
+                    <label for="resposta-{{ solicitacao.pk }}">Orientação ao aluno (obrigatória para recusar)</label>
+                    <textarea class="campo-formulario" id="resposta-{{ solicitacao.pk }}" name="resposta" rows="3" maxlength="500"></textarea>
+                    <div class="acoes-cartao"><button class="botao-principal" name="decisao" value="APROVADA">Aprovar realização</button><button class="botao-secundario" name="decisao" value="RECUSADA">Pedir revisão</button></div>
+                    <p data-retorno role="status"></p>
+                </form>
+                {% else %}<p>{{ solicitacao.resposta|default:'Realização confirmada pelo professor.' }}</p><p class="nota-painel">{{ solicitacao.professor|default:'Professor' }} · {{ solicitacao.respondido_em|date:'d/m/Y H:i' }}</p>{% endif %}
+            </article>
+            {% empty %}
+            <div class="vazio-painel"><h3>Nenhuma solicitação encontrada</h3><p>{% if busca %}Nenhum resultado para “{{ busca }}”. Tente outro termo ou outro filtro.{% else %}Quando um aluno ou responsável enviar uma atividade, ela aparecerá aqui para avaliação.{% endif %}</p></div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="tabela-responsiva">
+            <table>
+                <thead><tr><th>Atividade</th><th>Aluno</th><th>Conteúdo</th><th>Entrega</th><th>Situação</th><th>Ações</th></tr></thead>
+                <tbody>
+                    {% for atividade in pagina %}
+                    <tr>
+                        <td><strong>{{ atividade.titulo }}</strong></td>
+                        <td>{{ atividade.aluno.nome_completo }}</td>
+                        <td>{{ atividade.disciplina.nome|default:'Sem conteúdo' }}</td>
+                        <td>{{ atividade.data_entrega|date:'d/m/Y'|default:'—' }}</td>
+                        <td>{% if atividade.aguardando_aprovacao %}<span class="situacao">Aguardando avaliação</span>{% else %}{{ atividade.get_situacao_display }}{% endif %}</td>
+                        <td class="acoes">
+                            {% if atividade.aguardando_aprovacao %}<a class="botao-extra" href="{% url 'atividade-listar' %}?filtro=aprovacoes&amp;aluno={{ atividade.aluno_id }}">Avaliar</a>{% endif %}
+                            <a class="botao-extra" href="{% url 'atividade-detalhe' atividade.pk %}{% if visao == 'historico' %}?origem=historico{% endif %}">Detalhes</a>
+                            <a class="botao-editar" href="{% url 'atividade-editar' atividade.pk %}">Editar</a>
+                            <a class="botao-excluir" href="{% url 'atividade-excluir' atividade.pk %}">Excluir</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="sem-dados"><strong>Nenhuma atividade encontrada.</strong><p>{% if busca %}Nenhum resultado para “{{ busca }}”. Tente outro termo ou outro filtro.{% else %}Cadastre uma atividade ou escolha outro filtro para consultar os registros.{% endif %}</p></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if pagina.paginator.num_pages > 1 %}
+        <nav class="rodape-painel acoes-cartao" aria-label="Páginas de atividades">
+            {% if pagina.has_previous %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+            {% if pagina.has_next %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
+{% if visao == 'aprovacoes' %}<script src="{% static 'aplicacao/js/solicitacoes.js' %}" defer></script>{% endif %}
+{% endblock %}

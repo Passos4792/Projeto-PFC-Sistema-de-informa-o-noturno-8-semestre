@@ -1,0 +1,53 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_finais %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/vinculos.css' %}?v=20261110-organizacao">
+{% endblock %}
+{% block titulo_pagina %}ELO - Vínculos dos alunos{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina elo-vinculos-cabecalho">
+  <div><p class="caminho">Cadastros / Vínculos</p><h1>Vínculos dos alunos</h1>
+  <p class="subtitulo">Aluno, família e equipe pedagógica organizados em uma única ficha.</p></div>
+  <a class="elo-link-voltar" href="{% url 'vinculo-listar' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar aos vínculos</span></a>
+</header>
+<section class="painel elo-vinculos-ficha">
+  <div class="painel-cabecalho"><div><h2>{% if selecionado %}Editar vínculos de {{ selecionado.nome_completo }}{% else %}Cadastrar vínculos{% endif %}</h2>
+    <p>Selecione os profissionais responsáveis por cada função. Campos opcionais podem ficar vazios.</p></div>
+  </div>
+  <form class="elo-form-vinculos" method="post" novalidate>
+    {% csrf_token %}<input type="hidden" name="acao" value="salvar_ficha">
+    {% for erro in formulario.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+    <fieldset class="elo-vinculos-grupo"><legend>Estudante e família</legend>
+    <div class="elo-vinculos-grade">
+      {% for campo in formulario %}{% if campo.name == 'aluno' or campo.name == 'responsavel' %}
+      <div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }} *</label>{{ campo }}
+      {% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endif %}{% endfor %}
+    </div></fieldset>
+    <fieldset class="elo-vinculos-grupo"><legend>Equipe pedagógica</legend>
+    <div class="elo-vinculos-grade">
+      {% for campo in formulario %}{% if campo.name == 'professor_aee' or campo.name == 'professor_regente' or campo.name == 'professor_acompanhante' %}
+      <div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>{{ campo }}
+      {% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endif %}{% endfor %}
+    </div></fieldset>
+    <fieldset class="elo-vinculos-grupo"><legend>Permissões e situação</legend>
+      <div class="elo-vinculos-grade elo-vinculos-config">
+        <div class="grupo-campo"><label for="{{ formulario.data_vinculo.id_for_label }}">Data de início *</label>{{ formulario.data_vinculo }}
+          {% for erro in formulario.data_vinculo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>
+        <div class="elo-switch-cartao"><label class="elo-switch-linha" for="{{ formulario.ativo.id_for_label }}"><span class="elo-switch"><input type="checkbox" name="ativo" id="{{ formulario.ativo.id_for_label }}" {% if formulario.ativo.value %}checked{% endif %}><span class="elo-switch-trilho" aria-hidden="true"></span></span><span><strong>Vínculo ativo</strong><small>Habilita os vínculos com a escola.</small></span></label></div>
+      </div>
+      <div class="elo-switch-cartao elo-switch-familia"><label class="elo-switch-linha" for="{{ formulario.mesclar_perfis.id_for_label }}"><span class="elo-switch"><input type="checkbox" name="mesclar_perfis" id="{{ formulario.mesclar_perfis.id_for_label }}" {% if formulario.mesclar_perfis.value %}checked{% endif %}><span class="elo-switch-trilho" aria-hidden="true"></span></span><span><strong>Mesclar perfis</strong><small>Permite que o responsável principal acesse as atividades pela própria conta e envie respostas em nome do filho.</small></span></label>
+      <p class="elo-permissao-nota">Desativado: o responsável ainda consulta os documentos publicados do filho, mas não usa a área de atividades do aluno. Os cadastros continuam separados.</p></div>
+    </fieldset>
+    <div class="acoes-formulario"><a class="botao-secundario" href="{% url 'vinculo-listar' %}">Cancelar</a><button type="submit" class="botao-principal">Salvar vínculos</button></div>
+  </form>
+</section>
+<section class="painel elo-vinculos-ficha elo-vinculos-secundarios">
+  <div class="painel-cabecalho"><div><h2>Outros responsáveis</h2><p>Adicione outro familiar sem alterar o responsável principal.</p></div></div>
+  <form method="post" class="elo-form-vinculos" novalidate>{% csrf_token %}<input type="hidden" name="acao" value="adicionar_familiar">
+    <div class="elo-vinculos-grade">{% for campo in familiar_form %}{% if campo.name == 'aluno' or campo.name == 'responsavel' %}<div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endif %}{% endfor %}</div>
+    <div class="elo-switch-cartao elo-switch-familia"><label class="elo-switch-linha" for="{{ familiar_form.mesclar_perfis.id_for_label }}"><span class="elo-switch"><input type="checkbox" name="mesclar_perfis" id="{{ familiar_form.mesclar_perfis.id_for_label }}" {% if familiar_form.mesclar_perfis.value %}checked{% endif %}><span class="elo-switch-trilho" aria-hidden="true"></span></span><span><strong>Mesclar perfis com este responsável</strong><small>Autorizar este familiar a ajudar o aluno diretamente nas atividades.</small></span></label></div>
+    {% for erro in familiar_form.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+    <input type="hidden" name="ativo" value="on"><div class="acoes-formulario"><button class="botao-secundario" type="submit">Adicionar responsável</button></div>
+  </form>
+</section>
+{% endblock %}

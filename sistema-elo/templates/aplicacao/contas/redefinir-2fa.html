@@ -1,0 +1,39 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261112-requisitos">
+{% endblock %}
+{% block titulo_pagina %}ELO - Redefinir autenticação em duas etapas{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Início / {{ perfil_alvo.get_tipo_perfil_display }} / Redefinir 2FA</p>
+        <h1>Redefinir autenticação em duas etapas</h1>
+        <p class="subtitulo">Use quando o usuário perder o celular ou trocar de aparelho e não tiver mais os códigos de recuperação.</p>
+    </div>
+</header>
+<section class="painel cartao-senha cartao-redefinicao">
+    <div class="destinatario-senha">
+        <strong>{{ pessoa.nome_completo }}</strong>
+        <span>{{ perfil_alvo.get_tipo_perfil_display }} · Usuário: {{ perfil_alvo.usuario }}</span>
+    </div>
+    {% if configurado %}
+    <p class="subtitulo">Confira a identidade do usuário antes de continuar. Ao confirmar:</p>
+    <ul class="subtitulo">
+        <li>o Authenticator atual e os códigos de recuperação deixam de funcionar;</li>
+        <li>os navegadores confiáveis são revogados e as sessões abertas são encerradas;</li>
+        <li>o acesso <strong>continua exigindo</strong> a autenticação em duas etapas: no próximo login, depois da senha, o usuário deverá cadastrar um novo Authenticator antes de usar o ELO.</li>
+    </ul>
+    <form method="post" class="formulario-senha">
+        {% csrf_token %}
+        <div class="acoes-senha">
+            <button class="botao-principal" type="submit">Redefinir 2FA</button>
+            <a class="sair-senha" href="{% url rota_voltar %}">Cancelar</a>
+        </div>
+    </form>
+    {% else %}
+    <p class="subtitulo">Este usuário ainda não configurou a autenticação em duas etapas. Ela será exigida no próximo acesso.</p>
+    <div class="acoes-senha"><a class="sair-senha" href="{% url rota_voltar %}">Voltar</a></div>
+    {% endif %}
+</section>
+{% endblock %}

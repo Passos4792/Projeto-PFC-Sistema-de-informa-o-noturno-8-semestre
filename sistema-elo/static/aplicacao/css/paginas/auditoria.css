@@ -1,0 +1,74 @@
+.formulario-auditoria {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    padding: 20px;
+}
+
+
+.formulario-auditoria p {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+}
+
+
+.formulario-auditoria input,
+.formulario-auditoria select {
+    font: inherit;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+
+.painel nav[aria-label="Paginação da auditoria"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+}
+
+
+.formulario-auditoria {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 26px;
+    border-bottom: 1px solid var(--borda);
+}
+
+
+.formulario-auditoria label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.formulario-auditoria input,
+.formulario-auditoria select {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    border-color: #cbd4e0;
+    background: white;
+}
+
+
+.formulario-auditoria .errorlist {
+    grid-column: 1 / -1;
+    color: #a54040;
+}
+
+
+@media (max-width: 1050px) {
+    .formulario-auditoria {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 580px) {
+    .formulario-auditoria { grid-template-columns: 1fr; }
+}

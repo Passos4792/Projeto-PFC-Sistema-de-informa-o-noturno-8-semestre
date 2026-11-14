@@ -1,0 +1,45 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Meus dados<script src="{% static 'aplicacao/js/foto-perfil.js' %}" defer></script>
+{% endblock %}
+{% block conteudo %}
+<div class="pagina-meus-dados">
+    <header class="topo-pagina"><div><p class="caminho">Meu perfil / Meus dados</p><h1>Meus dados</h1><p class="subtitulo">Gerencie sua foto, sua senha e as integrações da sua conta.</p></div></header>
+    <div class="grade-meus-dados">
+        <section class="painel cartao-meus-dados" aria-labelledby="dados-pessoais-titulo">
+            <h2 id="dados-pessoais-titulo">Dados pessoais</h2>
+            <div class="dados-item"><small>Nome completo</small><strong>{{ perfil_nome }}</strong></div>
+            <div class="dados-item"><small>Usuário</small><strong>{{ request.user.username }}</strong></div>
+            <div class="dados-item"><small>E-mail</small><strong>{{ request.user.email|default:'Não informado' }}</strong></div>
+            <div class="dados-item"><small>Tipo de perfil</small><strong>{{ request.perfil_elo.get_tipo_perfil_display }}</strong></div>
+            <p><a class="botao-secundario" href="{% url 'trocar-senha' %}">Alterar minha senha</a></p>
+            {% if request.perfil_elo.tipo_perfil == 'PROFESSOR' or request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+            <p><a class="botao-secundario" href="{% url '2fa-seguranca' %}">Segurança e dispositivos confiáveis</a></p>
+            {% endif %}
+        </section>
+        <section class="painel cartao-meus-dados" aria-labelledby="foto-perfil-titulo">
+            <h2 id="foto-perfil-titulo">Foto de perfil</h2>
+            <span class="foto-perfil-grande">{% if perfil_tem_foto %}<img src="{% url 'foto-perfil' %}" alt="Sua foto de perfil" width="85" height="85">{% else %}{{ perfil_iniciais }}{% endif %}</span>
+            <p>Sem uma foto, exibimos as iniciais do seu nome e sobrenome.</p>
+            <form class="foto-perfil-form" method="post" enctype="multipart/form-data" action="{% url 'foto-perfil-alterar' %}">
+                {% csrf_token %}
+                <label class="foto-instrucao" for="id_foto_perfil">Sua foto (JPG ou PNG, até 2 MB)</label>
+                <div class="foto-seletor">
+                    <input class="foto-campo-arquivo" type="file" id="id_foto_perfil" name="foto" accept="image/jpeg,image/png,.jpg,.jpeg,.png" aria-describedby="foto-nome-arquivo" required>
+                    <label class="foto-selecionar" for="id_foto_perfil"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-upload"></use></svg> Escolher imagem</label>
+                    <span id="foto-nome-arquivo" class="foto-nome-arquivo" aria-live="polite">Nenhum arquivo selecionado</span>
+                </div>
+                <div class="acoes-foto"><button class="botao-principal" type="submit">Salvar foto</button></div>
+            </form>
+            {% if perfil_tem_foto %}<form method="post" action="{% url 'foto-perfil-remover' %}">{% csrf_token %}<button class="botao-secundario" type="submit">Remover foto</button></form>{% endif %}
+        </section>
+        <section class="painel cartao-meus-dados cartao-integracoes" aria-labelledby="titulo-integracoes">
+            <h2 id="titulo-integracoes">Integrações</h2>
+            {% if request.perfil_elo.tipo_perfil == 'ALUNO' or request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+                {% include 'aplicacao/partials/google-agenda.html' with origem='perfil' %}
+            {% else %}<p>O Google Agenda é conectado individualmente pelo aluno e pelo responsável para receber atividades.</p>{% endif %}
+        </section>
+    </div>
+</div>
+<script src="{% static 'aplicacao/js/foto-perfil.js' %}" defer></script>
+{% endblock %}

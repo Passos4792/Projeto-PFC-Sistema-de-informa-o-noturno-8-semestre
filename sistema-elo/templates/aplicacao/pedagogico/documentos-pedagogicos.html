@@ -1,0 +1,122 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/documentos.css' %}?v=20261112-busca-padrao">
+{% endblock %}
+{% block titulo_pagina %}ELO - Documentos pedagógicos{% endblock %}
+{% block conteudo %}
+<div class="elo-documentos-pagina">
+    <header class="topo-pagina elo-documentos-topo">
+        <div>
+            <p class="caminho">Acompanhamento / Documentação</p>
+            <h1>Documentos pedagógicos</h1>
+            <p class="subtitulo">Registros do acompanhamento escolar, organizados por estudante. A família visualiza apenas os documentos publicados.</p>
+        </div>
+    </header>
+
+    {% if eh_professor %}
+    <section class="painel elo-documentos-painel elo-documentos-criar" aria-labelledby="titulo-novo-registro">
+        <div class="painel-cabecalho elo-documentos-cabecalho">
+            <div>
+                <h2 id="titulo-novo-registro">Novo registro</h2>
+                <p>Selecione o tipo de documento para começar. Você poderá salvar um rascunho.</p>
+            </div>
+        </div>
+        <div class="elo-documentos-acoes">
+            <a class="botao-principal" href="{% url 'relatorio-criar' %}"><span aria-hidden="true">＋</span> Relatório livre</a>
+            {% if pode_pei %}
+            <a class="botao-secundario" href="{% url 'documento-criar' 'PEI' %}"><span aria-hidden="true">＋</span> PEI</a>
+            {% endif %}
+            {% if pode_paee %}
+            <a class="botao-secundario" href="{% url 'documento-criar' 'ESTUDO' %}"><span aria-hidden="true">＋</span> Estudo de Caso</a>
+            <a class="botao-secundario" href="{% url 'documento-criar' 'PAEE' %}"><span aria-hidden="true">＋</span> PAEE</a>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if eh_professor %}
+    <nav class="abas-atividades" aria-label="Filtrar documentos e relatórios" data-sincronizar-busca>
+        <a href="?filtro=todos{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'todos' %}aria-current="page"{% endif %}>Todos</a>
+        <a href="?filtro=rascunhos{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'rascunhos' %}aria-current="page"{% endif %}>Rascunhos</a>
+        <a href="?filtro=finalizados{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'finalizados' %}aria-current="page"{% endif %}>Finalizados</a>
+        <a href="?filtro=publicados{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'publicados' %}aria-current="page"{% endif %}>Disponíveis à família</a>
+    </nav>
+    {% endif %}
+
+    <section class="painel elo-documentos-painel elo-documentos-busca" aria-label="Pesquisar documentos e relatórios">
+        <div class="painel-cabecalho cabecalho-registros">
+            <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>registros</span></div>
+            <div>
+                <h2>Pesquisar registros</h2>
+                <p data-contagem-lista aria-live="polite">{{ pagina_documentos.paginator.count }} documento(s) e {{ pagina_relatorios.paginator.count }} relatório(s) encontrado(s).</p>
+            </div>
+            <form method="get" class="busca" role="search" data-busca-automatica>
+                {% if request.GET.aluno %}<input type="hidden" name="aluno" value="{{ request.GET.aluno }}">{% endif %}
+                {% if eh_professor %}<input type="hidden" name="filtro" value="{{ visao }}">{% endif %}
+                <input type="search" name="busca" value="{{ busca }}" maxlength="100" placeholder="Buscar aluno, tipo ou título" aria-label="Buscar documentos e relatórios por aluno, tipo ou título">
+                <small data-erro-busca role="alert" hidden>Não foi possível atualizar a lista. Pressione Enter para tentar novamente.</small>
+            </form>
+        </div>
+    </section>
+
+    <div class="elo-documentos-grade" data-resultados-lista>
+        <section class="painel elo-documentos-painel" id="documentos" aria-labelledby="titulo-planos">
+            <div class="painel-cabecalho elo-documentos-cabecalho">
+                <div>
+                    <h2 id="titulo-planos">Planos e documentos</h2>
+                    <p>PEI, Estudo de Caso e PAEE</p>
+                </div>
+            </div>
+            <div class="elo-documentos-lista">
+                {% for d in documentos %}
+                <article class="elo-documentos-registro">
+                    <div class="elo-documentos-registro-info">
+                        <strong>{{ d.get_tipo_display }}</strong>
+                        <p>{{ d.aluno.nome_completo }}</p>
+                        <small>{{ d.ano_letivo }}{% if d.bimestre %} · {{ d.bimestre }}º bimestre{% endif %} · {{ d.get_situacao_display }}</small>
+                    </div>
+                    <a class="botao-secundario" href="{% url 'documento-detalhe' d.pk %}" aria-label="Abrir {{ d.get_tipo_display }} de {{ d.aluno.nome_completo }}">Abrir</a>
+                </article>
+                {% empty %}
+                <div class="elo-documentos-vazio">
+                    <span class="elo-documentos-vazio-icone" aria-hidden="true">▤</span>
+                    <strong>Nenhum documento disponível</strong>
+                    <p>{% if busca or visao != 'todos' %}Tente outro termo ou outro filtro.{% elif eh_professor %}Os planos preenchidos aparecerão aqui.{% else %}Os documentos publicados pela escola aparecerão aqui.{% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% include 'aplicacao/partials/paginacao.html' with pagina=pagina_documentos filtros=filtros_documentos parametro='pagina_documentos' titulo='documentos' ancora='documentos' %}
+        </section>
+
+        <section class="painel elo-documentos-painel" id="relatorios" aria-labelledby="titulo-relatorios">
+            <div class="painel-cabecalho elo-documentos-cabecalho">
+                <div>
+                    <h2 id="titulo-relatorios">Relatórios descritivos</h2>
+                    <p>Registros das observações após os atendimentos</p>
+                </div>
+            </div>
+            <div class="elo-documentos-lista">
+                {% for r in relatorios %}
+                <article class="elo-documentos-registro">
+                    <div class="elo-documentos-registro-info">
+                        <strong>{{ r.titulo }}</strong>
+                        <p>{{ r.aluno.nome_completo }}</p>
+                        <small>{{ r.data_referencia|date:'d/m/Y' }} · {{ r.get_situacao_display }}</small>
+                    </div>
+                    <a class="botao-secundario" href="{% url 'relatorio-detalhe' r.pk %}" aria-label="Abrir relatório {{ r.titulo }} de {{ r.aluno.nome_completo }}">Abrir</a>
+                </article>
+                {% empty %}
+                <div class="elo-documentos-vazio">
+                    <span class="elo-documentos-vazio-icone" aria-hidden="true">✎</span>
+                    <strong>Nenhum relatório disponível</strong>
+                    <p>{% if busca or visao != 'todos' %}Tente outro termo ou outro filtro.{% elif eh_professor %}Os relatórios descritivos criados aparecerão aqui.{% else %}Os relatórios publicados pela escola aparecerão aqui.{% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% include 'aplicacao/partials/paginacao.html' with pagina=pagina_relatorios filtros=filtros_relatorios parametro='pagina_relatorios' titulo='relatórios' ancora='relatorios' %}
+        </section>
+    </div>
+</div>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
+{% endblock %}

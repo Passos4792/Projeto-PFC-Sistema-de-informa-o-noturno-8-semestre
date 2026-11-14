@@ -1,0 +1,9 @@
+Django==5.2.19
+djangorestframework==3.18.3
+PyMySQL[rsa]==1.2.4
+python-dotenv==1.2.4
+cryptography==50.0.2
+Pillow==13.0.0
+reportlab==4.5.1
+qrcode==8.2
+coverage==7.17.2

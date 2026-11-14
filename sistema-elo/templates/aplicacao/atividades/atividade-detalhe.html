@@ -1,0 +1,83 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/calendario.css' %}?v=20261110-organizacao">
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/atividades.css' %}?v=20261110-organizacao">
+{% endblock %}
+{% block titulo_pagina %}ELO - {{ atividade.titulo }}{% endblock %}
+{% block conteudo %}
+<div class="elo-detalhe-atividade">
+    <nav class="elo-voltar" aria-label="Voltar"><a href="{% url rota_voltar %}{% if voltar_historico %}?filtro=historico{% endif %}">← Voltar {% if voltar_historico %}ao histórico{% else %}às atividades{% endif %}</a></nav>
+    <header class="elo-detalhe-cabecalho">
+        <div class="elo-detalhe-titulo"><span class="elo-detalhe-icone" aria-hidden="true">✎</span>
+            <div><h1>{{ atividade.titulo }}</h1></div>
+        </div>
+        <span class="elo-estado {% if atividade.situacao == 'CONCLUIDA' %}elo-concluida{% elif atividade.situacao == 'CANCELADA' %}elo-cancelada{% elif ultima.situacao == 'PENDENTE' %}elo-analise{% elif ultima.situacao == 'RECUSADA' %}elo-revisao{% else %}elo-pendente{% endif %}">
+            {% if atividade.situacao == 'CONCLUIDA' %}Concluída{% elif atividade.situacao == 'CANCELADA' %}Cancelada{% elif ultima.situacao == 'PENDENTE' %}Em avaliação{% elif ultima.situacao == 'RECUSADA' %}Revisão solicitada{% else %}Pendente{% endif %}
+        </span>
+    </header>
+    <p class="elo-detalhe-meta"><strong>Aluno:</strong> {{ atividade.aluno.nome_completo }} <span aria-hidden="true">·</span> <strong>Prazo:</strong> {{ atividade.data_entrega|date:'d/m/Y'|default:'Não definido' }} <span aria-hidden="true">·</span> <strong>Professor:</strong> {{ atividade.professor.nome_completo }}</p>
+    <section class="elo-instrucoes" aria-labelledby="titulo-instrucoes">
+        <h2 id="titulo-instrucoes"><span aria-hidden="true">✍</span> O que fazer?</h2>
+        <div class="elo-descricao-professor">{{ atividade.descricao|default:'O professor ainda não adicionou orientações para esta atividade.'|linebreaks }}</div>
+        {% if atividade.material_apoio %}
+        <div class="elo-material-apoio"><span aria-hidden="true">📎</span><div><strong>Material de apoio</strong><p>Arquivo disponibilizado pelo professor</p></div><a class="botao-secundario" href="{% url 'atividade-material' atividade.pk %}">Baixar material</a></div>
+        {% endif %}
+        <div class="elo-passos-resumo">
+            <div><span>1</span> Leia as orientações do professor</div>
+            <div><span>2</span> Realize a proposta da atividade</div>
+            <div><span>3</span> {% if eh_professor or not pode_enviar_atividade %}Acompanhe a situação da atividade{% elif atividade.tipo_entrega == 'REGISTRO' %}Registre a realização, se desejar{% else %}Envie sua resposta ou uma foto{% endif %}</div>
+        </div>
+    </section>
+    {% if eh_professor %}
+        <section class="elo-bloco-entrega" aria-labelledby="titulo-entregas"><div class="elo-bloco-titulo"><div><h2 id="titulo-entregas">Entregas e registros</h2><p>Consulte as respostas e arquivos recebidos deste aluno.</p></div><a class="botao-secundario" href="{% url 'atividade-editar' atividade.pk %}">Editar atividade</a></div>
+        {% for envio in entregas %}
+            <article class="elo-entrega-recebida">
+                <div class="elo-entrega-cabecalho"><strong>{{ envio.get_situacao_display }}</strong><small>{{ envio.solicitado_em|date:'d/m/Y H:i' }} · {{ envio.solicitante|default:'Conta removida' }}</small></div>
+                {% if envio.resposta_aluno %}<div class="elo-resposta-publicada">{{ envio.resposta_aluno|linebreaks }}</div>{% endif %}
+                {% if envio.anexo %}<a class="botao-secundario" href="{% url 'entrega-anexo' envio.pk %}">Baixar anexo enviado</a>{% endif %}
+                {% if envio.mensagem %}<p><strong>Recado:</strong> {{ envio.mensagem }}</p>{% endif %}
+                {% if envio.resposta %}<p><strong>Devolutiva do professor:</strong> {{ envio.resposta }}</p>{% endif %}
+                {% if envio.situacao == 'PENDENTE' %}<a class="botao-principal" href="{% url 'atividade-listar' %}?filtro=aprovacoes&amp;aluno={{ atividade.aluno_id }}">Avaliar entrega</a>{% endif %}
+            </article>
+        {% empty %}<p class="nota-painel">Nenhuma resposta enviada para esta atividade até o momento.</p>{% endfor %}
+        {% include 'aplicacao/partials/paginacao.html' with pagina=pagina_entregas titulo='entregas' %}
+        </section>
+    {% else %}
+        <section class="elo-bloco-entrega" aria-labelledby="titulo-envio">
+        <div class="elo-bloco-titulo"><div><h2 id="titulo-envio">{% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}Atividade do estudante{% else %}Minha atividade{% endif %}</h2><p>{% if not pode_enviar_atividade %}Consulte as orientações e o andamento desta atividade.{% elif request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}Você pode ajudar o aluno a registrar e enviar a atividade.{% else %}Registre sua resposta após realizar a atividade.{% endif %}</p></div></div>
+        {% if atividade.situacao == 'CONCLUIDA' %}
+            <div class="elo-aviso-status elo-aviso-sucesso">✓ O professor confirmou a realização desta atividade.</div>
+            {% if ultima.resposta_aluno %}<div class="elo-resposta-publicada"><strong>Resposta enviada</strong>{{ ultima.resposta_aluno|linebreaks }}</div>{% endif %}
+            {% if ultima.anexo %}<p><a class="botao-secundario" href="{% url 'entrega-anexo' ultima.pk %}">Baixar minha entrega</a></p>{% endif %}
+        {% elif atividade.situacao == 'CANCELADA' %}
+            <div class="elo-aviso-status">Esta atividade foi cancelada pelo professor e não pode ser enviada.</div>
+        {% elif ultima.situacao == 'PENDENTE' %}
+            <div class="elo-aviso-status elo-aviso-analise">✓ Resposta enviada! Aguarde a avaliação do professor.</div>
+            {% if ultima.resposta_aluno %}<div class="elo-resposta-publicada"><strong>Resposta enviada</strong>{{ ultima.resposta_aluno|linebreaks }}</div>{% endif %}
+            {% if ultima.anexo %}<p><a class="botao-secundario" href="{% url 'entrega-anexo' ultima.pk %}">Baixar minha entrega</a></p>{% endif %}
+        {% else %}
+            {% if ultima.situacao == 'RECUSADA' %}<div class="elo-aviso-status elo-aviso-revisao"><strong>O professor solicitou uma revisão.</strong><p>{{ ultima.resposta|default:'Revise sua atividade e envie novamente.' }}</p></div>{% endif %}
+            {% if pode_enviar_atividade %}
+            <form class="form-envio-atividade elo-form-envio" action="{% url 'atividade-enviar' atividade.pk %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if atividade.tipo_entrega == 'REGISTRO' %}<p class="texto-ajuda">Atividade presencial: você pode registrar como foi ou enviar para confirmação sem texto e sem anexo.</p>{% else %}<p class="texto-ajuda">Envie sua resposta escrita, uma foto/PDF ou os dois. Não é preciso preencher os dois campos.</p>{% endif %}
+                <div class="grupo-campo envio-atividade-campo"><label for="resposta-aluno-{{ atividade.pk }}">Sua resposta</label><textarea class="campo-formulario" id="resposta-aluno-{{ atividade.pk }}" name="resposta_aluno" rows="5" maxlength="10000" placeholder="Escreva como você realizou a atividade..."></textarea></div>
+                <div class="grupo-campo envio-atividade-campo"><label for="anexo-{{ atividade.pk }}">Enviar foto ou documento (opcional)</label><input class="campo-formulario" id="anexo-{{ atividade.pk }}" type="file" name="anexo" accept=".pdf,.png,.jpg,.jpeg" aria-describedby="anexo-ajuda-{{ atividade.pk }}"><small class="texto-ajuda" id="anexo-ajuda-{{ atividade.pk }}">PDF, JPG ou PNG, até 8 MB.</small></div>
+                <details class="observacao-envio"><summary>Adicionar recado ao professor (opcional)</summary><div class="grupo-campo envio-atividade-campo"><label for="mensagem-{{ atividade.pk }}">Recado ao professor</label><textarea class="campo-formulario" id="mensagem-{{ atividade.pk }}" name="mensagem" rows="2" maxlength="500" placeholder="Observação opcional..."></textarea></div></details>
+                <div class="acoes-envio-atividade"><button class="botao-principal" type="submit">Enviar atividade para avaliação</button><small class="texto-ajuda">A conclusão será confirmada após a avaliação do professor.</small></div>
+            </form>
+            {% else %}
+            <p class="texto-ajuda">O envio de respostas fica disponível apenas quando a escola ativa a opção Mesclar perfis para este vínculo.</p>
+            {% endif %}
+        {% endif %}
+        </section>
+        <details class="elo-calendario-recolhido painel elo-calendario-detalhe"><summary><span>Google Agenda</span><small>Automático</small></summary><div class="elo-calendario-conteudo">
+            {% if google_conectado %}
+                <p>Conta Google conectada. Atividades com prazo são enviadas e atualizadas automaticamente.</p>
+                {% if google_sincronizado_em %}<small>Último envio confirmado: {{ google_sincronizado_em|date:'d/m/Y H:i' }}</small>{% endif %}
+            {% else %}<p>Conecte o Google Agenda em Minhas atividades ou Meus dados para acompanhar os prazos automaticamente.</p><a class="botao-secundario" href="{% url 'meus-dados' %}">Conectar no meu perfil</a>{% endif %}
+        </div></details>
+    {% endif %}
+</div>
+{% endblock %}

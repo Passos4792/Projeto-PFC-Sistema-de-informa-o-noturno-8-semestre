@@ -1,0 +1,49 @@
+.elo-vinculos-ficha{margin-bottom:20px;overflow:hidden;background:#fefbf8}
+.elo-vinculos-ficha .painel-cabecalho{padding:22px 26px 18px}
+.elo-vinculos-ficha .painel-cabecalho p{margin:6px 0 0;color:#526174;font-size:.96rem}
+.elo-form-vinculos{padding:16px 26px 26px}
+.elo-vinculos-grupo{border:1px solid #d8e5f5;background:#fffefa;border-radius:18px;margin:0 0 18px;padding:16px 20px 18px;min-width:0}
+.elo-vinculos-grupo legend{font-weight:800;color:#364e67;padding:0 8px;font-size:1.02rem}
+.elo-vinculos-grade{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 22px}
+.elo-vinculos-grade .grupo-campo{margin:0;min-width:0}
+.elo-vinculos-grade .campo-formulario{width:100%;max-width:100%;box-sizing:border-box}
+.elo-vinculos-config{align-items:center}
+.elo-switch-cartao{background:#f6f2ec;border:1px solid #e2e7ef;border-radius:16px;padding:15px 18px}
+.elo-switch-familia{background:#f1f6fd;border-color:#d7e6fa;margin-top:14px}
+.elo-switch-linha{display:flex;align-items:center;gap:13px;cursor:pointer;color:#34495e;font-size:.96rem;margin:0}
+.elo-switch-linha strong,.elo-switch-linha small{display:block}
+.elo-switch-linha small{font-size:.83rem;color:#586477;margin-top:4px;line-height:1.5}
+.elo-switch{position:relative;display:inline-flex;flex:0 0 50px;width:50px;height:29px}
+.elo-switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.elo-switch-trilho{width:50px;height:29px;border-radius:22px;background:#a3adba;transition:background .18s;box-shadow:inset 0 0 0 1px #87919e}
+.elo-switch-trilho:before{content:"";display:block;background:#fff;height:23px;width:23px;border-radius:50%;margin:3px;box-shadow:0 1px 4px #0002;transition:transform .18s}
+.elo-switch input:checked+.elo-switch-trilho{background:#648fbe;box-shadow:inset 0 0 0 1px #4d80b6}
+.elo-switch input:checked+.elo-switch-trilho:before{transform:translateX(21px)}
+.elo-switch input:focus-visible+.elo-switch-trilho{outline:3px solid #fce29c;outline-offset:3px}
+.elo-permissao-nota{font-size:.84rem;color:#526174;line-height:1.55;margin:10px 0 0 63px}
+.elo-form-vinculos .acoes-formulario{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;padding:6px 0 0;margin:0}
+.elo-resumo-lista{padding:5px 26px 23px;display:grid;gap:14px}
+.elo-resumo-aluno{background:#fffefa;border:1px solid #dae5f3;border-radius:16px;padding:18px 20px}
+.elo-resumo-topo{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.elo-resumo-topo h3{font-weight:800;font-size:1.1rem;margin:0 0 8px;color:#263951}
+.elo-chip{background:#e4edfc;border-radius:20px;color:#355f86;font-weight:700;padding:5px 10px;font-size:.77rem;display:inline-flex}
+.elo-chip-neutro{background:#f9eadf;color:#765745}
+.elo-resumo-grade{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;margin:17px 0 0}
+.elo-resumo-grade div{min-width:0}
+.elo-resumo-grade dt{font-size:.8rem;color:#536579;margin-bottom:3px}
+.elo-resumo-grade dd{font-size:.96rem;color:#273b54;font-weight:650;margin:0;overflow-wrap:anywhere}
+.elo-acesso-resumo{margin:16px 0 0;padding:10px 12px;background:#f5f0fa;border-radius:10px;color:#48516a;font-size:.86rem}
+.elo-familiar-linha{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:12px;padding:12px 13px;border-radius:11px;background:#f6f2ec}
+.elo-alternar-form .elo-switch{transform:scale(.87);transform-origin:center}
+@media(max-width:730px){
+ .elo-vinculos-grade,.elo-resumo-grade{grid-template-columns:1fr}
+ .elo-vinculos-ficha .painel-cabecalho{padding:19px 17px 14px}
+ .elo-form-vinculos{padding:13px 16px 19px}
+ .elo-vinculos-grupo{padding:13px 14px 15px}
+ .elo-resumo-lista{padding:4px 15px 17px}
+ .elo-resumo-topo{align-items:start;flex-direction:column}
+ .elo-permissao-nota{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){.elo-switch-trilho,.elo-switch-trilho:before{transition:none}}
+
+.vinculos-registros { margin-top: 20px; }

@@ -1,0 +1,11 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div><p class="caminho">Documentos / Novo registro</p><h1>{{ titulo }}</h1><p class="subtitulo">{{ tipo_nome }} · Preencha depois do atendimento. Você pode salvar um rascunho e continuar posteriormente.</p></div></header>
+<section class="painel painel-formulario"><form method="post" class="formulario-cadastro" novalidate>{% csrf_token %}
+{% for campo in formulario %}<div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>{{ campo }}
+{% if campo.help_text %}<small>{{ campo.help_text }}</small>{% endif %}{% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endfor %}
+{% for erro in formulario.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+<div class="acoes-formulario"><a href="{% url 'documentos-lista' %}" class="botao-secundario">Cancelar</a><button type="submit" class="botao-principal">Salvar rascunho</button></div></form>
+</section>
+{% endblock %}

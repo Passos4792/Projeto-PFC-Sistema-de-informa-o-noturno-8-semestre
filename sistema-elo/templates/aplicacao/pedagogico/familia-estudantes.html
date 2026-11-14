@@ -1,0 +1,13 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Família{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div><p class="caminho">Família / Estudantes</p><h1>Meus filhos no ELO</h1>
+<p class="subtitulo">Visualize os documentos publicados pela escola. Acompanhe as atividades, os documentos e o progresso dos estudantes vinculados.</p></div></header>
+<section class="painel"><div class="painel-cabecalho"><div><h2>Estudantes vinculados</h2><p>Selecione um estudante para acessar seu acompanhamento ou as atividades.</p></div></div>
+<div class="grade-cartoes">{% for aluno in alunos %}<article class="cartao-aluno"><span class="avatar">{{ aluno.nome|first }}{{ aluno.sobrenome|first }}</span><h2>{{ aluno.nome_completo }}</h2>
+<p>Acesso familiar vinculado.</p><a class="botao-principal" href="{% url 'aluno-inicio' aluno.pk %}">Ver acompanhamento</a>
+<a class="botao-secundario" href="{% url 'minhas-atividades' %}?aluno={{ aluno.pk }}">Ver atividades</a>
+<a class="botao-secundario" href="{% url 'documentos-lista' %}?aluno={{ aluno.pk }}">Ver documentos</a></article>{% empty %}<div class="sem-dados"><strong>Nenhum aluno vinculado.</strong><p>Solicite à escola que cadastre seu vínculo familiar.</p></div>{% endfor %}</div>
+{% include 'aplicacao/partials/paginacao.html' with pagina=pagina titulo='estudantes' %}
+</section>
+{% endblock %}

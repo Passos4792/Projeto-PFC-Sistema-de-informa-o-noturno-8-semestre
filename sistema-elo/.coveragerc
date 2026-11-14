@@ -1,0 +1,19 @@
+[run]
+source = aplicacao
+branch = True
+relative_files = True
+data_file = relatorios_testes/.coverage
+omit =
+    aplicacao/migrations/*
+
+[report]
+show_missing = True
+precision = 2
+fail_under = 50
+
+[html]
+directory = relatorios_testes/html
+title = Cobertura dos testes do ELO
+
+[xml]
+output = relatorios_testes/coverage.xml

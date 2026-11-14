@@ -1,0 +1,54 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_finais %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/vinculos.css' %}?v=20261110-organizacao">
+{% endblock %}
+{% block titulo_pagina %}ELO - Vínculos dos alunos{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+  <div><p class="caminho">Cadastros / Vínculos</p><h1>Vínculos dos alunos</h1>
+  <p class="subtitulo">Consulte os responsáveis e a equipe pedagógica de cada aluno.</p></div>
+  <a class="botao-principal" href="{% url 'vinculo-criar' %}">+ Cadastrar vínculos</a>
+</header>
+<section class="painel elo-vinculos-ficha elo-vinculos-resumo">
+  <div class="painel-cabecalho cabecalho-registros">
+    <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>alunos com vínculos</span></div>
+    <div><h2>Vínculos cadastrados</h2><p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ fichas|length }} nesta página.</p></div>
+    <form method="get" class="busca" role="search" data-busca-automatica>
+      <input type="search" name="busca" value="{{ busca }}" placeholder="Buscar aluno" aria-label="Buscar aluno">
+      <small data-erro-busca role="alert" hidden>Não foi possível atualizar a lista. Pressione Enter para tentar novamente.</small>
+    </form>
+  </div>
+  <div data-resultados-lista>
+  <div class="elo-resumo-lista">
+    {% for item in fichas %}
+    <article class="elo-resumo-aluno">
+      <div class="elo-resumo-topo"><div><h3>{{ item.aluno.nome_completo }}</h3>{% if item.principal and item.principal.ativo %}<span class="elo-chip">Vínculo ativo</span>{% else %}<span class="elo-chip elo-chip-neutro">Sem vínculo principal ativo</span>{% endif %}</div><a class="botao-secundario" href="{% url 'vinculo-criar' %}?aluno={{ item.aluno.pk }}">Editar ficha</a></div>
+      <dl class="elo-resumo-grade">
+        <div><dt>Responsável principal</dt><dd>{% if item.principal %}{{ item.principal.responsavel.nome_completo }}{% else %}Não informado{% endif %}</dd></div>
+        <div><dt>Professor AEE</dt><dd>{% if item.aee %}{{ item.aee.nome_completo }}{% else %}Não informado{% endif %}</dd></div>
+        <div><dt>Professor regente</dt><dd>{% for prof in item.regentes %}{{ prof.nome_completo }}{% if not forloop.last %}, {% endif %}{% empty %}Não informado{% endfor %}</dd></div>
+        <div><dt>Professor acompanhante</dt><dd>{% for prof in item.acompanhantes %}{{ prof.nome_completo }}{% if not forloop.last %}, {% endif %}{% empty %}Não informado{% endfor %}</dd></div>
+      </dl>
+      {% if item.principal %}<p class="elo-acesso-resumo">Mesclar perfis (responsável principal): <strong>{% if item.principal.mesclar_perfis and item.principal.ativo %}Ativado{% else %}Desativado{% endif %}</strong></p>{% endif %}
+      {% for familiar in item.familiares %}
+        <div class="elo-familiar-linha"><span>Responsável adicional: <strong>{{ familiar.responsavel.nome_completo }}</strong></span>
+        <form method="post" action="{% url 'vinculo-listar' %}" class="elo-alternar-form">{% csrf_token %}<input type="hidden" name="acao" value="alternar_familiar"><input type="hidden" name="vinculo_id" value="{{ familiar.pk }}">
+          <label class="elo-switch-linha" for="familia-{{ familiar.pk }}"><span class="elo-switch"><input type="checkbox" name="mesclar_perfis" id="familia-{{ familiar.pk }}" {% if familiar.mesclar_perfis %}checked{% endif %} data-envio-automatico><span class="elo-switch-trilho" aria-hidden="true"></span></span><span><small>Mesclar perfis</small></span></label>
+          <noscript><button type="submit" class="botao-secundario">Salvar</button></noscript>
+        </form></div>
+      {% endfor %}
+    </article>
+    {% empty %}<div class="sem-dados"><strong>Nenhum vínculo encontrado.</strong><p>{% if busca %}Tente outro nome ou <a href="{% url 'vinculo-listar' %}">limpe a busca</a>.{% else %}Use o botão Cadastrar vínculos para vincular um aluno.{% endif %}</p></div>{% endfor %}
+  </div>
+  {% if pagina.paginator.num_pages > 1 %}
+  <nav class="rodape-painel acoes-cartao" aria-label="Páginas de vínculos">
+    {% if pagina.has_previous %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+  </nav>
+  {% endif %}
+  </div>
+</section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
+{% endblock %}

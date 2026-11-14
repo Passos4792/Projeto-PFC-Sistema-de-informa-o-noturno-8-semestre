@@ -1,0 +1,152 @@
+.elo-documentos-pagina { max-width: 1120px; margin: 0 auto; }
+.elo-documentos-pagina .elo-documentos-topo { margin-bottom: 22px; }
+.elo-documentos-pagina .elo-documentos-topo h1 { font-size: clamp(1.85rem, 2.8vw, 2.35rem); line-height: 1.22; font-weight: 600; }
+.elo-documentos-pagina .elo-documentos-topo .subtitulo { max-width: 790px; font-size: .95rem; line-height: 1.6; }
+.elo-documentos-pagina .elo-documentos-painel { margin: 0; border-width: 1.5px; border-radius: 16px; background: #fffefd; }
+.elo-documentos-pagina .elo-documentos-cabecalho { padding: 20px 23px 15px; }
+.elo-documentos-pagina .elo-documentos-cabecalho h2 { font-size: 1.18rem; font-weight: 700; line-height: 1.35; }
+.elo-documentos-pagina .elo-documentos-cabecalho p { font-size: .84rem; line-height: 1.5; margin-top: 4px; }
+.elo-documentos-pagina .elo-documentos-criar,
+.elo-documentos-pagina .elo-documentos-busca { margin-bottom: 20px; }
+
+.elo-documentos-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 11px; padding: 19px 23px 22px; }
+.elo-documentos-acoes a { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 42px; padding: 10px 17px; font-size: .88rem; border-radius: 22px; }
+.elo-documentos-acoes a span { font-size: 1.15rem; font-weight: 500; line-height: 1; }
+.elo-documentos-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 20px; }
+.elo-documentos-lista { display: flex; flex-direction: column; gap: 10px; padding: 18px 22px 22px; }
+.elo-documentos-registro { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; padding: 15px; border: 1px solid #e2e9f5; border-radius: 11px; background: #fcfdff; }
+.elo-documentos-registro-info { min-width: 0; overflow-wrap: anywhere; }
+.elo-documentos-registro-info strong { display: block; color: #365b94; font-size: .93rem; }
+.elo-documentos-registro-info p { margin: 5px 0; color: #535f70; font-size: .85rem; }
+.elo-documentos-registro-info small { display: block; color: #768298; line-height: 1.5; font-size: .77rem; }
+.elo-documentos-registro > a { flex-shrink: 0; padding: 8px 13px; min-height: 38px; font-size: .85rem; }
+.elo-documentos-vazio { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 154px; padding: 20px 13px; text-align: center; background: #f8faff; border: 1px dashed #dae5f8; border-radius: 11px; }
+.elo-documentos-vazio-icone { display: grid; place-items: center; width: 34px; height: 34px; background: #e9f0fe; color: #587fbc; border-radius: 10px; font-size: 1.12rem; }
+.elo-documentos-vazio strong { color: #526987; font-size: .9rem; }
+.elo-documentos-vazio p { max-width: 290px; margin: 0; color: #778498; font-size: .8rem; line-height: 1.5; }
+@media (max-width: 1000px) { .elo-documentos-grade { grid-template-columns: 1fr; } }
+@media (max-width: 580px) {
+  .elo-documentos-pagina .elo-documentos-topo h1 { font-size: 1.68rem; }
+  .elo-documentos-pagina .elo-documentos-cabecalho { padding: 18px 17px 14px; }
+  .elo-documentos-acoes { padding: 17px; gap: 9px; }
+  .elo-documentos-acoes a { flex: 1 1 100%; }
+  .elo-documentos-lista { padding: 15px; }
+  .elo-documentos-registro { flex-wrap: wrap; }
+  .elo-documentos-registro > a { width: 100%; text-align: center; }
+}
+
+
+.elo-documento-pagina { width: min(100%, 1120px); margin-inline: auto; }
+.elo-documento-topo { margin-bottom: 0; }
+.elo-documento-topo .caminho a { text-decoration: none; color: #4776ad; }
+.elo-documento-topo .caminho a:hover,
+.elo-documento-topo .caminho a:focus-visible { text-decoration: underline; }
+.elo-documento-topo .subtitulo { font-size: .96rem; overflow-wrap: anywhere; }
+
+.estrutura-pagina .elo-documento-detalhe { margin-top: 26px; }
+.elo-documento-detalhe .elo-documento-campos { gap: 0; padding: 6px 26px; }
+.elo-documento-detalhe .elo-documento-campo {
+    min-width: 0;
+    padding: 20px 0 22px;
+    border-bottom: 1px solid #e6edf6;
+}
+.elo-documento-detalhe .elo-documento-campo:last-child { border-bottom: 0; }
+.estrutura-pagina .elo-documento-detalhe .elo-documento-campo h2 {
+    margin: 0 0 9px;
+    color: #2f506f;
+    font-size: 1.06rem;
+    font-weight: 800;
+    line-height: 1.45;
+}
+.elo-documento-detalhe .elo-documento-campo p {
+    margin: 0;
+    color: #4b5d72;
+    font-size: .94rem;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+.elo-documento-detalhe .documento-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 0;
+    padding: 18px 26px;
+    border-top: 1px solid #e6edf6;
+    background: #fafbfd;
+}
+.elo-documento-detalhe .documento-acoes form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.elo-documento-detalhe .documento-acoes a,
+.elo-documento-detalhe .documento-acoes button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 11px 17px; font-size: .91rem; text-decoration: none; }
+.estrutura-pagina .documento-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 16px;
+    padding: 15px 20px;
+    border-radius: 16px;
+    background: #f9fbfe;
+}
+.documento-aviso .elo-icone { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 2px; color: #6483aa; }
+.estrutura-pagina .documento-aviso p {
+    margin: 0;
+    padding: 0;
+    color: #62738a;
+    font-size: .85rem;
+    line-height: 1.6;
+}
+
+.elo-dialogo-confirmacao {
+    box-sizing: border-box;
+    width: min(440px, calc(100% - 32px));
+    max-height: calc(100dvh - 40px);
+    padding: 0;
+    overflow: auto;
+    border: 1px solid #cfdeee;
+    border-radius: 22px;
+    background: #fffdfb;
+    color: #304863;
+    box-shadow: 0 24px 80px rgba(26, 42, 61, .22);
+}
+.elo-dialogo-confirmacao::backdrop { background: rgba(33, 47, 67, .42); }
+.elo-dialogo-conteudo { padding: 26px; }
+.elo-dialogo-icone {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 1px solid #d0e0f3;
+    border-radius: 13px;
+    background: #f0f6fc;
+    color: #4776ad;
+}
+.elo-dialogo-icone .elo-icone { width: 22px; height: 22px; }
+.estrutura-pagina .elo-dialogo-confirmacao h2,
+.elo-dialogo-confirmacao h2 { margin: 16px 0 7px; color: #273f5e; font-size: 1.3rem; line-height: 1.35; }
+.elo-dialogo-confirmacao p { margin: 0; color: #5b6d81; font-size: .95rem; line-height: 1.6; }
+.elo-dialogo-acoes { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+.elo-dialogo-acoes button { min-height: 44px; padding: 10px 17px; border-radius: 13px; font-size: .9rem; font-weight: 750; }
+.elo-dialogo-confirmacao button:focus-visible { outline: 3px solid #4776ad; outline-offset: 3px; }
+@media (max-width: 580px) {
+    .elo-documento-detalhe .elo-documento-campos { padding: 2px 17px; }
+    .elo-documento-detalhe .elo-documento-campo { padding: 17px 0 19px; }
+    .elo-documento-detalhe .documento-acoes { padding: 16px 17px; }
+    .elo-documento-detalhe .documento-acoes form { width: 100%; }
+    .elo-documento-detalhe .documento-acoes a,
+    .elo-documento-detalhe .documento-acoes button { width: 100%; }
+    .estrutura-pagina .documento-aviso { padding: 14px 17px; }
+    .elo-dialogo-conteudo { padding: 22px 18px; }
+    .elo-dialogo-acoes { flex-direction: column-reverse; }
+    .elo-dialogo-acoes button { width: 100%; }
+}
+
+.elo-documento-topo .elo-documento-baixar-pdf {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 11px 18px; min-height: 44px; flex-shrink: 0;
+    border-radius: 14px; text-decoration: none; font-size: .93rem; font-weight: 750;
+}
+.elo-documento-baixar-pdf .elo-icone { width: 19px; height: 19px; }
+@media (max-width: 680px) {
+    .elo-documento-topo { flex-wrap: wrap; align-items: flex-start; }
+    .elo-documento-topo .elo-documento-baixar-pdf { width: 100%; }
+}

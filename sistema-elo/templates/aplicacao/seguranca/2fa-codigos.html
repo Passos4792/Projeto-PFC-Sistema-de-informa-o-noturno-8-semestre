@@ -1,0 +1,21 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Códigos de recuperação{% endblock %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/2fa.css' %}">{% endblock %}
+{% block conteudo %}
+<section class="elo-2fa-cartao" aria-labelledby="titulo-2fa">
+  <span class="elo-2fa-etapa">{% if renovados %}Códigos renovados{% else %}Proteção ativada{% endif %}</span>
+  <h1 id="titulo-2fa">Guarde seus códigos de recuperação</h1>
+  <p>Estes oito códigos permitem entrar se você perder o celular. <strong>Cada código funciona apenas uma vez e não aparecerá novamente.</strong></p>
+  <div class="elo-2fa-aviso" role="status"><strong>Importante:</strong> salve-os em um lugar privado, fora do celular, e não os compartilhe com ninguém.</div>
+  <ul class="elo-2fa-lista-codigos" aria-label="Códigos de recuperação">
+    {% for codigo in codigos %}<li>{{ codigo }}</li>{% endfor %}
+  </ul>
+  <div class="elo-2fa-acoes">
+    <button type="button" class="elo-2fa-botao elo-2fa-botao-secundario" id="elo-imprimir-codigos">Imprimir os códigos</button>
+    <a class="elo-2fa-botao" href="{{ continuar_url }}">Continuar no ELO</a>
+  </div>
+  <p class="elo-2fa-rodape">Atenção ao imprimir: não deixe os códigos visíveis em ambientes compartilhados.</p>
+</section>
+<script src="{% static 'aplicacao/js/2fa-codigos.js' %}" defer></script>
+{% endblock %}

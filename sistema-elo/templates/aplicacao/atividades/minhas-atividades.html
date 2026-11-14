@@ -1,0 +1,65 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/calendario.css' %}?v=20261110-organizacao">
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/atividades.css' %}?v=20261110-organizacao">
+{% endblock %}
+{% block titulo_pagina %}ELO - Minhas atividades{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+    <div><p class="caminho">Meu acompanhamento / Atividades</p>
+        <h1>Suas atividades</h1>
+        <p class="subtitulo">{% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}Acompanhe as orientações e os prazos das atividades dos estudantes vinculados.{% else %}Escolha uma atividade para ver as orientações e enviar sua resposta.{% endif %}</p>
+    </div>
+</header>
+<nav class="abas-atividades" aria-label="Filtrar atividades" data-sincronizar-busca>
+    <a href="?filtro=todas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'todas' %}aria-current="page"{% endif %}>Todas</a>
+    <a href="?filtro=pendentes{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'pendentes' %}aria-current="page"{% endif %}>Pendentes</a>
+    <a href="?filtro=avaliacao{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'avaliacao' %}aria-current="page"{% endif %}>Em avaliação</a>
+    <a href="?filtro=concluidas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'concluidas' %}aria-current="page"{% endif %}>Concluídas</a>
+    <a href="?filtro=canceladas{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if visao == 'canceladas' %}aria-current="page"{% endif %}>Canceladas</a>
+</nav>
+<section class="painel elo-lista-atividades" aria-labelledby="titulo-lista-atividades">
+    <div class="painel-cabecalho elo-atividades-cabecalho">
+        <div><h2 id="titulo-lista-atividades">Atividades cadastradas</h2><p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} atividade(s) encontrada(s) · {{ atividades|length }} nesta página.</p></div>
+        <form method="get" class="busca" role="search" data-busca-automatica>
+            {% if request.GET.aluno %}<input type="hidden" name="aluno" value="{{ request.GET.aluno }}">{% endif %}
+            <input type="hidden" name="filtro" value="{{ visao }}">
+            <input type="search" name="busca" value="{{ busca }}" maxlength="100" placeholder="Buscar atividades" aria-label="Buscar atividade, aluno ou conteúdo">
+            <small data-erro-busca role="alert" hidden>Não foi possível buscar. Pressione Enter.</small>
+            <noscript><button type="submit" class="botao-secundario">Buscar</button></noscript>
+        </form>
+    </div>
+    <div data-resultados-lista>
+        <div class="tabela-responsiva">
+            <table class="elo-tabela-atividades">
+                <thead><tr><th>Atividade</th><th>Aluno</th><th>Entrega</th><th>Situação</th><th><span class="sr-only">Abrir</span></th></tr></thead>
+                <tbody>
+                {% for atividade in atividades %}
+                    <tr>
+                        <td data-label="Atividade"><span class="elo-atividade-nome"><span class="elo-atividade-icone" aria-hidden="true">✎</span><strong>{{ atividade.titulo }}</strong></span></td>
+                        <td data-label="Aluno">{{ atividade.aluno.nome_completo }}</td>
+                        <td data-label="Entrega">{{ atividade.data_entrega|date:'d/m/Y'|default:'Sem prazo' }}</td>
+                        <td data-label="Status">
+                            {% if atividade.situacao == 'CONCLUIDA' %}<span class="elo-estado elo-concluida">Concluída</span>
+                            {% elif atividade.situacao == 'CANCELADA' %}<span class="elo-estado elo-cancelada">Cancelada</span>
+                            {% elif atividade.ultima_solicitacao.situacao == 'PENDENTE' %}<span class="elo-estado elo-analise">Em avaliação</span>
+                            {% elif atividade.ultima_solicitacao.situacao == 'RECUSADA' %}<span class="elo-estado elo-revisao">Revisão solicitada</span>
+                            {% else %}<span class="elo-estado elo-pendente">Pendente</span>{% endif %}
+                        </td>
+                        <td class="elo-abrir-coluna"><a class="elo-abrir-atividade" href="{% url 'atividade-detalhe' atividade.pk %}" aria-label="Abrir atividade {{ atividade.titulo }}">→</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="sem-dados"><strong>Nenhuma atividade encontrada.</strong><p>{% if busca %}Tente buscar outro termo ou escolha outra aba.{% elif visao != 'todas' %}Não há atividades nesta aba.{% else %}As atividades cadastradas pelo professor aparecerão aqui.{% endif %}</p></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'aplicacao/partials/paginacao.html' with pagina=pagina filtros=filtros_paginacao titulo='atividades' %}
+    </div>
+</section>
+<section class="painel elo-google-painel" aria-label="Google Agenda">
+    <div class="elo-calendario-conteudo"><h2>Google Agenda</h2>{% include 'aplicacao/partials/google-agenda.html' with origem='atividades' %}</div>
+</section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
+{% endblock %}
