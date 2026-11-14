@@ -1,0 +1,26 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Recuperar senha administrativa{% endblock %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/2fa.css' %}">{% endblock %}
+{% block conteudo %}
+<section class="elo-2fa-cartao" aria-labelledby="titulo-recuperacao-admin">
+  <span class="elo-2fa-etapa">Administração / Recuperação de acesso</span>
+  <h1 id="titulo-recuperacao-admin">Recuperar senha do administrador</h1>
+  <p>Se esqueceu sua senha, informe seu nome de usuário, o código atual de seis dígitos do <strong>Microsoft Authenticator</strong> e <strong>um dos códigos de recuperação</strong> que você salvou ao configurar o aplicativo.</p>
+  <p class="elo-2fa-aviso">Não é necessário e-mail nem senha antiga. Por segurança, apenas o código do aplicativo não permite redefinir a conta administrativa. O código de recuperação será usado uma única vez.</p>
+  <form method="post" class="elo-2fa-form" autocomplete="off" novalidate>
+    {% csrf_token %}
+    {% for erro in formulario.non_field_errors %}<p class="elo-2fa-erro" role="alert">{{ erro }}</p>{% endfor %}
+    {% for campo in formulario %}
+    <div class="elo-2fa-campo">
+      <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for erro in campo.errors %}<p class="elo-2fa-erro" role="alert">{{ erro }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="elo-2fa-botao">Redefinir senha administrativa</button>
+  </form>
+  <p class="elo-2fa-rodape"><a href="{% url 'login' %}">Voltar ao login</a></p>
+  <p>Se também perdeu os códigos de recuperação, a redefinição deverá ser feita localmente por quem administra o servidor, após confirmação da identidade.</p>
+</section>
+{% endblock %}

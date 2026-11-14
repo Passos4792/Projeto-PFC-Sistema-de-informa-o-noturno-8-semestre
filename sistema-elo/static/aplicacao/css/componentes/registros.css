@@ -1,0 +1,36 @@
+.elo-acoes-documentos { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.elo-acoes-documentos form { display:flex; gap:12px; flex-wrap:wrap; }
+.elo-registros-lista { display:flex; flex-direction:column; gap:12px; }
+.elo-registro { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:16px; border:1px solid #d8e2f1; border-radius:12px; background:#fff; }
+.elo-registro p { margin:5px 0 0; color:#576478; }
+.elo-registro strong { color:#345d97; }
+.elo-documento-campo { padding:16px 0; border-bottom:1px solid #e7edf8; }
+.elo-documento-campo h2 { font-size:1.05rem; color:#4c76b1; margin:0 0 10px; }
+.elo-documento-campo p { overflow-wrap:anywhere; white-space:normal; margin:0; }
+@media(max-width:650px){ .elo-acoes-documentos, .elo-acoes-documentos form { flex-direction:column; align-items:stretch; } }
+
+.elo-acesso-desligado{font-size:.84rem;color:#674f40;background:#fff0e5;border-radius:9px;padding:8px 10px;margin:8px 0}
+
+.abas-atividades { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 20px; }
+.abas-atividades a { display: inline-flex; align-items: center; border: 1px solid #cdd7ee; border-radius: 10px; padding: 10px 14px; color: #52648c; background: #fff; text-decoration: none; font-size: .86rem; font-weight: 600; }
+.abas-atividades a:hover, .abas-atividades a:focus-visible { background: #f2f4fd; }
+.abas-atividades a[aria-current="page"] { background: #edf0fa; border-color: #a4b3dc; color: #3b5689; }
+.filtros-atividades { display: flex; flex: 1 1 100%; flex-wrap: wrap; align-items: end; gap: 14px; }
+.filtros-atividades .grupo-campo { flex: 1 1 160px; min-width: 0; }
+.filtros-atividades .grupo-campo { max-width: 340px; }
+.filtros-atividades .filtro-busca { flex: 2 1 260px; max-width: none; }
+.filtros-atividades .nota-painel { flex: 1 1 100%; margin: 0; }
+.grade-aprovacoes { padding: 18px; margin-bottom: 0; }
+.grade-aprovacoes .cartao-meta { border: 1px solid #d7e0f0; }
+@media(max-width: 650px) {
+    .abas-atividades { gap: 7px; }
+    .abas-atividades a { padding: 9px 11px; font-size: .82rem; }
+    .filtros-atividades { flex-direction: column; align-items: stretch; }
+    .filtros-atividades .grupo-campo { width: 100%; max-width: none; }
+}
+.topo-pagina + .abas-atividades { margin-top: 18px; }
+
+.painel-arquivo-inativo { margin: 20px 0; padding: 18px; border: 1px solid #cbd8e7; border-radius: 12px; background: #f5f8fc; color: #294664; }
+.painel-arquivo-inativo h2 { font-size: 1.15rem; margin: 0 0 8px; }
+.painel-arquivo-inativo p { line-height: 1.55; margin: 8px 0 14px; }
+.painel-arquivo-inativo .botao-secundario { display: inline-flex; margin-top: 5px; }

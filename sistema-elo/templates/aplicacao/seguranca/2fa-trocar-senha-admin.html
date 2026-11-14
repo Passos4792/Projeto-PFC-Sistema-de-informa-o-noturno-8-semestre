@@ -1,0 +1,34 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Alterar senha do administrador{% endblock %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/2fa.css' %}">{% endblock %}
+{% block conteudo %}
+<section class="elo-2fa-cartao" aria-labelledby="titulo-senha-admin">
+  <span class="elo-2fa-etapa">Administração / Segurança da conta</span>
+  <h1 id="titulo-senha-admin">Alterar senha do administrador</h1>
+  <p>Para confirmar esta alteração, informe a <strong>senha atual</strong>, escolha uma nova senha e digite um <strong>código novo de seis dígitos</strong> do Microsoft Authenticator.</p>
+  <p class="elo-2fa-aviso">Mesmo que este navegador esteja marcado como confiável, a confirmação pelo aplicativo é obrigatória. Códigos de recuperação não substituem o código do aplicativo nesta operação.</p>
+  <div class="elo-2fa-subarea">
+    <h2>Testar autenticação novamente</h2>
+    <p>Para exigir o código no próximo login, acesse a gestão de dispositivos e revogue a confiança deste navegador.</p>
+    <p><a class="elo-2fa-botao elo-2fa-botao-secundario" href="{% url '2fa-seguranca' %}">Gerenciar e desvincular dispositivos confiáveis</a></p>
+  </div>
+  <form method="post" class="elo-2fa-form" autocomplete="off" novalidate>
+    {% csrf_token %}
+    {% for erro in formulario.non_field_errors %}<p class="elo-2fa-erro" role="alert">{{ erro }}</p>{% endfor %}
+    {% for campo in formulario %}
+    <div class="elo-2fa-campo">
+      <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% if campo.name == 'new_password1' %}
+        {% include 'aplicacao/partials/regras-senha.html' with campo=campo confirmacao=formulario.new_password2 conta=formulario.user %}
+      {% elif campo.help_text %}<small>{{ campo.help_text|safe }}</small>{% endif %}
+      {% for erro in campo.errors %}<p class="elo-2fa-erro" role="alert">{{ erro }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="elo-2fa-botao">Salvar senha e confirmar Authenticator</button>
+  </form>
+  <p class="elo-2fa-rodape"><a href="{% url 'admin:index' %}">Voltar à administração</a> · <a href="{% url '2fa-seguranca' %}">Segurança da conta</a></p>
+</section>
+<script src="{% static 'aplicacao/js/regras-senha.js' %}" defer></script>
+{% endblock %}

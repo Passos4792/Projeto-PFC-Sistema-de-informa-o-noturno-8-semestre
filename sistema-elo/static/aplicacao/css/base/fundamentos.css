@@ -1,0 +1,40 @@
+:root {
+    --azul: #79a1ea;
+    --azul-escuro: #527ab9;
+    --azul-claro: #e1e9f7;
+    --verde: #85c995;
+    --amarelo: #f5c845;
+    --salmao: #efa089;
+    --lilas: #bba7ec;
+    --fundo: #f4f1eb;
+    --branco: #fffdfb;
+    --texto: #171717;
+    --texto-suave: #716e69;
+    --borda: #e6e1d9;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+a {
+    color: inherit;
+}
+
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}

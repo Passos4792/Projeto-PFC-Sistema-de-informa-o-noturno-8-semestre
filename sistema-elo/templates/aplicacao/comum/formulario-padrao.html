@@ -1,0 +1,92 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+
+{% block conteudo %}
+
+
+    <header class="topo-pagina topo-formulario">
+
+        <div>
+
+            <p class="caminho">
+                Cadastro
+            </p>
+
+            <h1>
+                {{ titulo }}
+            </h1>
+
+            <p class="subtitulo">
+                Preencha as informações abaixo. Os campos com * são obrigatórios.
+            </p>
+
+        </div>
+    </header>
+
+
+    <section class="painel painel-formulario">
+
+
+        <form method="post" enctype="multipart/form-data" novalidate class="formulario-cadastro" data-formulario-atividade data-metas-url="{% url 'api-metas-aluno' 0 %}">
+            {% csrf_token %}
+
+            {% for campo in formulario %}
+
+                <div class="grupo-campo {% if campo.field.widget.input_type == 'checkbox' %}grupo-checkbox{% endif %}{% if campo.name == 'tipo_perfil' %} grupo-destaque{% endif %}">
+                    <label for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %}<span class="obrigatorio" aria-hidden="true"> *</span>{% endif %}</label>
+                    {{ campo }}
+                    {% if campo.name == 'password1' %}
+                        {% include 'aplicacao/partials/regras-senha.html' with campo=campo confirmacao=formulario.password2 campos_pessoais='id_username id_nome id_sobrenome' %}
+                    {% elif campo.help_text %}<small id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</small>{% endif %}
+                    {% for erro in campo.errors %}
+                        <p class="erro-campo">
+                            {{ erro }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+            {% endfor %}
+
+            {% if arquivo_aluno %}
+            <div class="painel-arquivo-inativo" aria-live="polite">
+                <h2>Relatórios e documentos do aluno inativo</h2>
+                <p>O histórico pedagógico reúne, em um único PDF, todos os relatórios e documentos cadastrados para este aluno, incluindo rascunhos e registros finalizados ou publicados.</p>
+                {% if arquivo_aluno.documentos_em_prazo %}
+                <p><strong>Esse arquivo ficará disponível até 5 anos após o aluno ficar inativo.</strong>
+                   Data limite de disponibilidade: <strong>{{ arquivo_aluno.documentos_disponiveis_ate|date:"d/m/Y" }}</strong>.</p>
+                <a class="botao-secundario" href="{% url 'aluno-documentos-pdf' arquivo_aluno.pk %}">Baixar em PDF relatórios e documentos</a>
+                {% else %}
+                <p><strong>O período de cinco anos terminou.</strong> O arquivo não está mais disponível para download pelo ELO.</p>
+                {% endif %}
+            </div>
+            {% elif formulario.instance.pk and pagina_ativa == 'alunos' %}
+            <div class="painel-arquivo-inativo" id="aviso-arquivo-inativo" hidden aria-live="polite">
+                <p>Após salvar a alteração para <strong>Inativo</strong>, o PDF com todos os relatórios e documentos cadastrados ficará disponível nesta página por até cinco anos, contados da inativação.</p>
+            </div>
+            {% endif %}
+
+            {% for erro in formulario.non_field_errors %}
+                <p class="erro-campo">
+                    {{ erro }}
+                </p>
+            {% endfor %}
+
+
+            {% if formulario.instance.material_apoio %}
+            <p><a class="botao-secundario" href="{% url 'atividade-material' formulario.instance.pk %}">Baixar material de apoio atual</a></p>
+            {% endif %}
+            <div class="acoes-formulario">
+                <a class="botao-secundario" href="{{ url_voltar }}">Cancelar</a>
+                <button class="botao-principal" type="submit">Salvar</button>
+
+            </div>
+
+        </form>
+    </section>
+<script src="{% static 'aplicacao/js/formulario-atividade.js' %}" defer></script>
+{% if formulario.tipo_perfil %}<script src="{% static 'aplicacao/js/cadastro-usuario.js' %}" defer></script>{% endif %}
+{% if formulario.instance.pk and pagina_ativa == 'alunos' %}<script src="{% static 'aplicacao/js/inativacao-aluno.js' %}" defer></script>{% endif %}
+{% if formulario.password1 %}<script src="{% static 'aplicacao/js/regras-senha.js' %}" defer></script>{% endif %}
+{% endblock %}

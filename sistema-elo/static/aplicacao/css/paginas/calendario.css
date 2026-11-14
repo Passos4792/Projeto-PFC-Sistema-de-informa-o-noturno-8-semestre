@@ -1,0 +1,13 @@
+.conexao-calendario { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 28px; padding: 26px; align-items: center; }
+.conexao-calendario h2 { margin: 12px 0 8px; }
+.conexao-calendario p { margin: 0 0 10px; line-height: 1.6; }
+.conexao-calendario small, .sincronizacao-atividade small { color: #677387; line-height: 1.5; font-size: 12px; }
+.acoes-calendario { display: grid; gap: 12px; justify-items: start; }
+.acoes-calendario button { font-size: 13px; }
+.grade-atividades-calendario { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.atividade-calendario { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.atividade-calendario > p { white-space: pre-line; overflow-wrap: anywhere; line-height: 1.6; }
+.aluno-atividade { font-size: 13px; color: #527ab9; }
+.sincronizacao-atividade { display: grid; gap: 10px; margin-top: auto; padding-top: 16px; width: 100%; }
+.sincronizacao-atividade button { font-size: 12px; text-align: left; }
+@media (max-width: 700px) { .conexao-calendario { grid-template-columns: 1fr; gap: 18px; padding: 22px; } }

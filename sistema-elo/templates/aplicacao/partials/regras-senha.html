@@ -1,0 +1,18 @@
+{% load static %}
+<div class="requisitos-senha" id="{{ campo.auto_id }}_helptext"
+     data-regras-senha
+     data-campo-senha="{{ campo.auto_id }}"
+     data-campo-confirmacao="{{ confirmacao.auto_id }}"
+     data-tamanho-minimo="8"
+     data-lista-comuns="{% static 'aplicacao/dados/senhas-comuns.txt' %}"
+     {% if conta %}data-pessoal-usuario="{{ conta.username }}" data-pessoal-nome="{{ conta.first_name }}" data-pessoal-sobrenome="{{ conta.last_name }}" data-pessoal-email="{{ conta.email }}"{% endif %}
+     {% if campos_pessoais %}data-campos-pessoais="{{ campos_pessoais }}"{% endif %}>
+    <p class="requisitos-senha-titulo">A senha precisa:</p>
+    <ul>
+        <li data-regra="tamanho"><span class="requisito-icone" aria-hidden="true"></span><span>Ter pelo menos 8 caracteres</span><span class="sr-only" data-estado-texto></span></li>
+        <li data-regra="numerica"><span class="requisito-icone" aria-hidden="true"></span><span>Não ser formada só por números</span><span class="sr-only" data-estado-texto></span></li>
+        <li data-regra="pessoal"><span class="requisito-icone" aria-hidden="true"></span><span>Não ser parecida com o nome ou o usuário</span><span class="sr-only" data-estado-texto></span></li>
+        <li data-regra="comum"><span class="requisito-icone" aria-hidden="true"></span><span>Não ser uma senha muito usada, como 12345678</span><span class="sr-only" data-estado-texto></span></li>
+        <li data-regra="confirmacao"><span class="requisito-icone" aria-hidden="true"></span><span>Ser igual nos dois campos de senha</span><span class="sr-only" data-estado-texto></span></li>
+    </ul>
+</div>

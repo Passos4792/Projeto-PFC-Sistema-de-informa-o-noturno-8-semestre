@@ -1,0 +1,83 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/documentos.css' %}?v=20261112-exportacao-pdf">
+{% endblock %}
+{% block titulo_pagina %}ELO - Registro pedagógico{% endblock %}
+{% block conteudo %}
+<div class="elo-documento-pagina">
+    <header class="topo-pagina elo-documento-topo">
+        <div>
+            <p class="caminho"><a class="elo-link-voltar" href="{% url 'documentos-lista' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar aos documentos</span></a></p>
+            <h1 id="titulo-documento">{% if documento %}{{ item.get_tipo_display }}{% else %}{{ item.titulo }}{% endif %}</h1>
+            <p class="subtitulo">{{ item.aluno.nome_completo }} · {{ item.professor.nome_completo }} · {{ item.get_situacao_display }}{% if documento %} · {{ item.ano_letivo }}{% if item.bimestre %} / {{ item.bimestre }}º bimestre{% endif %}{% else %} · {{ item.data_referencia|date:'d/m/Y' }}{% endif %}</p>
+        </div>
+        <a class="botao-secundario elo-documento-baixar-pdf" href="{% if documento %}{% url 'documento-pdf' item.pk %}{% else %}{% url 'relatorio-pdf' item.pk %}{% endif %}" aria-label="Baixar PDF deste documento">
+            <svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-file-text"></use></svg>
+            Baixar PDF
+        </a>
+    </header>
+
+    <section class="painel elo-documento-detalhe" aria-labelledby="titulo-documento">
+        <div class="elo-registros-lista elo-documento-campos">
+            {% for rotulo, valor in linhas %}
+            <section class="elo-documento-campo" aria-label="{{ rotulo }}">
+                <h2>{{ rotulo }}</h2>
+                <p>{{ valor|default:'Não informado'|linebreaksbr }}</p>
+            </section>
+            {% endfor %}
+        </div>
+
+        {% if pode_editar or pode_publicar or pode_retirar %}
+        <div class="elo-acoes-documentos documento-acoes" aria-label="Ações do documento">
+            {% if pode_editar %}
+            <a class="botao-secundario" href="{% if documento %}{% url 'documento-editar' item.pk %}{% else %}{% url 'relatorio-editar' item.pk %}{% endif %}">Editar rascunho</a>
+            {% endif %}
+            {% if pode_publicar %}
+            <form method="post" action="{% if documento %}{% url 'documento-publicar' item.pk %}{% else %}{% url 'relatorio-publicar' item.pk %}{% endif %}">
+                {% csrf_token %}
+                <button type="submit" name="acao" value="FINALIZADO" class="botao-secundario">Finalizar (interno)</button>
+                <button type="submit" name="acao" value="PUBLICADO" class="botao-principal"
+                        data-confirmar="Após a publicação, os responsáveis vinculados poderão consultar este registro."
+                        data-titulo-confirmacao="Disponibilizar à família?"
+                        data-rotulo-confirmacao="Sim, disponibilizar">Disponibilizar à família</button>
+            </form>
+            {% endif %}
+            {% if pode_retirar %}
+            <form method="post" action="{% if documento %}{% url 'documento-publicar' item.pk %}{% else %}{% url 'relatorio-publicar' item.pk %}{% endif %}">
+                {% csrf_token %}
+                <button type="submit" name="acao" value="RETIRAR" class="botao-secundario"
+                        data-confirmar="Os responsáveis não poderão mais consultar este registro. O documento continuará disponível internamente."
+                        data-titulo-confirmacao="Retirar da família?"
+                        data-rotulo-confirmacao="Sim, retirar">Retirar da família</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <aside class="painel documento-aviso" aria-label="Informações sobre a publicação">
+        <svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-file-text"></use></svg>
+        <p>Registro pedagógico do ELO. Não é uma assinatura eletrônica oficial. A publicação permite a consulta pela família, mas não substitui a validação exigida pela escola.</p>
+    </aside>
+</div>
+
+{% if pode_publicar or pode_retirar %}
+<dialog id="elo-dialogo-confirmacao" class="elo-dialogo-confirmacao"
+        aria-labelledby="elo-dialogo-titulo" aria-describedby="elo-dialogo-mensagem">
+    <div class="elo-dialogo-conteudo">
+        <div class="elo-dialogo-cabecalho">
+            <span class="elo-dialogo-icone" aria-hidden="true">
+                <svg class="elo-icone" focusable="false"><use href="#elo-icone-file-text"></use></svg>
+            </span>
+            <h2 id="elo-dialogo-titulo">Confirmar ação</h2>
+            <p id="elo-dialogo-mensagem"></p>
+        </div>
+        <div class="elo-dialogo-acoes">
+            <button type="button" class="botao-secundario" data-fechar-dialogo>Cancelar</button>
+            <button type="button" class="botao-principal" data-confirmar-dialogo>Confirmar</button>
+        </div>
+    </div>
+</dialog>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,171 @@
+<div class="cabecalho-documento">
+    <span class="etiqueta">Privacidade no ELO</span>
+    <h1>Política de Privacidade</h1>
+    <p class="subtitulo">Transparência e proteção dos dados de crianças, adolescentes, famílias e profissionais no acompanhamento educacional.</p>
+    <p class="versao-documento">Versão {{ versao_privacidade }} · Vigência: {{ data_vigencia }}</p>
+</div>
+
+<div class="atalhos-documento" aria-label="Atalhos da política">
+    <a href="#dados">Dados tratados</a>
+    <a href="#criancas">Proteção de crianças</a>
+    <a href="#retencao">Guarda por 5 anos</a>
+    <a href="#direitos">Seus direitos</a>
+    <a href="#seguranca">Segurança</a>
+    <a href="#eca-digital">ECA Digital</a>
+    <a href="#referencias">Bases normativas</a>
+</div>
+
+<div class="chamada-aluno">
+    <div>
+        <strong>Você é aluno?</strong>
+        <p>Também explicamos a privacidade em palavras mais simples.</p>
+    </div>
+    <a class="botao-secundario" href="{% url 'privacidade-aluno' %}">Ler versão para alunos</a>
+</div>
+
+<div class="corpo-documento">
+    <section>
+        <h2>1. O que é o ELO e quem cuida dos dados</h2>
+        <p>O ELO é um sistema de acompanhamento educacional individualizado, desenvolvido como projeto acadêmico. Ele permite registrar atividades, metas, vínculos, relatórios e documentos pedagógicos para apoiar o trabalho de professores e a participação de alunos e responsáveis.</p>
+        <p>Em uma implantação real, a instituição ou entidade que efetivamente determina as finalidades e os meios de tratamento deve identificar-se como controladora, divulgar seus dados de identificação, canal de privacidade e encarregado, quando aplicável, documentar as bases legais e os prazos e estabelecer regras de segurança e descarte. A definição de responsabilidades entre escola, mantenedora e eventual fornecedor tecnológico deverá ser formalizada em contrato. Esta política descreve os recursos implementados na versão atual do ELO, não substituindo tais providências.</p>
+    </section>
+
+    <section>
+        <h2>2. Quem acessa as informações</h2>
+        <p>Existem perfis de professor, aluno e responsável. Professores podem atuar como AEE, regente ou acompanhante, com permissões específicas conforme seus vínculos com cada aluno. O professor gestor administra cadastros, vínculos e outros recursos restritos do sistema.</p>
+        <p>Os relatórios e documentos pedagógicos só são apresentados ao responsável vinculado quando publicados para a família. Registros internos e rascunhos ficam restritos aos profissionais autorizados. O aluno não recebe acesso direto à área de documentos pedagógicos; o acompanhamento de atividades pode ser acessado pelos perfis autorizados.</p>
+        <p>Quando um aluno é inativado, o histórico pedagógico completo pode ser exportado em PDF pelo <strong>professor gestor</strong>, sujeito ao prazo de disponibilidade informado na seção 7. Esse arquivo pode conter registros que nunca foram publicados para a família, de modo que sua distribuição exige cautela e autorização adequada.</p>
+    </section>
+
+    <section id="dados">
+        <h2>3. Quais informações são tratadas</h2>
+        <div class="grade-dados">
+            <article>
+                <h3>Identificação e conta</h3>
+                <p>Nome, sobrenome, identificador de usuário, data de nascimento quando fornecida, perfil, situação de acesso, registros de autenticação e fotografia de perfil opcional.</p>
+            </article>
+            <article>
+                <h3>Vínculos educacionais e familiares</h3>
+                <p>Associações entre alunos, responsáveis e profissionais, funções exercidas, datas de início e fim, situação dos vínculos e permissões de acompanhamento.</p>
+            </article>
+            <article>
+                <h3>Acompanhamento escolar</h3>
+                <p>Metas, atividades, conteúdos, prazos, envio de respostas, registros de conclusão e aprovação, observações e materiais ou anexos enviados nas atividades.</p>
+            </article>
+            <article>
+                <h3>Relatórios e documentos pedagógicos</h3>
+                <p>Relatórios descritivos de atendimentos e períodos, Plano Educacional Individualizado (PEI), Estudo de Caso, Plano de Atendimento Educacional Especializado (PAEE), seus campos preenchidos, situação de publicação, autoria e datas de criação ou alteração.</p>
+            </article>
+            <article>
+                <h3>Inativação e guarda documental</h3>
+                <p>Situação ativa ou inativa do aluno, data de inativação e prazo calculado para a disponibilização dos documentos e relatórios por até cinco anos.</p>
+            </article>
+            <article>
+                <h3>Segurança e operações do sistema</h3>
+                <p>Registros de auditoria, falhas e bloqueios de login, aceite dos documentos legais, dados protegidos de autenticação em duas etapas e, se autorizado, dados técnicos da sincronização com o Google Agenda.</p>
+            </article>
+        </div>
+        <div class="nota-documento">
+            <strong>Dados sensíveis:</strong> observações e documentos pedagógicos podem revelar dados relacionados à saúde, deficiência ou necessidades específicas da criança. Sua inclusão deve ser estritamente necessária à finalidade educacional, com base legal adequada, proteção reforçada e acesso limitado. O sistema não possui, nesta versão, um cadastro próprio de laudos médicos; arquivos anexados às atividades são uma categoria distinta dos documentos pedagógicos consolidados.
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Para que os dados são utilizados</h2>
+        <div class="tabela-responsiva">
+            <table class="tabela-documento">
+                <thead><tr><th>Finalidade</th><th>Informações utilizadas</th><th>Condições legais</th></tr></thead>
+                <tbody>
+                    <tr><td>Administrar e proteger os acessos</td><td>Dados de conta, credenciais e auditoria</td><td>Hipótese aplicável dos arts. 7º e, quando pertinente, 11 da LGPD, definida pela controladora.</td></tr>
+                    <tr><td>Realizar o acompanhamento educacional</td><td>Vínculos, metas, atividades, registros, documentos e relatórios</td><td>Finalidade educacional específica, necessidade e melhor interesse do aluno; base legal adequada ao tipo de dado.</td></tr>
+                    <tr><td>Compartilhar registros publicados com responsáveis</td><td>Vínculos e documentos autorizados</td><td>Respeito às permissões e aos direitos da criança ou adolescente.</td></tr>
+                    <tr><td>Preservar e fornecer o histórico do aluno inativo</td><td>Relatórios, documentos, data de inativação e exportação em PDF</td><td>Justificativa institucional de guarda, vinculada às finalidades e às obrigações aplicáveis; prazo de cinco anos definido como regra do ELO, não como imposição geral da LGPD.</td></tr>
+                    <tr><td>Registrar segurança e ciência dos documentos legais</td><td>Eventos técnicos, datas e versões aceitas</td><td>Segurança, prestação de contas e outras hipóteses juridicamente justificadas.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>A instituição controladora deve definir e documentar as bases legais concretas do tratamento, diferenciando dados pessoais comuns (art. 7º) e sensíveis (art. 11). A LGPD não exige consentimento em todas as hipóteses: quando ele for a base aplicável, deverá ser específico, informado e comprovável; a observância do melhor interesse da criança e do adolescente é sempre necessária. Conforme o Enunciado ANPD nº 1/2023, as hipóteses dos arts. 7º e 11 podem ser utilizadas, observadas as condições do caso concreto. O aceite dos Termos de Uso e a ciência desta política não constituem autorização irrestrita para tratamento de informações da criança.</p>
+    </section>
+
+    <section id="criancas">
+        <h2>5. Cuidados com crianças e adolescentes</h2>
+        <p>O ELO deve tratar as informações observando o <strong>melhor interesse da criança e do adolescente</strong>, a necessidade, a transparência, a segurança e a limitação de acesso, nos termos da Lei Geral de Proteção de Dados (LGPD) e da legislação de proteção infantojuvenil.</p>
+        <p>Informações médicas ou sensíveis não devem ser inseridas indiscriminadamente nos textos dos formulários. A controladora deve restringir os dados àquilo que seja necessário para a atividade educacional, orientar os profissionais e avaliar as condições legais para cada tratamento. Se o tratamento de dados de criança utilizar consentimento como base legal, devem ser observadas as exigências específicas da LGPD quanto ao responsável legal.</p>
+        <div class="nota-documento destaque">
+            <strong>Importante:</strong> a confirmação de leitura dos Termos e da Política é um registro de ciência e aceite das regras de uso, não um consentimento genérico que autorize qualquer uso de dados sensíveis ou de crianças.
+        </div>
+    </section>
+
+    <section>
+        <h2>6. Compartilhamento, integrações e cookies</h2>
+        <p>O acesso interno respeita o tipo de usuário, os vínculos e a situação de publicação dos registros. O PDF consolidado do aluno inativo é disponibilizado somente ao gestor autenticado e autorizado. O download deve ser guardado e compartilhado apenas quando houver necessidade e fundamento para isso; o ELO não controla cópias externas feitas após o download.</p>
+        <p>Alunos e responsáveis podem optar pela integração com o Google Agenda, quando configurada. Na sincronização escolhida pelo usuário, informações da atividade, nome do aluno e prazo são enviados ao calendário para criar ou atualizar um evento privado. A instituição deve avaliar essa transferência, especialmente quando envolver criança ou dados sensíveis, e oferecer alternativa de acompanhamento sem a integração. A autorização ocorre no Google, sem informar a senha Google ao ELO. O tratamento pelo Google também segue a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidade do Google</a>. A desconexão do ELO não elimina automaticamente eventos previamente criados no Google.</p>
+        <p>O sistema utiliza cookies técnicos necessários para sessões, autenticação e proteção das requisições. A versão acadêmica não implementa publicidade comportamental, venda de dados de alunos ou recursos de perfilamento comercial. Serviços externos, como Google Agenda e o carregamento de fontes do Google Fonts, podem estabelecer conexões com terceiros; em produção, a controladora deve avaliar essas conexões e a eventual transferência internacional de dados.</p>
+    </section>
+
+    <section id="retencao">
+        <h2>7. Retenção, exportação e descarte de documentos</h2>
+        <p><strong>Regra de disponibilidade dos documentos pedagógicos:</strong> a partir da data em que o cadastro de um aluno é alterado de <strong>Ativo</strong> para <strong>Inativo</strong>, seus relatórios e documentos pedagógicos cadastrados no ELO permanecerão disponíveis para consulta autorizada e exportação por até <strong>cinco anos após essa inativação</strong>. A data de inativação e a data-limite são registradas e calculadas pelo sistema.</p>
+        <p>Durante esse período, o professor gestor poderá acessar a edição do aluno inativo e utilizar a opção <strong>“Baixar em PDF relatórios e documentos”</strong>. O arquivo reúne os PEIs, PAEEs, estudos de caso e relatórios pedagógicos existentes no cadastro, independentemente de serem rascunhos, finalizados ou publicados. O histórico original permanece no banco de dados; o PDF é criado sob demanda e o download não altera os registros.</p>
+        <p><strong>Após cinco anos:</strong> o ELO bloqueia a disponibilização dos registros pedagógicos pelas telas e rotas de download, inclusive pelo arquivo consolidado. Uma eventual conservação técnica ou legal além desse marco só pode ocorrer quando existir fundamento jurídico e controle de acesso apropriados. <strong>O protótipo ainda não executa exclusão física automática do banco de dados, backups ou arquivos associados</strong>; a instituição responsável deve instituir e validar uma rotina segura de descarte, considerando as hipóteses legais de conservação ou os pedidos de titulares.</p>
+        <p>Se o aluno for reativado, ele volta ao acompanhamento normal; uma nova inativação inicia novo prazo documentado de cinco anos. Para alunos que já estavam inativos antes da implementação desta funcionalidade, sem data histórica verificável, o controle considera a data de adoção da nova regra no banco de dados.</p>
+        <ul class="lista-documento">
+            <li><strong>Registros pedagógicos:</strong> disponibilidade por até cinco anos após a inativação, sujeita aos direitos do titular e às obrigações legais pertinentes.</li>
+            <li><strong>Contas, vínculos, atividades e demais dados:</strong> conservação pelo período necessário à finalidade e às obrigações da controladora, com avaliação de eliminação ao término do tratamento.</li>
+            <li><strong>Auditoria, segurança e aceites:</strong> prazos próprios, proporcionais à necessidade de investigação, prestação de contas e demais exigências aplicáveis.</li>
+            <li><strong>Ambientes acadêmicos e dados de demonstração:</strong> dados fictícios ou autorizados devem ser descartados ao encerrar os testes, quando não houver outro motivo legítimo para conservá-los.</li>
+        </ul>
+        <p>O prazo de cinco anos acima é uma <strong>regra de retenção e disponibilidade adotada para o ELO</strong>, não um período obrigatório universal fixado pela LGPD. Sua adequação deve ser avaliada pela instituição controladora de acordo com as finalidades, as bases legais, o melhor interesse do aluno e as normas educacionais aplicáveis.</p>
+    </section>
+
+    <section id="direitos">
+        <h2>8. Direitos dos titulares e responsáveis</h2>
+        <p>Quando cabível, o titular ou seu representante legal pode solicitar confirmação do tratamento, acesso, correção, esclarecimentos sobre compartilhamento, anonimização, bloqueio ou eliminação de dados excessivos ou inadequados, informações sobre a conservação, oposição e revogação de consentimento, nos termos da LGPD.</p>
+        <p>Uma solicitação de eliminação será avaliada à luz das finalidades e das hipóteses legais de guarda, sem supor que todo documento deva ser mantido obrigatoriamente por cinco anos. Para solicitar direitos, o titular ou responsável legal deve usar o canal que a instituição controladora divulgar. Na versão acadêmica, ainda não há canal institucional de privacidade cadastrado no ELO; o professor gestor pode encaminhar a solicitação, mas não substitui o encarregado ou o procedimento institucional. As solicitações exigem verificação da identidade e do vínculo legal do solicitante para evitar divulgação indevida de informações de crianças.</p>
+    </section>
+
+    <section id="seguranca">
+        <h2>9. Medidas de segurança</h2>
+        <p>O ELO usa controles de autenticação do Django, proteção contra tentativas repetidas de login, perfis e vínculos de acesso, proteção CSRF, autenticação em duas etapas nos fluxos configurados e auditoria de ações relevantes. A exportação integral do histórico é restrita ao gestor, registrada na auditoria e enviada como download de PDF sem armazenamento em cache pelo navegador sempre que os cabeçalhos forem respeitados.</p>
+        <p>Dados e documentos de crianças exigem medidas organizacionais adicionais, como acesso mínimo, treinamento dos usuários, infraestrutura protegida, criptografia de transporte e, conforme a análise de riscos, de armazenamento, backups sob controle, resposta a incidentes e descarte verificável. O ELO não garante automaticamente que a infraestrutura de implantação, as cópias dos PDFs baixados ou os backups estejam protegidos; essas medidas devem ser implementadas e verificadas pela instituição.</p>
+    </section>
+
+
+    <section id="eca-digital">
+        <h2>10. Estatuto da Criança e do Adolescente e ECA Digital (Lei Felca)</h2>
+        <p>O uso do ELO deve respeitar o direito à educação inclusiva e a proteção da imagem, da intimidade, da identidade e da dignidade dos estudantes. Aplicam-se, conforme o caso, os arts. 17 e 18 do ECA, o art. 14 da LGPD, a Lei Brasileira de Inclusão e as obrigações proporcionais do ECA Digital (Lei nº 15.211/2025), regulamentado pelo Decreto nº 12.880/2026.</p>
+        <p>O sistema é voltado a tarefas educacionais em ambiente fechado e não oferece rede social pública, publicidade direcionada a menores, compras, jogos de azar ou mecanismos de engajamento compulsivo. Ainda assim, a instituição deve avaliar riscos de conteúdo inadequado, humilhação, discriminação, exposição de dados, contatos indevidos e eventual uso da plataforma por menores. Deve existir procedimento para reportar e remover conteúdos ilícitos ou prejudiciais, sem expor o estudante.</p>
+        <p>O vínculo de um responsável no cadastro não equivale a um mecanismo independente de aferição etária ou de confirmação de representação legal. A versão acadêmica não dispõe de verificação documental de idade, painel parental universal, fluxo automatizado de denúncias ou relatório formal de impacto à proteção de dados. A adequação desses controles deverá ser avaliada antes da operação institucional, de acordo com as funcionalidades e a legislação aplicável.</p>
+    </section>
+
+    <section>
+        <h2>11. Incidentes, cópias externas e responsabilidade institucional</h2>
+        <p>Em caso de suspeita de vazamento, envio indevido de PDF, acesso não autorizado ou outra violação, o usuário deve comunicar imediatamente o gestor e a instituição controladora, não divulgar o conteúdo e preservar as informações úteis à apuração. A controladora deve investigar, conter, documentar e, quando presentes os critérios legais, comunicar os titulares e a ANPD conforme a Resolução CD/ANPD nº 15/2024. Os prazos e obrigações de comunicação não são executados automaticamente pelo ELO.</p>
+        <p>Os arquivos PDF são gerados sob demanda e destinados ao uso institucional autorizado. Após o download, o ELO não controla cópias locais, compartilhamentos por aplicativos, impressões ou armazenamento em outros serviços. O destinatário deve protegê-los, limitar a circulação e eliminar cópias quando deixarem de ser necessárias ou quando assim determinado validamente.</p>
+    </section>
+
+    <section>
+        <h2>12. Transparência, decisões institucionais e limitações</h2>
+        <p>O ELO não executa decisões automatizadas de avaliação ou diagnóstico clínico de estudantes. O acompanhamento pedagógico e os documentos são elaborados por profissionais autorizados. Os registros não substituem avaliação médica nem documentação oficial emitida pela escola.</p>
+        <p>Antes do uso real com dados de crianças, a controladora deve aprovar a política, identificar-se publicamente, inventariar operações e terceiros, definir bases legais e prazos por categoria, avaliar necessidade de relatório de impacto, formalizar a gestão de incidentes e verificar controles técnicos e contratuais. A publicação desta política por si só não demonstra conformidade legal integral.</p>
+    </section>
+
+    <section id="referencias">
+        <h2>13. Legislação e orientações consideradas</h2>
+        <ul class="lista-documento">
+            <li>LGPD, Lei nº 13.709/2018 — arts. 6º, 7º, 11, 14, 15, 16, 18, 37, 46 e 48.</li>
+            <li>Estatuto da Criança e do Adolescente, Lei nº 8.069/1990 — arts. 15, 17 e 18.</li>
+            <li>ECA Digital (Lei Felca), Lei nº 15.211/2025, e Decreto nº 12.880/2026 — proteção e prevenção de riscos no ambiente digital, de forma proporcional ao serviço.</li>
+            <li>Lei Brasileira de Inclusão, Lei nº 13.146/2015 — especialmente direito à educação inclusiva e à dignidade.</li>
+            <li>Marco Civil da Internet, Lei nº 12.965/2014 — privacidade, sigilo e proteção de registros, quando aplicáveis.</li>
+            <li>ANPD — Enunciado CD/ANPD nº 1/2023 e Resolução CD/ANPD nº 15/2024 (incidentes de segurança).</li>
+        </ul>
+        <p>Estas referências orientam o projeto. Regras específicas do sistema de ensino, da instituição e do contrato com o prestador devem ser analisadas separadamente.</p>
+    </section>
+
+    <section>
+        <h2>14. Atualizações desta política</h2>
+        <p>Alterações relevantes de finalidade, dados, compartilhamento, procedimentos de exportação ou prazo de guarda exigem revisão desta política e comunicação apropriada. Quando necessário, o ELO solicitará nova manifestação de ciência da versão vigente antes do acesso às áreas internas.</p>
+        <p><strong>Versão atual:</strong> {{ versao_privacidade }} · <strong>Vigência:</strong> {{ data_vigencia }}.</p>
+    </section>
+</div>

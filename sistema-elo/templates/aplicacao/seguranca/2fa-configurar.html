@@ -1,0 +1,31 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - Configurar Microsoft Authenticator{% endblock %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/2fa.css' %}">{% endblock %}
+{% block conteudo %}
+<section class="elo-2fa-cartao" aria-labelledby="titulo-2fa">
+  <span class="elo-2fa-etapa">Proteção de dados · Etapa obrigatória</span>
+  <h1 id="titulo-2fa">Configure o Microsoft Authenticator</h1>
+  <p>Para proteger os relatórios e documentos dos alunos, professores e responsáveis precisam ativar a verificação em duas etapas. Essa configuração é feita apenas uma vez.</p>
+  <ol>
+    <li>Abra o aplicativo <strong>Microsoft Authenticator</strong> no celular.</li>
+    <li>Toque em <strong>Adicionar conta</strong> e escolha <strong>Outra conta</strong> (ou conta não Microsoft).</li>
+    <li>Leia este QR Code e digite o código de seis dígitos exibido no aplicativo.</li>
+  </ol>
+  <img class="elo-2fa-qr" src="data:image/png;base64,{{ qr_base64 }}" width="240" height="240" alt="QR Code para cadastrar o ELO no aplicativo autenticador">
+  <details>
+    <summary>Não consigo ler o QR Code. Mostrar chave de configuração manual</summary>
+    <code class="elo-2fa-chave">{{ chave_manual }}</code>
+    <p>Adicione uma conta baseada em tempo (TOTP), com códigos de 6 dígitos a cada 30 segundos.</p>
+  </details>
+  {% if erro %}<p class="elo-2fa-erro" role="alert">{{ erro }}</p>{% endif %}
+  <form method="post" class="elo-2fa-form" autocomplete="off">
+    {% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+    <label for="id_codigo">Código do aplicativo</label>
+    <input type="text" id="id_codigo" name="codigo" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" maxlength="6" placeholder="000000" required autofocus>
+    <label class="elo-2fa-linha-check" for="id_confiar"><input type="checkbox" id="id_confiar" name="confiar" value="sim"> Confiar neste navegador por 30 dias. Não marque em computadores compartilhados.</label>
+    <button class="elo-2fa-botao" type="submit">Ativar proteção</button>
+  </form>
+  <p class="elo-2fa-rodape">Após ativar, você receberá códigos de recuperação. Guarde-os fora do dispositivo.</p>
+</section>
+{% endblock %}

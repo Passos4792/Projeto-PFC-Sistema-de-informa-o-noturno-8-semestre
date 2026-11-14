@@ -1,0 +1,37 @@
+{% extends layout_2fa %}
+{% load static %}
+{% block titulo_pagina %}ELO - Segurança da conta{% endblock %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/2fa.css' %}">{% endblock %}
+{% block conteudo %}
+<section class="elo-2fa-cartao" aria-labelledby="titulo-2fa">
+  <span class="elo-2fa-etapa">Meus dados / Segurança</span>
+  <h1 id="titulo-2fa">Autenticação em duas etapas</h1>
+  <p>O Microsoft Authenticator está <strong>ativado</strong> para a sua conta.</p>
+  {% if request.user.is_superuser %}
+  <div class="elo-2fa-subarea">
+    <h2>Senha administrativa</h2>
+    <p>Para alterar a própria senha de administrador, informe a senha atual e um código novo do Microsoft Authenticator, mesmo neste navegador confiável.</p>
+    <p><a class="elo-2fa-botao elo-2fa-botao-secundario" href="{% url 'admin-trocar-senha' %}">Alterar minha senha de administrador</a></p>
+  </div>
+  {% endif %}
+  <div class="elo-2fa-subarea">
+    <h2>Navegadores confiáveis</h2>
+    <p>Os navegadores abaixo podem dispensar o código por até 30 dias. Após esse período, o Authenticator será solicitado novamente.</p>
+    {% if dispositivos %}
+      <ul class="elo-2fa-dispositivos">{% for dispositivo in dispositivos %}<li><strong>{{ dispositivo.descricao|truncatechars:90 }}</strong><br><small>Confiável até {{ dispositivo.expira_em|date:'d/m/Y H:i' }}</small></li>{% endfor %}</ul>
+    {% else %}<p>Nenhum navegador confiável cadastrado.</p>{% endif %}
+    <form method="post" action="{% url '2fa-revogar' %}">{% csrf_token %}<button class="elo-2fa-botao elo-2fa-botao-secundario" type="submit">Desvincular dispositivos confiáveis e exigir código no próximo login</button></form>
+  </div>
+  <div class="elo-2fa-subarea">
+    <h2>Códigos de recuperação</h2>
+    <p>Você tem <strong>{{ quantidade_codigos }}</strong> códigos de recuperação disponíveis. Ao emitir novos, os antigos deixam de funcionar.</p>
+    <form method="post" class="elo-2fa-form" autocomplete="off">
+      {% csrf_token %}<input type="hidden" name="acao" value="novos-codigos">
+      <label for="id_codigo">Código atual do Authenticator (para gerar novos códigos)</label>
+      <input type="text" id="id_codigo" name="codigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+      <button class="elo-2fa-botao elo-2fa-botao-secundario" type="submit">Gerar novos códigos de recuperação</button>
+    </form>
+  </div>
+  <p class="elo-2fa-rodape"><a href="{{ voltar_url }}">Voltar ao sistema</a></p>
+</section>
+{% endblock %}

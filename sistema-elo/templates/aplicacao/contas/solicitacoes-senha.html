@@ -1,0 +1,68 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261112-requisitos">
+{% endblock %}
+{% block titulo_pagina %}ELO - Pedidos de senha{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina">
+    <div>
+        <p class="caminho">Início / Solicitações de acesso</p>
+        <h1>Pedidos de redefinição de senha</h1>
+        <p class="subtitulo">{% if request.perfil_elo.gestor %}Solicitações de alunos, responsáveis e professores. Confira a identidade antes de atender.{% else %}Solicitações de alunos e responsáveis vinculados ao seu acompanhamento AEE.{% endif %}</p>
+    </div>
+</header>
+<nav class="abas-atividades" aria-label="Filtrar pedidos de senha" data-sincronizar-busca>
+    <a href="?filtro=todas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'todas' %}aria-current="page"{% endif %}>Todos</a>
+    <a href="?filtro=pendentes{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'pendentes' %}aria-current="page"{% endif %}>Pendentes{% if pedidos_senha_pendentes %} ({{ pedidos_senha_pendentes }}){% endif %}</a>
+    <a href="?filtro=atendidas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'atendidas' %}aria-current="page"{% endif %}>Atendidos</a>
+</nav>
+<section class="painel painel-lista">
+    <div class="painel-cabecalho cabecalho-registros">
+        <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>pedidos</span></div>
+        <div>
+            <h2>Solicitações recebidas</h2>
+            <p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ pedidos|length }} nesta página.</p>
+            <p>Confira o vínculo e a identidade antes de criar uma senha temporária.</p>
+        </div>
+        <form method="get" class="busca" role="search" data-busca-automatica>
+            <input type="hidden" name="filtro" value="{{ visao }}">
+            <input type="search" name="busca" value="{{ busca }}" maxlength="100" placeholder="Buscar por nome ou usuário" aria-label="Buscar pedido por nome ou usuário">
+            <small data-erro-busca role="alert" hidden>Não foi possível atualizar a lista. Pressione Enter para tentar novamente.</small>
+        </form>
+    </div>
+    <div data-resultados-lista>
+    <div class="tabela-responsiva">
+        <table class="lista-pedidos-senha">
+            <thead><tr><th>Solicitante</th><th>Perfil</th><th>Usuário</th><th>Recebido em</th><th>Situação</th><th>Ação</th></tr></thead>
+            <tbody>
+            {% for pedido in pedidos %}
+                <tr>
+                    <td>{% if pedido.usuario_alvo %}{% if pedido.usuario_alvo.tipo_perfil == 'ALUNO' %}{{ pedido.usuario_alvo.aluno_perfil.nome_completo }}{% elif pedido.usuario_alvo.tipo_perfil == 'RESPONSAVEL' %}{{ pedido.usuario_alvo.responsavel_perfil.nome_completo }}{% else %}{{ pedido.usuario_alvo.professor_perfil.nome_completo }}{% endif %}{% else %}{{ pedido.aluno.nome_completo }}{% endif %}</td>
+                    <td>{% if pedido.usuario_alvo %}{{ pedido.usuario_alvo.get_tipo_perfil_display }}{% else %}Aluno{% endif %}</td>
+                    <td>{% if pedido.usuario_alvo %}{{ pedido.usuario_alvo.usuario }}{% else %}{{ pedido.aluno.usuario.usuario }}{% endif %}</td>
+                    <td>{{ pedido.criada_em|date:'d/m/Y H:i' }}</td>
+                    <td>{{ pedido.get_situacao_display }}</td>
+                    <td>
+                        {% if pedido.situacao == 'PENDENTE' %}
+                            {% if pedido.usuario_alvo_id == request.perfil_elo.pk %}
+                                <span>Solicite atendimento a outro gestor</span>
+                            {% else %}
+                                <a class="botao-extra" href="{% url 'solicitacao-senha-atender' pedido.pk %}">Atender pedido</a>
+                            {% endif %}
+                        {% else %}
+                            <span>Atendida em {{ pedido.atendida_em|date:'d/m/Y H:i' }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6" class="sem-dados"><strong>Nenhuma solicitação de senha</strong><p>{% if busca %}Nenhum resultado para “{{ busca }}”. Tente outro nome ou usuário.{% elif visao != 'todas' %}Não há pedidos nesta aba.{% else %}Os pedidos que você pode atender aparecerão aqui.{% endif %}</p></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include 'aplicacao/partials/paginacao.html' with pagina=pagina filtros=filtros_paginacao titulo='pedidos de senha' %}
+    </div>
+</section>
+<script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
+{% endblock %}

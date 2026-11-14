@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Conheça o ELO, sistema de acompanhamento educacional individualizado que aproxima escola, família e estudantes.">
+    <title>Conheça o ELO</title>
+    <link rel="stylesheet" href="{% static 'aplicacao/css/base/fundamentos.css' %}">
+    <link rel="stylesheet" href="{% static 'aplicacao/css/base/tema.css' %}?v=20261112-icones-outline">
+    <link rel="stylesheet" href="{% static 'aplicacao/css/paginas/sobre.css' %}?v=20261112-figma-fiel-v1">
+</head>
+<body class="pagina-sobre-elo">
+    <main class="elo-sobre" id="conteudo-principal">
+        <img class="elo-sobre-ondas" src="{% static 'aplicacao/imagens/login/ondas-elo-login.png' %}" alt="" aria-hidden="true">
+        <section class="elo-sobre-apresentacao" aria-label="Apresentação do ELO">
+            <div class="elo-sobre-marca">
+                <img class="elo-sobre-simbolo" src="{% static 'aplicacao/imagens/login/logo-elo.png' %}" alt="Símbolo do ELO">
+                <p class="elo-sobre-nome" aria-label="ELO"><span>E</span><span>L</span><span>O</span></p>
+            </div>
+            <h1 class="elo-sobre-chamada"><span class="elo-sobre-chamada-linha">Conectando escola,</span> <span class="elo-sobre-chamada-linha">família e estudante</span> <span class="elo-sobre-chamada-destaque">em uma só jornada!</span></h1>
+            <p class="elo-sobre-texto">O ELO é uma plataforma que ajuda a organizar atividades, documentos, metas e o desenvolvimento de cada estudante, promovendo uma comunicação mais próxima entre escola, família e estudante.</p>
+        </section>
+        <section class="elo-sobre-conteudo" aria-labelledby="sobre-titulo">
+            <header class="elo-sobre-cabecalho">
+                <h2 id="sobre-titulo">Conheça o ELO</h2>
+                <p class="elo-sobre-subtitulo">Uma plataforma para construir caminhos únicos</p>
+                <p class="elo-sobre-intro">O ELO foi criado para apoiar o desenvolvimento de cada estudante, respeitando suas habilidades, necessidades e potencial.</p>
+            </header>
+            <div class="elo-sobre-recursos">
+                <article class="elo-sobre-recurso">
+                    <span class="elo-sobre-recurso-icone" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3m6 1V3M8 10h8M8 14h5"/></svg>
+                    </span>
+                    <h3>Atividades</h3>
+                    <p>Acompanhe prazos e entregas de atividades realizadas em casa.</p>
+                </article>
+                <article class="elo-sobre-recurso">
+                    <span class="elo-sobre-recurso-icone" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                    </span>
+                    <h3>Metas</h3>
+                    <p>Visualize objetivos individuais e acompanhe cada conquista.</p>
+                </article>
+                <article class="elo-sobre-recurso">
+                    <span class="elo-sobre-recurso-icone" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h7"/></svg>
+                    </span>
+                    <h3>Documentos</h3>
+                    <p>Reúna registros pedagógicos em um ambiente organizado e seguro.</p>
+                </article>
+                <article class="elo-sobre-recurso">
+                    <span class="elo-sobre-recurso-icone" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M8 15l2.5 2.5L16 12"/></svg>
+                    </span>
+                    <h3>Google Agenda</h3>
+                    <p>Conecte sua conta para acompanhar automaticamente os prazos.</p>
+                </article>
+            </div>
+            <a class="elo-sobre-voltar" href="{% url 'login' %}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
+                Voltar para a página inicial
+            </a>
+        </section>
+    </main>
+</body>
+</html>

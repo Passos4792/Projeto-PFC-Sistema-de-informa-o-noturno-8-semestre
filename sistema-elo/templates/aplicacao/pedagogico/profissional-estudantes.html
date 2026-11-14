@@ -1,0 +1,11 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Meus alunos{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div><p class="caminho">Acompanhamento pedagógico</p><h1>Meus alunos</h1>
+<p class="subtitulo">Acesse os estudantes vinculados à sua função e registre o trabalho realizado após o atendimento.</p></div></header>
+<section class="painel"><div class="painel-cabecalho"><div><h2>Estudantes vinculados</h2></div><a class="botao-principal" href="{% url 'documentos-lista' %}">Documentos e relatórios</a></div>
+<div class="grade-cartoes">{% for aluno in alunos %}<article class="cartao-aluno"><span class="avatar">{{ aluno.nome|first }}{{ aluno.sobrenome|first }}</span><h2>{{ aluno.nome_completo }}</h2>
+<p>{{ aluno.funcoes_no_elo }}.</p><a class="botao-principal" href="{% url 'documentos-lista' %}?aluno={{ aluno.pk }}">Documentos e relatórios</a>{% if aluno.pode_gerenciar %} <a class="botao-secundario" href="{% url 'aluno-inicio' aluno.pk %}">Acompanhamento AEE</a>{% endif %}</article>{% empty %}<div class="sem-dados"><strong>Nenhum aluno atribuído.</strong><p>Solicite à gestão o cadastro do vínculo profissional.</p></div>{% endfor %}</div>
+{% include 'aplicacao/partials/paginacao.html' with pagina=pagina titulo='alunos' %}
+</section>
+{% endblock %}

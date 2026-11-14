@@ -1,0 +1,137 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+{% block conteudo %}
+
+
+<div class="painel-pedagogico" data-painel data-api="{{ api_url }}" data-secao="{{ secao }}">
+    <header class="topo-pagina">
+        <div>
+            <p class="caminho">Acompanhamento / {{ titulo }}</p>
+            <h1>{{ titulo }}{% if aluno %} de {{ aluno.nome }}{% endif %}</h1>
+            <p class="subtitulo">{% if secao == 'metas' %}Objetivos claros, uma conquista de cada vez.{% else %}Metas, conteúdos e atividades no mesmo lugar.{% endif %}</p>
+        </div>
+        {% if professor %}
+            {% if secao == 'metas' %}<a class="botao-principal" href="{% url 'meta-criar' %}">+ Nova meta</a>
+
+            {% else %}<a class="botao-secundario" href="{% url 'atividade-listar' %}?filtro=aprovacoes">Ver atividades e aprovações</a>{% endif %}
+        {% elif url_atividades %}<a class="botao-secundario" href="{{ url_atividades }}">Ver atividades</a>{% endif %}
+    </header>
+
+
+    <form class="painel filtros-painel" method="get" data-filtros-painel>
+        {% if aluno %}<input type="hidden" name="aluno" value="{{ aluno.pk }}">
+        {% elif secao == 'metas' and professor %}
+            {% if formulario.aluno.value %}<input type="hidden" name="aluno" value="{{ formulario.aluno.value }}">{% endif %}
+        {% else %}<div class="grupo-campo">{{ formulario.aluno.label_tag }}{{ formulario.aluno }}</div>{% endif %}
+        {% if secao == 'metas' %}<div class="grupo-campo">{{ formulario.periodo.label_tag }}{{ formulario.periodo }}</div>
+        {% elif not painel_individual %}
+        <div class="grupo-campo">{{ formulario.inicio.label_tag }}{{ formulario.inicio }}</div>
+        <div class="grupo-campo">{{ formulario.fim.label_tag }}{{ formulario.fim }}</div>
+        {% endif %}
+        {% if secao == 'metas' %}
+        <div class="grupo-campo filtro-busca"><label for="id_busca">Pesquisar</label>{{ formulario.busca }}</div>
+        <input type="hidden" name="estado" value="{{ estado_metas }}">
+        {% endif %}
+        <noscript><button class="botao-secundario" type="submit">Filtrar</button></noscript>
+        <a class="limpar-filtros" href="{{ request.path }}">Limpar filtros</a>
+        {% if formulario.errors %}<div class="erro-campo" role="alert">{{ formulario.errors }}</div>{% endif %}
+    </form>
+
+    {% if dados %}
+    <div data-painel-resultados>
+    {% if painel_individual %}{{ dados|json_script:"dados-painel-iniciais" }}{% endif %}
+    <p class="nota-painel" data-atualizacao role="status">Dados atualizados ao abrir esta página. Apenas atividades aprovadas pelo professor contam como realizadas.</p>
+    {% if secao == 'metas' %}
+    <section class="indicadores-periodos" aria-label="Metas por período">
+        {% for periodo in dados.periodos %}
+        <article class="cartao-periodo"><span>{{ periodo.nome }}</span><strong>{{ periodo.alcancadas }} <small>/ {{ periodo.total }}</small></strong><p>metas alcançadas</p></article>
+        {% endfor %}
+    </section>
+    {% else %}
+    <section class="indicadores-periodos" aria-label="Resumo do acompanhamento">
+        <article class="cartao-periodo"><span>Atividades</span><strong>{{ dados.resumo.atividades }}</strong><p>Total geral</p></article>
+        <article class="cartao-periodo"><span>Realizadas</span><strong>{{ dados.resumo.realizadas }}</strong><p>conclusões aprovadas</p></article>
+        <article class="cartao-periodo"><span>Pendentes</span><strong>{{ dados.resumo.pendentes }}</strong><p>para acompanhar</p></article>
+        {% if painel_individual %}<article class="cartao-periodo"><span>Alunos acompanhados</span><strong>{{ dados.resumo.alunos }}</strong><p>No filtro selecionado</p></article>
+        {% else %}<article class="cartao-periodo"><span>Metas alcançadas</span><strong>{{ dados.resumo.metas_alcancadas }}</strong><p>em todos os períodos</p></article>{% endif %}
+    </section>
+    {% endif %}
+
+
+    {% if painel_individual and not mostrar_grafico_individual %}
+    <p class="nota-painel" role="status">Selecione um aluno para acompanhar {% if secao == 'metas' %}o gráfico de metas{% else %}as atividades por conteúdo no gráfico{% endif %}.</p>
+    {% else %}
+    <section class="painel bloco-grafico">
+        <div><p class="caminho">Visão geral</p><h2>{% if secao == 'metas' %}Conquistas por período{% else %}Atividades por conteúdo{% endif %}</h2><p class="nota-painel">Os valores também estão disponíveis nos cartões e tabelas abaixo.</p>
+            {% if secao == 'metas' and professor %}<p class="nota-painel">{% if busca_metas %}Mostrando as metas encontradas para “{{ busca_metas }}”.{% else %}Total de todos os alunos. Pesquise o nome de um aluno para ver só as metas dele.{% endif %}</p>{% endif %}</div>
+        <div class="area-grafico">
+            <canvas data-grafico role="img" aria-label="Gráfico de acompanhamento; valores disponíveis abaixo"></canvas>
+            <p data-grafico-vazio hidden>Cadastre atividades e metas para visualizar os indicadores.</p>
+        </div>
+    </section>
+
+    {% endif %}
+
+
+    {% if secao == 'metas' or secao == 'acompanhamento' %}
+    <section class="secao-acompanhamento">
+        <div class="titulo-secao"><div><h2>Metas dos alunos</h2><p>{{ total_metas }} meta(s) encontrada(s). As metas por período contam atividades pela data de entrega.</p></div></div>
+        {% if secao == 'metas' %}
+        <nav class="abas-atividades" aria-label="Filtrar metas">
+            {% for codigo, nome in abas_metas %}
+            <a href="?estado={{ codigo }}{% if filtros_abas %}&amp;{{ filtros_abas }}{% endif %}" {% if estado_metas == codigo %}aria-current="page"{% endif %}>{{ nome }}</a>
+            {% endfor %}
+        </nav>
+        {% endif %}
+        <div class="grade-metas">
+        {% for meta in metas_lista %}
+            <article class="painel cartao-meta">
+                <div class="linha-etiquetas"><span class="etiqueta">{{ meta.periodo_nome }}</span><span class="situacao-meta estado-{{ meta.estado|lower }}">{{ meta.estado_nome }}</span></div>
+                <h3>{{ meta.titulo }}</h3><p class="aluno-meta">{{ meta.aluno }}</p>
+                {% if meta.descricao %}<p class="descricao-meta">{{ meta.descricao }}</p>{% endif %}
+                <div class="progresso-numeros"><strong>{{ meta.realizadas }} / {{ meta.alvo }}</strong><span>atividades realizadas</span></div>
+                <progress max="100" value="{{ meta.percentual }}" aria-label="Progresso da meta {{ meta.titulo }}">{{ meta.percentual }}%</progress>
+                <p class="nota-painel">{{ meta.inicio_formatado }}{% if meta.fim %} a {{ meta.fim_formatado }}{% endif %} · {{ meta.atribuidas }} atividade(s) cadastrada(s) no período</p>
+                {% if professor %}<div class="acoes-cartao"><a href="{% url 'meta-editar' meta.id %}">Editar</a><a href="{% url 'meta-excluir' meta.id %}">Excluir</a></div>{% endif %}
+            </article>
+        {% empty %}<div class="painel vazio-painel"><h3>Nenhuma meta encontrada</h3><p>{% if filtro_metas_ativo %}Tente outro termo ou escolha outra aba.{% elif professor %}Cadastre uma meta e defina o período e a quantidade de atividades.{% else %}As metas definidas pelo professor aparecerão aqui.{% endif %}</p></div>{% endfor %}
+        </div>
+        {% if pagina_metas.paginator.num_pages > 1 %}
+        <nav class="rodape-painel acoes-cartao" aria-label="Páginas de metas">
+            {% if pagina_metas.has_previous %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina_metas.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ pagina_metas.number }} de {{ pagina_metas.paginator.num_pages }} · {{ pagina_metas.paginator.count }} metas</span>
+            {% if pagina_metas.has_next %}<a class="botao-secundario" href="?{{ filtros_paginacao }}&amp;pagina={{ pagina_metas.next_page_number }}">Próxima</a>{% endif %}
+        </nav>
+        {% endif %}
+    </section>
+    {% endif %}
+
+
+    {% if secao == 'acompanhamento' %}
+    <section class="painel">
+        <div class="painel-cabecalho"><div><h2>Conteúdos e realizações</h2><p>{{ dados.conteudos|length }} conteúdo(s). Atividades canceladas não entram nos totais.</p></div></div>
+        <div class="tabela-responsiva"><table>
+            <thead><tr><th>Conteúdo</th><th>Total</th><th>Realizadas</th><th>Pendentes</th></tr></thead>
+            <tbody>{% for conteudo in conteudos_lista %}<tr>
+                <td><strong>{{ conteudo.nome }}</strong>{% if not conteudo.ativo %}<span class="etiqueta">Inativo</span>{% endif %}{% if conteudo.descricao %}<p class="nota-painel">{{ conteudo.descricao }}</p>{% endif %}</td>
+                <td>{{ conteudo.total }}</td><td>{{ conteudo.realizadas }}</td><td>{{ conteudo.pendentes }}</td>
+            </tr>{% empty %}<tr><td colspan="4" class="sem-dados">Nenhum conteúdo encontrado. Cadastre atividades para visualizar o resumo por conteúdo.</td></tr>{% endfor %}</tbody>
+        </table></div>
+        {% include 'aplicacao/partials/paginacao.html' with pagina=pagina_conteudos filtros=filtros_conteudos parametro='pagina_conteudos' titulo='conteúdos' %}
+    </section>
+    {% endif %}
+
+
+    {% if secao == 'acompanhamento' %}
+    <div class="rodape-painel">
+        {% if professor %}<a class="botao-principal" href="{% url 'atividade-listar' %}?aluno={{ aluno.pk }}">Abrir atividades</a>
+        {% elif url_atividades %}<a class="botao-principal" href="{{ url_atividades }}">{% if pode_enviar_atividades %}Abrir atividades e solicitar conclusão{% else %}Ver atividades{% endif %}</a>{% endif %}
+    </div>
+    {% endif %}
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'aplicacao/vendor/chart.umd.min.js' %}" defer></script>
+<script src="{% static 'aplicacao/js/painel-acompanhamento.js' %}?v=20261112-grafico-metas" defer></script>
+{% endblock %}

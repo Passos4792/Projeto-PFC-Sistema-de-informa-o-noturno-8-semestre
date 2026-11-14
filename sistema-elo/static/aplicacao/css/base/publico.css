@@ -1,0 +1,146 @@
+.pagina-publica {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.cabecalho-publico {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px max(24px, calc((100% - 1120px) / 2));
+    background: var(--branco);
+    border-bottom: 1px solid var(--borda);
+}
+
+
+.cabecalho-publico img {
+    width: 112px;
+    display: block;
+}
+
+
+.cabecalho-publico span {
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+
+.conteudo-publico {
+    width: min(100%, 1060px);
+    margin: auto;
+    padding: 48px 24px;
+}
+
+
+.cartao-publico {
+    margin: 0;
+    padding: clamp(24px, 5vw, 64px);
+    text-align: center;
+}
+
+
+.saida-primeiro-acesso {
+    margin-top: 20px;
+}
+
+.cartao-publico h1 {
+    margin-top: 20px;
+}
+
+
+.cartao-publico .subtitulo {
+    max-width: 660px;
+    margin: 16px auto 28px;
+    line-height: 1.6;
+}
+
+
+.aviso-informativo {
+    background: #edf2fa;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 28px auto;
+    max-width: 620px;
+    text-align: left;
+}
+
+
+.aviso-informativo p {
+    color: #53627a;
+}
+
+
+.grade-beneficios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 36px 0;
+    text-align: left;
+}
+
+
+.grade-beneficios article {
+    padding: 22px;
+    background: #f1f5fc;
+    border-radius: 16px;
+}
+
+
+.grade-beneficios article:nth-child(2) {
+    background: #eff7f0;
+}
+
+
+.grade-beneficios article:nth-child(3) {
+    background: #f4effb;
+}
+
+
+.grade-beneficios article>span {
+    font-size: 28px;
+    color: #527ab9;
+}
+
+
+.grade-beneficios h2 {
+    font-size: 18px;
+}
+
+
+.grade-beneficios p {
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+
+.rodape-publico {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--texto-suave);
+}
+
+
+.rodape-publico {
+    display: grid;
+    gap: 8px;
+}
+
+.rodape-publico nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+}
+
+.rodape-publico a {
+    color: var(--azul-escuro);
+    text-decoration: none;
+}
+
+.rodape-publico a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,260 @@
+.estrutura-pagina {
+    display: grid;
+    grid-template-columns: 242px minmax(0, 1fr);
+    min-height: 100vh;
+    transition: grid-template-columns .35s ease;
+}
+
+
+.menu-lateral {
+    display: flex;
+    min-height: 100vh;
+    padding: 24px 16px 20px;
+    flex-direction: column;
+    border-right: 1px solid var(--borda);
+    background: rgba(255, 253, 251, .98);
+}
+
+
+.logo-menu {
+    display: grid;
+    min-height: 104px;
+    padding: 3px 10px 22px;
+    place-items: center;
+    border-bottom: 1px solid var(--borda);
+}
+
+
+.logo-menu img {
+    width: 130px;
+    height: auto;
+}
+
+
+.logo-menu small {
+    margin-top: 8px;
+    color: #6f8fca;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.menu-navegacao {
+    flex: 1;
+    margin-top: 14px;
+}
+
+
+.menu-navegacao p {
+    margin: 22px 12px 8px;
+    color: #938ba1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+
+.menu-navegacao a {
+    display: flex;
+    min-height: 46px;
+    margin: 5px 0;
+    padding: 9px 11px;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid #e5ddf8;
+    border-radius: 0 9px 9px 0;
+    text-decoration: none;
+}
+
+
+.menu-navegacao a span {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    place-items: center;
+    border: 1px solid #8d8a87;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+
+.menu-navegacao a:hover,
+.menu-navegacao a.ativo {
+    background: var(--azul-claro);
+    color: #315a9e;
+}
+
+
+.rodape-menu {
+    display: flex;
+    padding: 11px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #f0c0b3;
+    border-radius: 9px;
+    background: #fff8f5;
+    color: #b86452;
+}
+
+
+.rodape-menu span {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border: 1px solid #e9ad9d;
+    border-radius: 6px;
+}
+
+
+.alternar-menu {
+    position: fixed;
+    z-index: 20;
+    top: 24px;
+    left: 220px;
+    display: grid;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    place-items: center;
+    border: 1px solid #c6d8f7;
+    border-radius: 50%;
+    background: var(--branco);
+    color: var(--azul-escuro);
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 13px rgba(93, 126, 180, .18);
+    transition: left .35s ease;
+}
+
+
+.alternar-menu .icone-alternar-menu {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .2s ease;
+}
+
+body.menu-minimizado .alternar-menu .icone-alternar-menu {
+    transform: rotate(180deg);
+}
+
+body.menu-minimizado .estrutura-pagina {
+    grid-template-columns: 82px minmax(0, 1fr);
+}
+
+
+body.menu-minimizado .alternar-menu {
+    left: 61px;
+}
+
+
+body.menu-minimizado .menu-lateral {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+
+body.menu-minimizado .logo-menu img {
+    width: 52px;
+}
+
+
+body.menu-minimizado .logo-menu small,
+body.menu-minimizado .menu-navegacao p,
+body.menu-minimizado .menu-navegacao b,
+body.menu-minimizado .rodape-menu b {
+    display: none;
+}
+
+
+body.menu-minimizado .menu-navegacao a,
+body.menu-minimizado .rodape-menu {
+    justify-content: center;
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
+
+.conteudo {
+    width: min(100%, 1320px);
+    min-width: 0;
+    padding: clamp(26px, 3vw, 48px);
+    justify-self: center;
+    padding-bottom: 64px;
+}
+
+
+.topo-pagina {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+
+.caminho {
+    margin: 0 0 9px;
+    color: var(--azul-escuro);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+h1 {
+    margin: 0;
+    font-size: clamp(34px, 3vw, 43px);
+    font-weight: 500;
+}
+
+
+.subtitulo {
+    margin: 8px 0 0;
+    color: var(--texto-suave);
+    font-size: 17px;
+}
+
+
+.elo-link-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--elo-acao, var(--azul-escuro));
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    transition: color .18s ease, transform .18s ease;
+}
+
+.elo-link-voltar:hover,
+.elo-link-voltar:focus-visible {
+    color: #365e88;
+}
+
+.elo-link-voltar:hover .elo-link-voltar__icone,
+.elo-link-voltar:focus-visible .elo-link-voltar__icone {
+    transform: translateX(-2px) rotate(90deg);
+}
+
+.elo-link-voltar__icone {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    color: currentColor;
+    transform: rotate(90deg);
+    transition: transform .18s ease;
+    stroke-width: 2.4;
+}
+
+.caminho .elo-link-voltar {
+    font-size: 1.02rem;
+}

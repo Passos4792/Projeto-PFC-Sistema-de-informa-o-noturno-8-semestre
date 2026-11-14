@@ -1,0 +1,12 @@
+<div class="google-resumo">
+    <div><strong>Google Agenda</strong>
+        {% if google_conexao_perfil %}<p>Conta conectada. As atividades futuras com prazo são sincronizadas automaticamente e atualizadas quando o professor as altera.</p>
+        {% else %}<p>Conecte sua conta Google uma única vez. O ELO enviará automaticamente as atividades dos alunos vinculados, sem precisar sincronizar uma por uma.</p>{% endif %}
+    </div>
+    {% if google_conexao_perfil %}
+        <span class="etiqueta">Conectado</span>
+        <form method="post" action="{% url 'google-desconectar' %}">{% csrf_token %}<input type="hidden" name="origem" value="{{ origem|default:'atividades' }}"><button type="submit" class="botao-secundario">Desconectar</button></form>
+    {% elif google_configurado %}
+        <form method="post" action="{% url 'google-conectar' %}">{% csrf_token %}<input type="hidden" name="origem" value="{{ origem|default:'atividades' }}"><button type="submit" class="botao-principal">Conectar Google Agenda</button></form>
+    {% else %}<span class="nota-painel">Integração ainda não configurada pelo administrador.</span>{% endif %}
+</div>

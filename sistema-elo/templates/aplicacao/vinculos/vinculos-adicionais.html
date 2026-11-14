@@ -1,0 +1,22 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_finais %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/vinculos.css' %}?v=20261110-organizacao">
+{% endblock %}
+{% block titulo_pagina %}ELO - {{ titulo }}{% endblock %}
+{% block conteudo %}
+<header class="topo-pagina"><div><p class="caminho">Cadastros / Vínculos</p><h1>{{ titulo }}</h1><p class="subtitulo">{{ descricao }}</p></div></header>
+<section class="painel painel-formulario"><div class="painel-cabecalho"><h2>Novo vínculo</h2></div>
+<form method="post" class="formulario-cadastro">{% csrf_token %}
+{% for campo in formulario %}<div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endfor %}
+{% for erro in formulario.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
+<div class="acoes-formulario"><button class="botao-principal" type="submit">Cadastrar vínculo</button></div></form></section>
+<section class="painel vinculos-registros"><div class="painel-cabecalho"><h2>Vínculos cadastrados</h2></div><div class="elo-registros-lista">
+{% for vinculo in pagina %}<article class="elo-registro"><strong>{{ vinculo.aluno.nome_completo }}</strong> — {% if familia %}{{ vinculo.responsavel.nome_completo }}{% else %}{{ vinculo.professor.nome_completo }} ({{ vinculo.get_funcao_display }}){% endif %}
+<span>{% if vinculo.ativo %}Ativo{% else %}Inativo{% endif %}</span></article>{% empty %}<p>Nenhum vínculo adicional cadastrado.</p>{% endfor %}
+</div>{% if pagina.paginator.num_pages > 1 %}<nav class="rodape-painel acoes-cartao" aria-label="Páginas de vínculos">
+{% if pagina.has_previous %}<a class="botao-secundario" href="?pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+{% if pagina.has_next %}<a class="botao-secundario" href="?pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+</nav>{% endif %}<p class="subtitulo">Vínculos adicionais podem ser alterados pelo administrador Django. Os vínculos antigos do ELO permanecem preservados.</p></section>
+{% endblock %}

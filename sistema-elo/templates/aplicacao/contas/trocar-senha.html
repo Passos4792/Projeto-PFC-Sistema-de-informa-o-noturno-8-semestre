@@ -1,0 +1,39 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261112-requisitos">
+{% endblock %}
+{% block titulo_pagina %}ELO - Crie sua senha{% endblock %}
+{% block conteudo %}
+<section class="painel cartao-publico cartao-senha">
+    <header class="cabecalho-senha">
+    <span class="rotulo-senha">{% if obrigatoria %}Primeiro acesso{% else %}Minha conta{% endif %}</span>
+    <h1>{% if obrigatoria %}Defina sua senha{% else %}Trocar senha{% endif %}</h1>
+    <p class="subtitulo">{% if obrigatoria %}Troque a senha recebida por uma senha pessoal.{% else %}Informe a senha atual e escolha uma nova.{% endif %}</p>
+    </header>
+    <form method="post" class="formulario-senha" novalidate>
+        {% csrf_token %}
+        {% for erro in formulario.non_field_errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        {% for campo in formulario %}
+        <div class="grupo-campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% if campo.name == 'new_password1' %}
+                {% include 'aplicacao/partials/regras-senha.html' with campo=campo confirmacao=formulario.new_password2 conta=formulario.user %}
+            {% elif campo.help_text %}
+                <small id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</small>
+            {% endif %}
+            {% for erro in campo.errors %}<p class="erro-campo" role="alert">{{ erro }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="acoes-senha">
+            <button class="botao-principal" type="submit">Salvar senha</button>
+            {% if obrigatoria %}<button class="sair-senha" type="submit" form="sair-primeiro-acesso">Sair da conta</button>{% else %}<a class="sair-senha" href="{% url 'meus-dados' %}">Voltar</a>{% endif %}
+        </div>
+    </form>
+    <form id="sair-primeiro-acesso" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+    </form>
+</section>
+<script src="{% static 'aplicacao/js/regras-senha.js' %}" defer></script>
+{% endblock %}

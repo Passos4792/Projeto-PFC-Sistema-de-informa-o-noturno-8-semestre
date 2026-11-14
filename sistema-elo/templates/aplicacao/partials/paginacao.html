@@ -1,0 +1,11 @@
+{% if pagina.paginator.num_pages > 1 %}
+<nav class="rodape-painel elo-paginacao" aria-label="Páginas de {{ titulo|default:'registros' }}">
+    {% if pagina.has_previous %}
+    <a class="botao-secundario" href="?{% if filtros %}{{ filtros }}&amp;{% endif %}{{ parametro|default:'pagina' }}={{ pagina.previous_page_number }}{% if ancora %}#{{ ancora }}{% endif %}" aria-label="Página anterior de {{ titulo|default:'registros' }}">Anterior</a>
+    {% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }} <span class="elo-paginacao-total">· {{ pagina.paginator.count }} registro(s)</span></span>
+    {% if pagina.has_next %}
+    <a class="botao-secundario" href="?{% if filtros %}{{ filtros }}&amp;{% endif %}{{ parametro|default:'pagina' }}={{ pagina.next_page_number }}{% if ancora %}#{{ ancora }}{% endif %}" aria-label="Próxima página de {{ titulo|default:'registros' }}">Próxima</a>
+    {% endif %}
+</nav>
+{% endif %}

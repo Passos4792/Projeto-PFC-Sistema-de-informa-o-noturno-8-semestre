@@ -1,0 +1,44 @@
+.atalhos-inicio { padding: 28px; }
+.atalhos-inicio h2 { margin: 0 0 8px; font-size: 22px; }
+.atalhos-inicio > p { color: var(--texto-suave); margin: 0 0 24px; }
+.grade-atalhos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grade-atalhos a { display: grid; gap: 10px; padding: 24px; border: 1px solid #e0e5ed; border-radius: 14px; text-decoration: none; background: #fafbfd; }
+.grade-atalhos strong { color: #365c91; font-size: 17px; }
+.grade-atalhos span { color: #677387; font-size: 13px; line-height: 1.5; }
+.grade-atalhos a:hover { background: #edf3fd; border-color: #b4cbed; }
+@media (max-width: 800px) { .grade-atalhos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.atalhos-inicio > p { padding: 0; }
+
+@media (max-width: 580px) {
+    .grade-atalhos { grid-template-columns: 1fr; }
+}
+
+.progresso-inicio { padding: 27px 28px; margin: 22px 0 26px; }
+.progresso-inicio-cabecalho { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.progresso-inicio-cabecalho > div { flex: 1 1 300px; }
+.progresso-inicio-cabecalho h2 { margin: 5px 0 8px; }
+.progresso-inicio-cabecalho .nota-painel { margin: 0; max-width: 660px; }
+.filtro-aluno-inicio { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; }
+.filtro-aluno-inicio label { width: 100%; font-size: .85rem; font-weight: 800; color: #5b6980; }
+.filtro-aluno-inicio select { min-width: 220px; max-width: 100%; min-height: 42px; border: 1px solid #c7d7e7; border-radius: 10px; background: #fff; padding: 10px 12px; color: #293b52; }
+.filtro-aluno-inicio button { min-height: 42px; }
+.progresso-aluno { font-weight: 800; margin: 22px 0 12px; color: #416b9e; }
+.resumo-progresso-inicio { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.resumo-progresso-inicio > div { border: 2px solid #c6d9ee; border-radius: 16px; background: #f4f7fb; padding: 18px 20px; display: grid; gap: 8px; }
+.resumo-progresso-inicio > div:nth-child(2) { border-color: #f2d5bf; background: #fef9f6; }
+.resumo-progresso-inicio > div:nth-child(3) { border-color: #d9cbe9; background: #f8f5fb; }
+.resumo-progresso-inicio span { color: #5b6980; font-size: .9rem; }
+.resumo-progresso-inicio strong { font-size: 1.75rem; color: #365c91; line-height: 1.2; }
+.resumo-progresso-inicio > div:nth-child(2) strong { color: #b16e51; }
+.resumo-progresso-inicio > div:nth-child(3) strong { color: #765aa0; }
+.resumo-progresso-inicio small { font-size: .9rem; font-weight: 600; color: #718097; }
+.barra-progresso-inicio { margin-top: 24px; }
+.barra-progresso-inicio-info { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; color: #5b6980; }
+.barra-progresso-inicio-info strong { color: #365c91; }
+.barra-progresso-inicio progress { width: 100%; height: 12px; display: block; border: none; border-radius: 20px; overflow: hidden; accent-color: #88b4a4; }
+.barra-progresso-inicio progress::-webkit-progress-bar { background: #e9eff2; border-radius: 20px; }
+.barra-progresso-inicio progress::-webkit-progress-value { background: #88b4a4; border-radius: 20px; }
+.barra-progresso-inicio progress::-moz-progress-bar { background: #88b4a4; border-radius: 20px; }
+.progresso-vazio { margin: 20px 0 0; padding: 16px 18px; background: #f4f7fb; border-radius: 12px; color: #5b6980; }
+.progresso-atalho { display: inline-flex; margin-top: 20px; }
+@media (max-width: 720px) { .resumo-progresso-inicio { grid-template-columns: 1fr; } .progresso-inicio { padding: 19px; } }
