@@ -1,5 +1,0 @@
-pip install Django
-pip install "PyMySQL[rsa]"
-pip install python-dotenv
-pip install cryptography
-pip install djangorestframework==3.18.3
