@@ -42,6 +42,7 @@
                         <a href="{% url 'pagina-inicial' %}" class="{% if pagina_ativa == 'pagina-inicial' %}ativo{% endif %}"><span>⌂</span><b>Página inicial</b></a>
                         <a href="{% url 'usuario-criar' %}" class="{% if pagina_ativa == 'usuarios' %}ativo{% endif %}"><span>+</span><b>Cadastrar usuário</b></a>
                         <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}"><span>🎓</span><b>Alunos</b></a>
+                        <a href="{% url 'solicitacao-senha-listar' %}" class="{% if pagina_ativa == 'solicitacoes-senha' %}ativo{% endif %}"><span>🔑</span><b>Pedidos de senha {% if pedidos_senha_pendentes %}({{ pedidos_senha_pendentes }}){% endif %}</b></a>
                         <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}"><span>👤</span><b>Professores</b></a>
                         <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}"><span>👥</span><b>Responsáveis</b></a>
                         <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}"><span>🔗</span><b>Vínculos</b></a>

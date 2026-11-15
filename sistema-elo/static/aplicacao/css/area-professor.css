@@ -2080,3 +2080,11 @@ body.menu-minimizado .links-legais-menu {
 .sincronizacao-atividade { display: grid; gap: 10px; margin-top: auto; padding-top: 16px; width: 100%; }
 .sincronizacao-atividade button { font-size: 12px; text-align: left; }
 @media (max-width: 700px) { .conexao-calendario { grid-template-columns: 1fr; gap: 18px; padding: 22px; } }
+
+.formulario-recuperacao { max-width: 520px; margin: 26px auto; text-align: left; }
+.formulario-recuperacao .botao-principal { width: 100%; justify-content: center; }
+.lista-pedidos-senha { width: 100%; border-collapse: collapse; }
+.lista-pedidos-senha th, .lista-pedidos-senha td { padding: 15px 13px; text-align: left; border-bottom: 1px solid #dce4ef; }
+.lista-pedidos-senha th { color: #446aa7; font-size: 12px; text-transform: uppercase; }
+.lista-pedidos-senha .botao-extra { white-space: nowrap; }
+@media (max-width: 700px) { .lista-pedidos-senha { display: block; overflow-x: auto; } }

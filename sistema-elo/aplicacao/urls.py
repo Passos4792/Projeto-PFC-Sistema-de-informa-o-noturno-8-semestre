@@ -1,7 +1,7 @@
 
 from django.urls import path
 
-from . import views, contas, calendario, paineis, api
+from . import views, contas, calendario, paineis, api, senha_solicitacoes
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 
@@ -23,6 +23,9 @@ urlpatterns = [
     path('google/desconectar/', calendario.desconectar, name='google-desconectar'),
     path('atividades/<int:pk>/sincronizar-google/', calendario.sincronizar, name='google-sincronizar'),
     path('usuarios/<int:pk>/redefinir-senha/', contas.redefinir_senha, name='usuario-redefinir-senha'),
+    path('usuarios/<int:pk>/ativar-acesso/', senha_solicitacoes.ativar_acesso, name='usuario-ativar-acesso'),
+    path('solicitacoes-de-senha/', senha_solicitacoes.lista_solicitacoes, name='solicitacao-senha-listar'),
+    path('solicitacoes-de-senha/<int:pk>/atender/', senha_solicitacoes.atender_solicitacao, name='solicitacao-senha-atender'),
     path('pagina-inicial/', views.pagina_inicial, name='pagina-inicial'),
     path('trocar-senha/', contas.trocar_senha, name='trocar-senha'),
     path('auditoria/', views.auditoria, name='auditoria'),
@@ -30,8 +33,7 @@ urlpatterns = [
          authentication_form=contas.LoginElo), name='login'),
     path('sair/', LogoutView.as_view(), name='logout'),
     path('usuarios/novo/', contas.cadastrar, name='usuario-criar'),
-    path('recuperar-senha/', TemplateView.as_view(template_name='aplicacao/recuperar-senha.html'),
-         name='recuperar-senha'),
+    path('recuperar-senha/', senha_solicitacoes.solicitar_senha, name='recuperar-senha'),
     path('sobre/', TemplateView.as_view(template_name='aplicacao/sobre.html'), name='sobre'),
     path('politica-de-privacidade/', TemplateView.as_view(template_name='aplicacao/politica-privacidade.html'), name='politica-privacidade'),
     path('termos-de-uso/', TemplateView.as_view(template_name='aplicacao/termos-uso.html'), name='termos-uso'),

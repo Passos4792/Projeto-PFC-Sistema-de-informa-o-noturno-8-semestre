@@ -74,6 +74,7 @@
                                 {% if linha.url_extra %}<a class="botao-extra" href="{{ linha.url_extra }}">{{ linha.texto_extra }}</a>{% endif %}
                                 <a class="botao-editar" href="{{ linha.url_editar }}">Editar</a>
                                 {% if linha.url_senha %}<a class="botao-extra" href="{{ linha.url_senha }}">Redefinir senha</a>{% endif %}
+                                {% if linha.url_ativar %}<a class="botao-extra" href="{{ linha.url_ativar }}">Ativar acesso</a>{% endif %}
                                 <a class="botao-excluir" href="{{ linha.url_excluir }}">Excluir</a>
                             </td>
 
