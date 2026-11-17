@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 import warnings
 from django.core.exceptions import ImproperlyConfigured
@@ -38,6 +39,22 @@ if SECRET_KEY in _CHAVES_DE_EXEMPLO or len(SECRET_KEY) < 50:
             "DJANGO_SECRET_KEY é a chave de exemplo ou tem menos de 50 caracteres. " + _COMO_GERAR)
     warnings.warn("DJANGO_SECRET_KEY fraca: aceitável apenas em desenvolvimento. " + _COMO_GERAR)
 
+
+# Painel técnico: sem rota publica padrao no ambiente hospedado.
+# Em desenvolvimento e na suite de testes, conserva /admin/ para compatibilidade.
+# Em produção, defina ELO_ADMIN_PATH com um segmento privativo, ou deixe vazio
+# para desativar a interface Django Admin. Nao e uma alternativa ao controle de acesso.
+_ELO_EM_TESTE = os.getenv("DJANGO_SETTINGS_MODULE") == "testes.configuracao"
+ELO_ADMIN_PATH = os.getenv(
+    "ELO_ADMIN_PATH", "admin" if (DEBUG or _ELO_EM_TESTE) else ""
+).strip().strip("/")
+if ELO_ADMIN_PATH:
+    if not re.fullmatch(r"[A-Za-z0-9_-]{4,80}", ELO_ADMIN_PATH):
+        raise ImproperlyConfigured(
+            "ELO_ADMIN_PATH deve conter um unico segmento com letras, numeros, '_' ou '-'."
+        )
+    if not DEBUG and not _ELO_EM_TESTE and ELO_ADMIN_PATH.lower() == "admin":
+        raise ImproperlyConfigured("A rota /admin/ nao pode ser usada em producao.")
 
 #aplicativos e middlewares
 INSTALLED_APPS = [

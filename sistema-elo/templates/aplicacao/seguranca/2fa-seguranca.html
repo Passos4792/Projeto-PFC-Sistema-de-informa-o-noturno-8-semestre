@@ -32,6 +32,6 @@
       <button class="elo-2fa-botao elo-2fa-botao-secundario" type="submit">Gerar novos códigos de recuperação</button>
     </form>
   </div>
-  <p class="elo-2fa-rodape"><a href="{{ voltar_url }}">Voltar ao sistema</a></p>
+  {% if voltar_url %}<p class="elo-2fa-rodape"><a href="{{ voltar_url }}">Voltar ao sistema</a></p>{% endif %}
 </section>
 {% endblock %}

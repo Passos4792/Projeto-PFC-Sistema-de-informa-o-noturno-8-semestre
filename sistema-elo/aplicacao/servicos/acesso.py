@@ -3,7 +3,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -195,6 +195,9 @@ class ControleAcesso:
         nome = match.url_name
 
         if match.app_name == 'admin':
+            # Evita exibir a identidade de aluno/responsavel na tela administrativa.
+            if request.user.is_authenticated and not request.user.is_staff:
+                raise Http404
             if request.user.is_authenticated and request.user.is_staff:
                 if not segundo_fator_verificado(request):
                     configuracao = obter_configuracao(request.user)

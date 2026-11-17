@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, logout, password_validation, update_session_auth_hash
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -37,13 +38,17 @@ def _registrar_falha_codigo(request, detalhes):
 
 
 def _destino_seguro(request):
+    # A conta tecnica sem perfil ELO nao tem painel convencional se o Admin
+    # estiver desligado no ambiente hospedado.
+    if request.user.is_staff and perfil_ativo(request.user) is None and not settings.ELO_ADMIN_PATH:
+        return reverse('2fa-seguranca')
     proximo = (request.POST.get('next') or request.GET.get('next') or '').strip()
     if proximo.startswith('/') and not proximo.startswith('//') and url_has_allowed_host_and_scheme(
             proximo, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
         if not proximo.startswith((reverse('2fa-configurar'), reverse('2fa-verificar'))):
             return proximo
     if request.user.is_staff and perfil_ativo(request.user) is None:
-        return reverse('admin:index')
+        return reverse('admin:index') if settings.ELO_ADMIN_PATH else reverse('2fa-seguranca')
     return reverse('inicio')
 
 
@@ -140,7 +145,9 @@ def seguranca(request):
     return render(request, 'aplicacao/seguranca/2fa-seguranca.html', {
         'layout_2fa': 'aplicacao/comum/estrutura-base.html' if perfil_ativo(request.user)
                       else 'aplicacao/comum/estrutura-publica.html',
-        'voltar_url': _destino_seguro(request),
+        # Sem o painel técnico, não há uma área interna para onde retornar.
+        'voltar_url': (None if not settings.ELO_ADMIN_PATH and perfil_ativo(request.user) is None
+                       else _destino_seguro(request)),
         'dispositivos': dispositivos,
         'quantidade_codigos': CodigoRecuperacao2FA.objects.filter(conta=request.user).count(),
         'pagina_ativa': 'meus-dados',
@@ -206,7 +213,7 @@ def trocar_senha_admin(request):
             update_session_auth_hash(request, conta)
             messages.success(request, 'Sua senha foi alterada com confirmação do Authenticator. '
                              'Os navegadores confiáveis foram revogados.')
-            resposta = redirect('admin:index')
+            resposta = redirect('admin:index' if settings.ELO_ADMIN_PATH else '2fa-seguranca')
             resposta.delete_cookie(COOKIE_CONFIAVEL, path='/', samesite='Lax')
             return resposta
         _registrar_falha_codigo(request, 'Código recusado ao alterar a senha administrativa.')

@@ -28,7 +28,8 @@
     {% endfor %}
     <button type="submit" class="elo-2fa-botao">Salvar senha e confirmar Authenticator</button>
   </form>
-  <p class="elo-2fa-rodape"><a href="{% url 'admin:index' %}">Voltar à administração</a> · <a href="{% url '2fa-seguranca' %}">Segurança da conta</a></p>
+  {% url 'admin:index' as url_painel_tecnico %}
+  <p class="elo-2fa-rodape">{% if url_painel_tecnico %}<a href="{{ url_painel_tecnico }}">Voltar à administração</a> · {% endif %}<a href="{% url '2fa-seguranca' %}">Segurança da conta</a></p>
 </section>
 <script src="{% static 'aplicacao/js/regras-senha.js' %}" defer></script>
 {% endblock %}
