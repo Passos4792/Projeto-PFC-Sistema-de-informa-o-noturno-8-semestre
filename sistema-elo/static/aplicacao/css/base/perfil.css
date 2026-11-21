@@ -10,7 +10,7 @@
 .avatar-perfil { flex:none; display:grid; place-items:center; width:40px; height:40px; overflow:hidden; border-radius:50%; border:2px solid #c4d8ed; background:#eaf3fc; color:#39638e; font-size:.88rem; font-weight:900; }
 .avatar-perfil img { width:100%; height:100%; object-fit:cover; }
 .nome-perfil-topo { max-width:170px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.seta-perfil { width:15px; height:15px; margin-left:2px; color:#758ba4; transition:transform .18s ease; }
+.seta-perfil { display:block; flex:none; align-self:center; width:15px; height:15px; margin-left:2px; color:#758ba4; transition:transform .18s ease; }
 .menu-perfil[open] .seta-perfil { transform:rotate(180deg); }
 .opcoes-perfil { position:absolute; top:calc(100% + 12px); right:0; min-width:245px; padding:9px; background:#fefbf8; border:1px solid #dfebf4; border-radius:16px; box-shadow:0 11px 28px rgba(35,57,84,.15); z-index:55; }
 .opcoes-perfil-nome { margin:0 0 6px; padding:10px 12px; border-bottom:1px solid #e9e2dc; }
@@ -40,7 +40,12 @@
 .foto-perfil-form { display:grid; gap:12px; }
 .foto-perfil-form input[type=file] { width:100%; max-width:100%; }
 .acoes-foto { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
-.cartao-integracoes { grid-column: 1 / -1; }
+.cartao-integracoes, .cartao-privacidade { grid-column: 1 / -1; }
+.cartao-privacidade .botao-secundario { display:inline-flex; max-width:100%; }
+.opcoes-privacidade .cartao-meus-dados { display:flex; flex-direction:column; align-items:flex-start; }
+.opcoes-privacidade .cartao-meus-dados p { flex:1; }
+.opcoes-privacidade .botao-secundario { margin-top:auto; }
+.privacidade-alerta { border-left:3px solid #d8a568; padding:12px 14px; background:#fcf7f0; border-radius:0 10px 10px 0; }
 .google-resumo { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .google-resumo > div:first-child { flex:1 1 235px; }
 .google-resumo p { margin:5px 0; }
@@ -48,7 +53,7 @@
 .elo-google-painel { margin-top: 22px; }
 .elo-google-painel .elo-calendario-conteudo { padding: 16px 20px; }
 .elo-google-painel h2 { margin:0 0 8px; }
-@media(max-width:850px) { .grade-meus-dados { grid-template-columns:1fr; } .cartao-integracoes { grid-column:1; } .nome-perfil-topo { display:none; } .barra-superior { padding:8px 13px; } .marca-superior img { width:75px; } .estrutura-pagina > .conteudo { grid-column:2; } }
+@media(max-width:850px) { .grade-meus-dados { grid-template-columns:1fr; } .cartao-integracoes, .cartao-privacidade { grid-column:1; } .nome-perfil-topo { display:none; } .barra-superior { padding:8px 13px; } .marca-superior img { width:75px; } .estrutura-pagina > .conteudo { grid-column:2; } }
 @media(max-width:540px) { .sair-rotulo { display:none; } .acoes-superiores { gap:5px; } .sair-superior button { padding:8px 10px; } }
 
 .foto-instrucao { font-weight:600; color:#3d526e; font-size:.9rem; }

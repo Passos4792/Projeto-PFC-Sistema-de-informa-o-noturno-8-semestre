@@ -192,10 +192,14 @@
         gatilho.setAttribute('aria-label', `Selecionar ${rotulo}`);
         const valor = document.createElement('span');
         valor.className = 'elo-selecao-valor';
-        const seta = document.createElement('span');
-        seta.className = 'elo-selecao-seta';
+        const seta = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        seta.classList.add('elo-selecao-seta');
+        seta.setAttribute('viewBox', '0 0 24 24');
         seta.setAttribute('aria-hidden', 'true');
-        seta.textContent = '⌄';
+        seta.setAttribute('focusable', 'false');
+        const caminho = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        caminho.setAttribute('d', 'm6 9 6 6 6-6');
+        seta.appendChild(caminho);
         gatilho.append(valor, seta);
 
         select.parentNode.insertBefore(caixa, select);

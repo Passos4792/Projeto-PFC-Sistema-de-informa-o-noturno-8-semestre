@@ -162,6 +162,17 @@ class ProgressoMetasTests(CenarioTestCase):
         self.assertEqual(resultado['realizadas'], 1)
         self.assertEqual(resultado['estado'], 'ALCANCADA')
 
+    def test_atividade_cancelada_deixa_de_contar_nas_metas(self):
+        meta = self.meta(quantidade_alvo=2)
+        primeira = self.atividade(meta=meta, situacao='CONCLUIDA')
+        segunda = self.atividade(meta=meta, situacao='CONCLUIDA', titulo='Leitura')
+        primeira.situacao = 'CANCELADA'
+        primeira.save(update_fields=['situacao'])
+        resultado = dados_metas(self.aluno.usuario, {})['metas'][0]
+        self.assertEqual(resultado['realizadas'], 1)
+        self.assertEqual(resultado['percentual'], 50)
+        self.assertEqual(resultado['estado'], 'EM_ANDAMENTO')
+
     def test_aluno_nao_recebe_meta_de_outro_aluno(self):
         self.meta(aluno=self.outro_aluno)
         self.assertEqual(dados_metas(self.aluno.usuario, {})['metas'], [])

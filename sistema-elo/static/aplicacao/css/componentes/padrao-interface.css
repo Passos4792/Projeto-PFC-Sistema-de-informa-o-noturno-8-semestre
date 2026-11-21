@@ -1,0 +1,340 @@
+/* ELO | Identidade visual compartilhada - telas internas
+   Padrões de campos, formulários, ações, tabelas e estados.
+   Escopo intencional: conteúdo autenticado (não altera menu ou tela de login).
+*/
+.estrutura-pagina .conteudo {
+  --ui-texto: #293b52;
+  --ui-texto-suave: #5b6e82;
+  --ui-borda: #c4d6e8;
+  --ui-borda-leve: #e1e9f1;
+  --ui-azul: #416b9e;
+  --ui-azul-escuro: #345984;
+  --ui-branco: #fffdfb;
+  --ui-erro: #a5443f;
+  --ui-raio: 13px;
+  color: var(--ui-texto);
+}
+
+/* Hierarquia visual de todas as páginas. */
+.estrutura-pagina .conteudo .topo-pagina {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 24px;
+}
+.estrutura-pagina .conteudo .topo-pagina h1 {
+  color: #293d57;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+.estrutura-pagina .conteudo .topo-pagina .subtitulo {
+  max-width: 850px;
+  margin-top: 8px;
+  color: var(--ui-texto-suave);
+  line-height: 1.55;
+}
+.estrutura-pagina .conteudo .topo-pagina .caminho { margin-bottom: 8px; }
+.estrutura-pagina .conteudo .topo-pagina .elo-link-voltar {
+  min-height: 28px;
+  font-size: .91rem;
+  font-weight: 800;
+}
+
+/* Cartões: mesma borda, mesmo raio e mesma sombra. */
+.estrutura-pagina .conteudo .painel {
+  border: 1px solid #d9e5f0;
+  border-radius: 20px;
+  background: var(--ui-branco);
+  box-shadow: 0 6px 20px rgba(49, 72, 98, .06);
+}
+.estrutura-pagina .conteudo .painel-cabecalho {
+  background: #f8fafc;
+  border-bottom: 1px solid var(--ui-borda-leve);
+}
+.estrutura-pagina .conteudo .painel h2 { color: #2c4561; font-weight: 900; }
+.estrutura-pagina .conteudo .painel-formulario { max-width: 900px; }
+.estrutura-pagina .conteudo .topo-formulario { max-width: 900px; }
+
+.estrutura-pagina .conteudo .topo-pagina + .painel { margin-top: 0; }
+
+/* Rótulos, instruções e erros em todos os formulários internos. */
+.estrutura-pagina .conteudo .grupo-campo { min-width: 0; }
+.estrutura-pagina .conteudo .grupo-campo > label,
+.estrutura-pagina .conteudo .formulario-cadastro .grupo-campo > label {
+  display: block;
+  margin-bottom: 7px;
+  color: #354e69;
+  font-size: .9rem;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.estrutura-pagina .conteudo .grupo-campo small,
+.estrutura-pagina .conteudo .grupo-campo .helptext {
+  color: var(--ui-texto-suave);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.estrutura-pagina .conteudo .grupo-campo .obrigatorio { color: #a34d43; }
+.estrutura-pagina .conteudo .erro-campo,
+.estrutura-pagina .conteudo .errorlist { color: var(--ui-erro); font-size: .85rem; }
+
+/* Campo de texto / busca / data / senha / upload: altura e interação consistentes. */
+.estrutura-pagina .conteudo input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+.estrutura-pagina .conteudo select,
+.estrutura-pagina .conteudo textarea,
+.estrutura-pagina .conteudo .campo-formulario:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  box-sizing: border-box;
+  min-height: 46px;
+  max-width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--ui-borda);
+  border-radius: var(--ui-raio);
+  background-color: #fffefa;
+  color: var(--ui-texto);
+  font: inherit;
+  font-size: .96rem;
+  line-height: 1.45;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.estrutura-pagina .conteudo textarea,
+.estrutura-pagina .conteudo textarea.campo-formulario {
+  min-height: 105px;
+  resize: vertical;
+}
+.estrutura-pagina .conteudo input::placeholder,
+.estrutura-pagina .conteudo textarea::placeholder { color: #7b8ca0; opacity: 1; }
+.estrutura-pagina .conteudo input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="file"]):focus-visible,
+.estrutura-pagina .conteudo select:focus-visible,
+.estrutura-pagina .conteudo textarea:focus-visible,
+.estrutura-pagina .conteudo .elo-selecao-gatilho:focus-visible {
+  border-color: #5c86b4;
+  outline: 2px solid #5c86b4;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px #e6f0f9;
+}
+.estrutura-pagina .conteudo :is(input, select, textarea)[aria-invalid="true"],
+.estrutura-pagina .conteudo :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):user-invalid {
+  border-color: #bf6a65;
+  background-color: #fff8f6;
+}
+.estrutura-pagina .conteudo :is(input, select, textarea):disabled,
+.estrutura-pagina .conteudo :is(input, select, textarea)[readonly] {
+  background-color: #f2f5f8;
+  color: #67798b;
+  cursor: not-allowed;
+}
+.estrutura-pagina .conteudo input[type="checkbox"],
+.estrutura-pagina .conteudo input[type="radio"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ui-azul);
+}
+.estrutura-pagina .conteudo .grupo-campo > label:has(> input[type="checkbox"]),
+.estrutura-pagina .conteudo .grupo-campo > label:has(> input[type="radio"]) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--ui-texto);
+  font-weight: 700;
+  line-height: 1.55;
+}
+.estrutura-pagina .conteudo .grupo-checkbox { align-items: center; padding-top: 6px; }
+.estrutura-pagina .conteudo .grupo-checkbox label { margin-bottom: 0; }
+.estrutura-pagina .conteudo .elo-selecao-gatilho {
+  min-height: 46px;
+  border: 1px solid var(--ui-borda);
+  border-radius: var(--ui-raio);
+  background: #fffefa;
+  color: var(--ui-texto);
+  font-size: .96rem;
+}
+.estrutura-pagina .conteudo .elo-selecao-gatilho:hover:not(:disabled) { border-color: #7fa5cc; }
+.estrutura-pagina .conteudo .busca input { min-height: 46px; border-radius: var(--ui-raio); }
+
+/* Upload padrão; mantém oculto o campo customizado de foto de perfil. */
+.estrutura-pagina .conteudo input[type="file"]:not(.foto-campo-arquivo) {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 46px;
+  padding: 8px 11px;
+  border: 1px dashed var(--ui-borda);
+  border-radius: var(--ui-raio);
+  background: #f9fbfd;
+  color: var(--ui-texto-suave);
+  font: inherit;
+  font-size: .88rem;
+}
+.estrutura-pagina .conteudo input[type="file"]:not(.foto-campo-arquivo)::file-selector-button {
+  margin-right: 10px;
+  padding: 6px 10px;
+  border: 1px solid #b7cce1;
+  border-radius: 9px;
+  background: #eff5fb;
+  color: #365e88;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Botões: ação primária azul, secundária contornada e riscos em vermelho. */
+.estrutura-pagina .conteudo :is(.botao-principal, .botao-secundario, .botao-perigo, .botao-perigo-contorno, .botao-editar, .botao-extra, .botao-excluir) {
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 17px;
+  border: 1px solid transparent;
+  border-radius: var(--ui-raio);
+  font-family: var(--elo-fonte);
+  font-size: .91rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.estrutura-pagina .conteudo .botao-principal {
+  border-color: var(--ui-azul);
+  background: var(--ui-azul);
+  color: white;
+  box-shadow: 0 3px 9px rgba(65, 107, 158, .12);
+}
+.estrutura-pagina .conteudo .botao-principal:hover:not(:disabled) { background: var(--ui-azul-escuro); border-color: var(--ui-azul-escuro); }
+.estrutura-pagina .conteudo .botao-secundario,
+.estrutura-pagina .conteudo .botao-editar {
+  color: #365e88;
+  border-color: #b8cde1;
+  background: var(--ui-branco);
+}
+.estrutura-pagina .conteudo .botao-secundario:hover,
+.estrutura-pagina .conteudo .botao-editar:hover { background: #eef5fb; border-color: #91b2d3; }
+.estrutura-pagina .conteudo .botao-extra {
+  background: #f6f2fa;
+  border-color: #d7cbea;
+  color: #645284;
+}
+.estrutura-pagina .conteudo .botao-extra:hover { background: #ede6f5; }
+.estrutura-pagina .conteudo .botao-perigo {
+  background: #a94e49;
+  border-color: #a94e49;
+  color: #fff;
+}
+.estrutura-pagina .conteudo .botao-perigo:hover { background: #8e3833; border-color: #8e3833; }
+.estrutura-pagina .conteudo .botao-perigo-contorno,
+.estrutura-pagina .conteudo .botao-excluir {
+  background: #fff9f7;
+  border-color: #e3b9b3;
+  color: #913f3a;
+}
+.estrutura-pagina .conteudo .botao-perigo-contorno:hover,
+.estrutura-pagina .conteudo .botao-excluir:hover { background: #fcece8; border-color: #cc918b; }
+.estrutura-pagina .conteudo :is(.botao-principal, .botao-secundario, .botao-perigo, .botao-perigo-contorno, .botao-editar, .botao-extra, .botao-excluir):is(:disabled, [aria-disabled="true"]) {
+  opacity: .62;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.estrutura-pagina .conteudo :is(.botao-principal, .botao-secundario, .botao-perigo, .botao-perigo-contorno, .botao-editar, .botao-extra, .botao-excluir):focus-visible {
+  outline: 3px solid #5c86b4;
+  outline-offset: 3px;
+}
+.estrutura-pagina .conteudo :is(.botao-editar, .botao-extra, .botao-excluir) {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: .83rem;
+}
+
+/* Ordem funcional: cancelar/voltar à esquerda, salvar/confirmar à direita. */
+.estrutura-pagina .conteudo .acoes-formulario {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 21px;
+  border-top: 1px solid var(--ui-borda-leve);
+}
+.estrutura-pagina .conteudo .painel-confirmacao .acoes-formulario { justify-content: center; }
+.estrutura-pagina .conteudo .acoes-formulario > :is(a, button) { margin: 0; }
+.estrutura-pagina .conteudo .acoes-cartao,
+.estrutura-pagina .conteudo .acoes-foto { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.estrutura-pagina .conteudo .acoes td, .estrutura-pagina .conteudo td.acoes { white-space: normal; }
+.estrutura-pagina .conteudo td.acoes > :is(a, button) { margin: 3px 4px 3px 0; }
+
+/* Segurança 2FA, quando aberta dentro do painel interno. */
+.estrutura-pagina .conteudo .elo-2fa-cartao {
+  border: 1px solid #d9e5f0;
+  border-radius: 20px;
+  background: var(--ui-branco);
+  box-shadow: 0 6px 20px rgba(49, 72, 98, .06);
+}
+.estrutura-pagina .conteudo .elo-2fa-botao {
+  min-height: 44px;
+  border: 1px solid var(--ui-azul);
+  border-radius: var(--ui-raio);
+  background: var(--ui-azul);
+  color: #fff !important;
+  font-family: var(--elo-fonte);
+  font-size: .91rem;
+  font-weight: 800;
+}
+.estrutura-pagina .conteudo .elo-2fa-botao:hover { background: var(--ui-azul-escuro); }
+.estrutura-pagina .conteudo .elo-2fa-botao-secundario {
+  background: var(--ui-branco);
+  border-color: #b8cde1;
+  color: #365e88 !important;
+}
+.estrutura-pagina .conteudo .elo-2fa-botao-secundario:hover { background: #eef5fb; }
+.estrutura-pagina .conteudo .elo-2fa-etapa { color: var(--ui-azul); }
+
+/* Listas, tabelas e mensagens seguindo o mesmo esquema de cor. */
+.estrutura-pagina .conteudo .tabela-responsiva { overflow-x: auto; border-radius: 0 0 19px 19px; }
+.estrutura-pagina .conteudo table thead th {
+  background: #edf4fa;
+  color: #3b618f;
+  border-bottom: 1px solid #d9e5ef;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .035em;
+}
+.estrutura-pagina .conteudo table tbody td { border-bottom: 1px solid #e8edf3; vertical-align: middle; }
+.estrutura-pagina .conteudo table tbody tr:hover { background-color: #f8fbfe; }
+.estrutura-pagina .conteudo .mensagens > p { border-radius: var(--ui-raio); }
+.estrutura-pagina .conteudo .erro-campo[role="alert"] { font-weight: 700; }
+
+/* Blocos de exportação e encerramento, mantendo escolhas bem separadas. */
+.estrutura-pagina .conteudo .acoes-privacidade {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 12px;
+}
+.estrutura-pagina .conteudo .acoes-privacidade :is(a, button) { margin: 0; }
+.estrutura-pagina .conteudo .dados-item .acoes-privacidade { margin-bottom: 0; }
+
+@media (max-width: 660px) {
+  .estrutura-pagina .conteudo .topo-pagina { align-items: stretch; }
+  .estrutura-pagina .conteudo .painel-cabecalho { padding: 18px; }
+  .estrutura-pagina .conteudo .painel-formulario { padding: 20px 17px; }
+  .estrutura-pagina .conteudo :is(.acoes-formulario, .acoes-privacidade) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .estrutura-pagina .conteudo :is(.acoes-formulario, .acoes-privacidade) > :is(a, button) { width: 100%; }
+  .estrutura-pagina .conteudo .acoes-formulario > :is(.botao-principal, .botao-perigo) { order: 1; }
+  .estrutura-pagina .conteudo .busca { max-width: 100%; }
+  .estrutura-pagina .conteudo .busca input { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .estrutura-pagina .conteudo :is(input, select, textarea, button, a) { transition: none !important; }
+}

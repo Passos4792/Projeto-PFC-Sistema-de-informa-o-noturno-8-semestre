@@ -26,7 +26,7 @@
     </header>
 
 
-    <section class="painel">
+    <section class="painel painel-lista painel-pessoas">
 
         <div class="painel-cabecalho cabecalho-registros">
             <div class="resumo-registros"><strong>{{ total_professores }}</strong><span>cadastrados</span></div>
@@ -38,14 +38,14 @@
                 </h2>
 
                 <p data-contagem-lista aria-live="polite">
-                    {{ pagina.paginator.count }} registro(s) encontrado(s) · {{ professores|length }} nesta página.
+                    {{ pagina.paginator.count }} registro{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }} · {{ professores|length }} nesta página.
                 </p>
 
             </div>
 
 
             <form method="get" class="busca" data-busca-automatica role="search">
-                <input name="busca" type="search" value="{{ busca }}" placeholder="Buscar professor" aria-label="Buscar professor">
+                <input name="busca" type="search" value="{{ busca }}" placeholder="Buscar por nome" aria-label="Buscar professores por nome ou usuário">
 
                 <small data-erro-busca role="alert" hidden>Não foi possível atualizar. Pressione Enter para tentar novamente.</small>
             </form>
@@ -69,22 +69,32 @@
                     {% for professor in professores %}
 
                         <tr>
-                            <td><span class="avatar">{{ professor.nome|first }}{{ professor.sobrenome|first }}</span>{{ professor.nome_completo }}</td>
+                            <td>{% include 'aplicacao/partials/pessoa-identificacao.html' with pessoa=professor %}</td>
                             <td>{{ professor.usuario }}</td>
                             <td>{{ professor.quantidade_alunos }} aluno{{ professor.quantidade_alunos|pluralize }}</td>
                             <td><span class="situacao {% if not professor.ativo %}inativo{% endif %}">{% if professor.ativo %}Ativo{% else %}Inativo{% endif %}</span></td>
                             <td class="acoes">
+                                <div class="elo-pessoas-acoes">
                                 {% if request.perfil_elo.gestor and not professor.usuario.gestor and professor.usuario.conta_id and not professor.usuario.conta.is_superuser %}<a class="botao-extra" href="{% url 'usuario-redefinir-senha' professor.usuario_id %}">Redefinir senha</a>{% endif %}
                                 {% if request.perfil_elo.gestor and professor.tem_2fa and not professor.usuario.gestor and not professor.usuario.conta.is_superuser %}<a class="botao-extra" href="{% url 'usuario-redefinir-2fa' professor.usuario_id %}">Redefinir 2FA</a>{% endif %}
                                 {% if request.perfil_elo.gestor %}<a class="botao-editar" href="{% url 'professor-editar' professor.pk %}">Editar</a>{% endif %}
                                 {% if request.perfil_elo.gestor %}<a class="botao-excluir" href="{% url 'professor-excluir' professor.pk %}">Excluir</a>{% endif %}
+                                </div>
                             </td>
 
                         </tr>
                     {% empty %}
 
                         <tr>
-                            <td colspan="5" class="sem-dados">Nenhum professor encontrado.</td>
+                            <td colspan="5" class="sem-dados">
+                                {% if busca %}
+                                <strong>Nenhum resultado para “{{ busca }}”</strong>
+                                <p>Tente outro nome ou <a href="{{ request.path }}">limpe a busca</a> para ver todos os registros.</p>
+                                {% else %}
+                                <span class="icone-vazio" aria-hidden="true">＋</span><strong>Ainda não há registros</strong>
+                                <p>Para adicionar professores, acesse “Cadastrar usuário” no menu lateral.</p>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
 

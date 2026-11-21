@@ -91,6 +91,8 @@ class SolicitacaoSenha(models.Model):
     class Situacao(models.TextChoices):
         PENDENTE = 'PENDENTE', 'Pendente'
         ATENDIDA = 'ATENDIDA', 'Atendida'
+        CANCELADA = 'CANCELADA', 'Cancelada'
+        NEGADA = 'NEGADA', 'Negada'
 
     aluno = models.ForeignKey('Aluno', on_delete=models.PROTECT, related_name='solicitacoes_senha', null=True, blank=True)
     professor = models.ForeignKey('Professor', on_delete=models.PROTECT, related_name='solicitacoes_senha', null=True, blank=True)

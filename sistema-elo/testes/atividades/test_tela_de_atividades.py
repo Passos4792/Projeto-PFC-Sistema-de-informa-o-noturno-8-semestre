@@ -73,3 +73,52 @@ class AtividadesUnificadasTests(CenarioTestCase):
         self.assertEqual(tarefa.disciplina, self.disciplina)
         resposta = self.cliente(self.aluno).get(reverse('pagina-inicial'))
         self.assertEqual(resposta.context['progresso']['percentual'], 100)
+
+    def test_professor_pode_cancelar_atividade_pelo_menu_e_remover_pendencia(self):
+        atividade = self.atividade(titulo='Entrega final', situacao='CONCLUIDA')
+        solicitacao = SolicitacaoConclusao.objects.create(
+            atividade=atividade, aluno=self.aluno, solicitante=self.aluno.usuario, situacao='PENDENTE')
+        cliente = self.cliente(self.professor)
+        resposta = cliente.post(reverse('atividade-cancelar', args=[atividade.pk]), {'next': reverse('atividade-listar')})
+        self.assertRedirects(resposta, reverse('atividade-listar'))
+        atividade.refresh_from_db()
+        solicitacao.refresh_from_db()
+        self.assertEqual(atividade.situacao, 'CANCELADA')
+        self.assertEqual(solicitacao.situacao, 'RECUSADA')
+        self.assertEqual(solicitacao.resposta, 'Atividade cancelada pelo professor.')
+
+    def test_menu_de_tres_pontos_aparece_na_lista_de_atividades(self):
+        self.atividade()
+        resposta = self.cliente(self.professor).get(reverse('atividade-listar'))
+        self.assertContains(resposta, 'Mais ações')
+        self.assertContains(resposta, 'Cancelar atividade')
+        self.assertContains(resposta, 'Excluir atividade')
+
+
+class CancelamentoPermissoesTests(CenarioTestCase):
+    def test_cancelamento_nao_funciona_por_get(self):
+        atividade = self.atividade()
+        resposta = self.cliente(self.professor).get(reverse('atividade-cancelar', args=[atividade.pk]))
+        self.assertEqual(resposta.status_code, 403)
+        atividade.refresh_from_db()
+        self.assertEqual(atividade.situacao, 'PENDENTE')
+
+    def test_outro_professor_nao_pode_cancelar(self):
+        atividade = self.atividade()
+        resposta = self.cliente(self.outro_professor).post(reverse('atividade-cancelar', args=[atividade.pk]))
+        self.assertEqual(resposta.status_code, 403)
+        atividade.refresh_from_db()
+        self.assertEqual(atividade.situacao, 'PENDENTE')
+
+    def test_aluno_nao_pode_cancelar(self):
+        atividade = self.atividade()
+        resposta = self.cliente(self.aluno).post(reverse('atividade-cancelar', args=[atividade.pk]))
+        self.assertEqual(resposta.status_code, 403)
+        atividade.refresh_from_db()
+        self.assertEqual(atividade.situacao, 'PENDENTE')
+
+    def test_redirecionamento_externo_nao_permitido(self):
+        atividade = self.atividade()
+        resposta = self.cliente(self.professor).post(reverse('atividade-cancelar', args=[atividade.pk]),
+                                                  {'next': 'https://exemplo-externo.com'})
+        self.assertRedirects(resposta, reverse('atividade-listar'))

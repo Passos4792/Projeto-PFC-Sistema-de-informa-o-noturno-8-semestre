@@ -223,42 +223,44 @@ input {
 }
 
 
+/* O botão de exibir senha fica dentro do campo, com ícone SVG em vez do olho oval em CSS. */
 .botao-olho {
     position: absolute;
     top: 50%;
-    right: 17px;
+    right: 12px;
+    display: grid;
+    place-items: center;
     width: 38px;
     height: 38px;
     padding: 0;
     border: 0;
+    border-radius: 50%;
     background: transparent;
+    color: #527ab9;
+    cursor: pointer;
     transform: translateY(-50%);
+    transition: background-color .15s ease;
 }
 
-
-.icone-olho {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 23px;
-    height: 15px;
-    border: 2px solid var(--azul);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
+.botao-olho:hover {
+    background: #e9f1fc;
 }
 
-
-.icone-olho::after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--azul);
-    content: "";
-    transform: translate(-50%, -50%);
+.botao-olho svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
+
+.botao-olho .icone-olho-fechado { display: none; }
+.botao-olho[aria-pressed="true"] .icone-olho-aberto { display: none; }
+.botao-olho[aria-pressed="true"] .icone-olho-fechado { display: block; }
+.botao-olho:focus-visible { outline: 2px solid #527ab9; outline-offset: 2px; }
 
 
 .esqueci-senha {

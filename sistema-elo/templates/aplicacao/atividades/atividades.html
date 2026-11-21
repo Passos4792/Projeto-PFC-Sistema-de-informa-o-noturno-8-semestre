@@ -1,5 +1,6 @@
 {% extends 'aplicacao/comum/estrutura-base.html' %}
 {% load static %}
+{% block estilos_pagina %}<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/atividades.css' %}?v=20261120-menu-acoes-esquerda">{% endblock %}
 {% block titulo_pagina %}ELO - Atividades{% endblock %}
 {% block conteudo %}
 <header class="topo-pagina">
@@ -70,7 +71,7 @@
         <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>{% if visao == 'aprovacoes' %}solicitações{% else %}atividades{% endif %}</span></div>
         <div>
             <h2>{% if visao == 'aprovacoes' %}Avaliação das entregas{% elif visao == 'historico' %}Histórico de atividades{% else %}Atividades dos alunos{% endif %}</h2>
-            <p data-contagem-lista role="status">{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ pagina|length }} nesta página.</p>
+            <p data-contagem-lista role="status">{{ pagina.paginator.count }} registro{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }} · {{ pagina|length }} nesta página.</p>
         </div>
     </div>
     <div data-resultados-lista>
@@ -101,8 +102,8 @@
         </div>
         {% else %}
         <div class="tabela-responsiva">
-            <table>
-                <thead><tr><th>Atividade</th><th>Aluno</th><th>Conteúdo</th><th>Entrega</th><th>Situação</th><th>Ações</th></tr></thead>
+            <table class="tabela-atividades-gestao">
+                <thead><tr><th>Atividade</th><th>Aluno</th><th>Conteúdo</th><th>Entrega</th><th class="coluna-situacao">Situação</th><th>Ações</th></tr></thead>
                 <tbody>
                     {% for atividade in pagina %}
                     <tr>
@@ -110,12 +111,38 @@
                         <td>{{ atividade.aluno.nome_completo }}</td>
                         <td>{{ atividade.disciplina.nome|default:'Sem conteúdo' }}</td>
                         <td>{{ atividade.data_entrega|date:'d/m/Y'|default:'—' }}</td>
-                        <td>{% if atividade.aguardando_aprovacao %}<span class="situacao">Aguardando avaliação</span>{% else %}{{ atividade.get_situacao_display }}{% endif %}</td>
-                        <td class="acoes">
-                            {% if atividade.aguardando_aprovacao %}<a class="botao-extra" href="{% url 'atividade-listar' %}?filtro=aprovacoes&amp;aluno={{ atividade.aluno_id }}">Avaliar</a>{% endif %}
-                            <a class="botao-extra" href="{% url 'atividade-detalhe' atividade.pk %}{% if visao == 'historico' %}?origem=historico{% endif %}">Detalhes</a>
-                            <a class="botao-editar" href="{% url 'atividade-editar' atividade.pk %}">Editar</a>
-                            <a class="botao-excluir" href="{% url 'atividade-excluir' atividade.pk %}">Excluir</a>
+                        <td class="coluna-situacao">
+                            {% if atividade.aguardando_aprovacao %}
+                            <span class="estado-atividade estado-atividade--avaliacao">Aguardando avaliação</span>
+                            {% elif atividade.situacao == 'CONCLUIDA' %}
+                            <span class="estado-atividade estado-atividade--concluida">Concluída</span>
+                            {% elif atividade.situacao == 'CANCELADA' %}
+                            <span class="estado-atividade estado-atividade--cancelada">Cancelada</span>
+                            {% else %}
+                            <span class="estado-atividade estado-atividade--pendente">{{ atividade.get_situacao_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="acoes acoes-atividade-tabela">
+                            <div class="acoes-atividade-conteudo">
+                                {% if atividade.aguardando_aprovacao %}<a class="botao-extra acao-avaliar" href="{% url 'atividade-listar' %}?filtro=aprovacoes&amp;aluno={{ atividade.aluno_id }}">Avaliar</a>{% endif %}
+                                <a class="botao-extra acao-detalhes{% if atividade.aguardando_aprovacao %} com-avaliacao{% endif %}" href="{% url 'atividade-detalhe' atividade.pk %}{% if visao == 'historico' %}?origem=historico{% endif %}">Detalhes</a>
+                                <a class="botao-editar acao-editar{% if atividade.aguardando_aprovacao %} com-avaliacao{% endif %}" href="{% url 'atividade-editar' atividade.pk %}">Editar</a>
+                                <details class="menu-acoes-linha">
+                                    <summary aria-label="Mais ações para {{ atividade.titulo }}" title="Mais ações">
+                                        <span aria-hidden="true">⋮</span>
+                                    </summary>
+                                    <div class="menu-acoes-linha-opcoes">
+                                        {% if atividade.situacao != 'CANCELADA' %}
+                                        <form method="post" action="{% url 'atividade-cancelar' atividade.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            <button type="submit" class="acao-menu acao-menu--cancelar" onclick="return confirm('Cancelar esta atividade? Se ela já estiver concluída, deixará de contar nas metas.')">Cancelar atividade</button>
+                                        </form>
+                                        {% endif %}
+                                        <a class="acao-menu acao-menu--excluir" href="{% url 'atividade-excluir' atividade.pk %}">Excluir atividade</a>
+                                    </div>
+                                </details>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}

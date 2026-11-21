@@ -1,0 +1,38 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Confirmar encerramento de conta{% endblock %}
+{% block conteudo %}
+<div class="pagina-meus-dados">
+  <header class="topo-pagina"><div><p class="caminho"><a class="elo-link-voltar" href="{% url 'privacidade-gerenciar' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar ao gerenciamento de dados</span></a></p><h1>Confirmar encerramento de conta</h1></div></header>
+  <section class="painel cartao-meus-dados">
+    <h2>{% if conta_propria %}Minha conta{% else %}Conta do aluno{% endif %}: {{ nome_alvo }}</h2>
+    <p>Esta ação encerra o acesso, elimina o login e as credenciais, desativa os vínculos ativos pertinentes
+    e impede novas entradas com esta conta. Não pode ser desfeita por você.</p>
+    <p><strong>Importante:</strong> os registros escolares e de auditoria cuja conservação ainda seja necessária não
+    são apagados automaticamente. A instituição deve avaliar pedidos de eliminação desses dados conforme a LGPD.</p>
+    {% if conta_propria and criancas_principais %}
+    <p><strong>Atenção:</strong> existem crianças menores de 12 anos sob sua responsabilidade principal.
+    Se também deseja encerrar a conta delas, <a href="{% url 'privacidade-gerenciar' %}">faça isso antes de encerrar a sua</a>,
+    pois você perderá a possibilidade de acessá-las pelo ELO.</p>
+    {% endif %}
+    <p><strong>Antes de continuar, baixe uma cópia dos dados disponíveis em PDF:</strong></p>
+    {% if conta_propria %}<a class="botao-secundario" href="{% url 'privacidade-exportar-minha' %}">Baixar meus dados em PDF</a>
+    {% else %}<a class="botao-secundario" href="{% url 'privacidade-exportar-menor' aluno.pk %}">Baixar PDF do aluno</a>{% endif %}
+    <p><small>O PDF do aluno inclui metas, atividades e documentos e relatórios publicados. Rascunhos internos,
+    documentos não publicados e arquivos anexos exigem solicitação à instituição de ensino.</small></p>
+    {% if erro %}<p role="alert" style="color:#a12c2c"><strong>{{ erro }}</strong></p>{% endif %}
+    <form method="post" autocomplete="off" class="formulario-senha" novalidate>
+      {% csrf_token %}
+      <div class="grupo-campo"><label for="id_senha">Sua senha atual (do responsável ou do titular)</label>
+      <input type="password" id="id_senha" name="senha" autocomplete="current-password" required></div>
+      <div class="grupo-campo"><label for="id_confirmacao">Para confirmar, digite ENCERRAR</label>
+      <input type="text" id="id_confirmacao" name="confirmacao" required></div>
+      <div class="grupo-campo"><label><input type="checkbox" name="confirmo" required> Entendo que perderei o acesso e que
+      a eliminação de dados escolares sujeitos a retenção não é automática.</label></div>
+      <div class="acoes-formulario">
+        <a class="botao-secundario" href="{% url 'privacidade-gerenciar' %}">Cancelar</a>
+        <button type="submit" class="botao-perigo">Confirmar encerramento da conta</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django.contrib import messages
+from django.contrib.auth.views import LoginView
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -10,13 +11,34 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.crypto import salted_hmac
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.decorators.http import require_GET, require_http_methods
-from aplicacao.servicos.acesso import alunos_com_funcao
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from aplicacao.servicos.acesso import alunos_com_funcao, perfil_ativo
+from aplicacao.servicos.duplo_fator import exige_segundo_fator, segundo_fator_verificado
+from aplicacao.servicos.solicitacoes_senha import cancelar_pedidos_apos_login
 from aplicacao.servicos.auditoria import registrar
-from aplicacao.forms import PedidoRecuperacaoForm, RedefinicaoSenha
+from aplicacao.forms import LoginElo, PedidoRecuperacaoForm, RedefinicaoSenha
 from aplicacao.servicos.limite_login import ip_cliente
 from aplicacao.models import (Aluno, Professor, Responsavel, SolicitacaoSenha, Usuario,
                      Vinculo, VinculoFamiliar, VinculoProfissional)
+
+
+class EntradaElo(LoginView):
+    """Login normal; se a senha estiver correta, cancela pedidos ainda pendentes.
+
+    Para professor/responsável que exigem 2FA, o cancelamento só acontece após
+    concluir o segundo fator, evitando que a senha sozinha encerre o pedido.
+    """
+    template_name = 'aplicacao/contas/login.html'
+    authentication_form = LoginElo
+
+    def form_valid(self, form):
+        resposta = super().form_valid(form)
+        usuario = self.request.user
+        perfil = perfil_ativo(usuario)
+        if not exige_segundo_fator(usuario, perfil) or segundo_fator_verificado(self.request):
+            if cancelar_pedidos_apos_login(usuario, self.request):
+                messages.info(self.request, 'Seu pedido de troca de senha foi cancelado porque você entrou normalmente.')
+        return resposta
 
 
 def _professor_logado(request):
@@ -44,8 +66,8 @@ def _conta_para_formulario(perfil, pessoa):
 
 def _salvar_senha(perfil, pessoa, formulario, request, *, somente_nova=False):
     perfil = Usuario.objects.select_for_update().select_related('conta').get(pk=perfil.pk)
-    if not pessoa.ativo:
-        raise PermissionDenied('O cadastro está inativo.')
+    if not pessoa.ativo or perfil.conta_encerrada_em is not None:
+        raise PermissionDenied('A conta foi encerrada ou o cadastro está inativo.')
     if somente_nova and perfil.conta_id:
         return False
     if perfil.conta_id:
@@ -88,7 +110,7 @@ def _aee_do_aluno(aluno):
 
 def _alvo_por_usuario(nome):
     perfil = Usuario.objects.select_related('conta').filter(usuario__iexact=nome).first()
-    if not perfil or perfil.gestor or (perfil.conta_id and (perfil.conta.is_superuser or not perfil.conta.is_active)):
+    if not perfil or perfil.gestor or perfil.conta_encerrada_em is not None or (perfil.conta_id and (perfil.conta.is_superuser or not perfil.conta.is_active)):
         return None, None, None
     try:
         pessoa = getattr(perfil, {'ALUNO': 'aluno_perfil', 'RESPONSAVEL': 'responsavel_perfil',
@@ -182,10 +204,14 @@ def lista_solicitacoes(request):
     pedidos = pedidos_permitidos(perfil)
     total = pedidos.count()
     visao = request.GET.get('filtro', 'todas')
-    if visao not in {'todas', 'pendentes', 'atendidas'}:
+    estados = {'pendentes': SolicitacaoSenha.Situacao.PENDENTE,
+               'atendidas': SolicitacaoSenha.Situacao.ATENDIDA,
+               'canceladas': SolicitacaoSenha.Situacao.CANCELADA,
+               'negadas': SolicitacaoSenha.Situacao.NEGADA}
+    if visao not in {'todas', *estados}:
         visao = 'todas'
     if visao != 'todas':
-        pedidos = pedidos.filter(situacao='PENDENTE' if visao == 'pendentes' else 'ATENDIDA')
+        pedidos = pedidos.filter(situacao=estados[visao])
     busca = request.GET.get('busca', '').strip()[:100]
     for parte in busca.split():
         criterio = Q(usuario_alvo__usuario__icontains=parte)
@@ -206,6 +232,28 @@ def lista_solicitacoes(request):
     })
 
 
+@require_POST
+def negar_solicitacao(request, pk):
+    """Permite rejeitar manualmente apenas pedidos que o operador pode atender."""
+    operador = _professor_logado(request)
+    with transaction.atomic():
+        pedido = get_object_or_404(SolicitacaoSenha.objects.select_for_update(), pk=pk)
+        if not pedidos_permitidos(operador).filter(pk=pedido.pk).exists():
+            raise Http404
+        if pedido.usuario_alvo_id == operador.pk:
+            raise PermissionDenied('Não é permitido decidir sobre o próprio pedido.')
+        if pedido.situacao != SolicitacaoSenha.Situacao.PENDENTE:
+            messages.info(request, 'Este pedido já foi encerrado e não pode ser alterado.')
+            return redirect('solicitacao-senha-listar')
+        pedido.situacao = SolicitacaoSenha.Situacao.NEGADA
+        pedido.atendida_em = timezone.now()
+        pedido.save(update_fields=['situacao', 'atendida_em'])
+        registrar('SENHA', request=request, entidade='solicitacao_senha', objeto_id=pedido.pk,
+                  detalhes='Pedido de redefinição negado pelo profissional autorizado.')
+    messages.success(request, 'Pedido negado. A senha do usuário foi mantida e o histórico foi preservado.')
+    return redirect('solicitacao-senha-listar')
+
+
 @sensitive_post_parameters('new_password1', 'new_password2')
 @require_http_methods(['GET', 'POST'])
 def atender_solicitacao(request, pk):
@@ -221,7 +269,7 @@ def atender_solicitacao(request, pk):
         raise Http404
     perfil_alvo, pessoa = _pessoa_do_pedido(pedido)
     if pedido.situacao != SolicitacaoSenha.Situacao.PENDENTE:
-        messages.info(request, 'Esta solicitação já foi atendida.')
+        messages.info(request, 'Esta solicitação já foi encerrada.')
         return redirect('solicitacao-senha-listar')
     if not pessoa.ativo or (perfil_alvo.conta_id and perfil_alvo.conta.is_superuser):
         raise PermissionDenied('A conta não pode ser redefinida.')

@@ -7,7 +7,7 @@
 {% block titulo_pagina %}ELO - {{ atividade.titulo }}{% endblock %}
 {% block conteudo %}
 <div class="elo-detalhe-atividade">
-    <nav class="elo-voltar" aria-label="Voltar"><a href="{% url rota_voltar %}{% if voltar_historico %}?filtro=historico{% endif %}">← Voltar {% if voltar_historico %}ao histórico{% else %}às atividades{% endif %}</a></nav>
+    <nav class="elo-voltar" aria-label="Voltar"><a class="elo-link-voltar" href="{% url rota_voltar %}{% if voltar_historico %}?filtro=historico{% endif %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar {% if voltar_historico %}ao histórico{% else %}às atividades{% endif %}</span></a></nav>
     <header class="elo-detalhe-cabecalho">
         <div class="elo-detalhe-titulo"><span class="elo-detalhe-icone" aria-hidden="true">✎</span>
             <div><h1>{{ atividade.titulo }}</h1></div>
@@ -59,7 +59,7 @@
         {% else %}
             {% if ultima.situacao == 'RECUSADA' %}<div class="elo-aviso-status elo-aviso-revisao"><strong>O professor solicitou uma revisão.</strong><p>{{ ultima.resposta|default:'Revise sua atividade e envie novamente.' }}</p></div>{% endif %}
             {% if pode_enviar_atividade %}
-            <form class="form-envio-atividade elo-form-envio" action="{% url 'atividade-enviar' atividade.pk %}" method="post" enctype="multipart/form-data">
+            <form class="form-envio-atividade elo-form-envio" data-proteger-rascunho action="{% url 'atividade-enviar' atividade.pk %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if atividade.tipo_entrega == 'REGISTRO' %}<p class="texto-ajuda">Atividade presencial: você pode registrar como foi ou enviar para confirmação sem texto e sem anexo.</p>{% else %}<p class="texto-ajuda">Envie sua resposta escrita, uma foto/PDF ou os dois. Não é preciso preencher os dois campos.</p>{% endif %}
                 <div class="grupo-campo envio-atividade-campo"><label for="resposta-aluno-{{ atividade.pk }}">Sua resposta</label><textarea class="campo-formulario" id="resposta-aluno-{{ atividade.pk }}" name="resposta_aluno" rows="5" maxlength="10000" placeholder="Escreva como você realizou a atividade..."></textarea></div>

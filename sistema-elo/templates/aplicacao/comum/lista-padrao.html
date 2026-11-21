@@ -28,7 +28,7 @@
     </header>
 
 
-    <section class="painel painel-lista">
+    <section class="painel painel-lista{% if pagina_ativa == 'alunos' or pagina_ativa == 'responsaveis' %} painel-pessoas{% endif %}">
 
         <div class="painel-cabecalho cabecalho-registros">
             <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>cadastrados</span></div>
@@ -37,12 +37,12 @@
                     Registros de {{ titulo|lower }}
                 </h2>
                 <p data-contagem-lista aria-live="polite">
-                    {% if pagina %}{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ linhas|length }} nesta página.{% else %}{{ linhas|length }} registro(s) nesta lista.{% endif %}
+                    {% if pagina %}{{ pagina.paginator.count }} registro{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }} · {{ linhas|length }} nesta página.{% else %}{{ linhas|length }} registro{{ linhas|length|pluralize }} nesta lista.{% endif %}
                 </p>
             </div>
             {% if busca_habilitada %}
             <form method="get" class="busca" role="search" data-busca-automatica>
-                <input id="busca-nome" type="search" name="busca" value="{{ busca }}" placeholder="Buscar em {{ titulo|lower }}" aria-label="Buscar em {{ titulo|lower }}">
+                <input id="busca-nome" type="search" name="busca" value="{{ busca }}" placeholder="Buscar por nome" aria-label="Buscar {{ titulo|lower }} por nome">
                 <small data-erro-busca role="alert" hidden>Não foi possível atualizar a lista. Pressione Enter para tentar novamente.</small>
             </form>
             {% else %}
@@ -70,21 +70,31 @@
                     {% for linha in linhas %}
 
                         <tr>
-                            {% for valor in linha.valores %}<td>{% if forloop.last and pagina_ativa == 'alunos' or forloop.last and pagina_ativa == 'responsaveis' %}<span class="situacao {% if valor == 'Inativo' %}inativo{% endif %}">{{ valor }}</span>{% else %}{{ valor }}{% endif %}</td>{% endfor %}
+                            {% for valor in linha.valores %}
+                            <td>
+                                {% if forloop.first and linha.pessoa %}
+                                    {% include 'aplicacao/partials/pessoa-identificacao.html' with pessoa=linha.pessoa %}
+                                {% elif forloop.last and pagina_ativa == 'alunos' or forloop.last and pagina_ativa == 'responsaveis' %}
+                                    <span class="situacao {% if valor == 'Inativo' %}inativo{% endif %}">{{ valor }}</span>
+                                {% else %}{{ valor }}{% endif %}
+                            </td>
+                            {% endfor %}
                             <td class="acoes">
-                                {% if linha.url_extra %}<a class="botao-extra" href="{{ linha.url_extra }}">{{ linha.texto_extra }}</a>{% endif %}
-                                <a class="botao-editar" href="{{ linha.url_editar }}">Editar</a>
-                                {% if linha.url_senha %}<a class="botao-extra" href="{{ linha.url_senha }}">Redefinir senha</a>{% endif %}
-                                {% if linha.url_2fa %}<a class="botao-extra" href="{{ linha.url_2fa }}">Redefinir 2FA</a>{% endif %}
-                                {% if linha.url_ativar %}<a class="botao-extra" href="{{ linha.url_ativar }}">Ativar acesso</a>{% endif %}
-                                <a class="botao-excluir" href="{{ linha.url_excluir }}">Excluir</a>
+                                <div class="elo-pessoas-acoes">
+                                    {% if linha.url_extra %}<a class="botao-extra" href="{{ linha.url_extra }}">{{ linha.texto_extra }}</a>{% endif %}
+                                    {% if linha.url_editar %}<a class="botao-editar" href="{{ linha.url_editar }}">Editar</a>{% endif %}
+                                    {% if linha.url_senha %}<a class="botao-extra" href="{{ linha.url_senha }}">Redefinir senha</a>{% endif %}
+                                    {% if linha.url_2fa %}<a class="botao-extra" href="{{ linha.url_2fa }}">Redefinir 2FA</a>{% endif %}
+                                    {% if linha.url_ativar %}<a class="botao-extra" href="{{ linha.url_ativar }}">Ativar acesso</a>{% endif %}
+                                    {% if linha.url_excluir %}<a class="botao-excluir" href="{{ linha.url_excluir }}">Excluir</a>{% endif %}
+                                </div>
                             </td>
 
                         </tr>
                     {% empty %}
 
                         <tr>
-                            <td colspan="8" class="sem-dados">
+                            <td colspan="{{ cabecalhos|length|add:'1' }}" class="sem-dados">
                                 {% if busca %}
                                 <strong>Nenhum resultado para “{{ busca }}”</strong>
                                 <p>Tente outro nome ou <a href="{{ request.path }}">limpe a busca</a> para ver todos os registros.</p>

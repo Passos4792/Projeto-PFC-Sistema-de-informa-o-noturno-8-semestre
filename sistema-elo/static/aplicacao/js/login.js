@@ -4,4 +4,5 @@ document.querySelector('.botao-olho').addEventListener('click', function() {
     campo.type = mostrar ? 'text' : 'password';
     this.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
     this.setAttribute('aria-pressed', String(mostrar));
+    this.setAttribute('title', mostrar ? 'Ocultar senha' : 'Mostrar senha');
 });

@@ -152,6 +152,13 @@ def _assinatura_senha(usuario):
     return _digest('senha-do-dispositivo', usuario.password)
 
 
+def atualizar_assinatura_apos_rehash(usuario, hash_anterior):
+    """Chamado só após login com a senha correta cujo hash foi regravado pelo Django."""
+    DispositivoConfiavel2FA.objects.filter(
+        conta=usuario, assinatura_senha=_digest('senha-do-dispositivo', hash_anterior),
+    ).update(assinatura_senha=_assinatura_senha(usuario))
+
+
 def registrar_dispositivo(request, response):
     dias = getattr(settings, 'ELO_2FA_DISPOSITIVO_DIAS', 30)
     usuario = request.user

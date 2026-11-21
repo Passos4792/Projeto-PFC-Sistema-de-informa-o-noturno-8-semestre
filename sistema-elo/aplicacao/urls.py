@@ -1,17 +1,15 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from django.views.generic import TemplateView
 from aplicacao.views import (anexos, api, area_estudante, atividades, cadastros, contas, inicio, paineis,
                              pedagogico, seguranca, senhas, vinculos)
-from aplicacao.forms import LoginElo
 
 
 #rotas
 urlpatterns = [
     #entrada e senha
     path('', contas.inicio, name='inicio'),
-    path('login/', LoginView.as_view(template_name='aplicacao/contas/login.html',
-         authentication_form=LoginElo), name='login'),
+    path('login/', senhas.EntradaElo.as_view(), name='login'),
     path('sair/', LogoutView.as_view(), name='logout'),
     path('seguranca/configurar/', seguranca.configurar, name='2fa-configurar'),
     path('seguranca/verificar/', seguranca.verificar, name='2fa-verificar'),
@@ -22,10 +20,23 @@ urlpatterns = [
     path('recuperar-senha/', senhas.solicitar_senha, name='recuperar-senha'),
     path('trocar-senha/', contas.trocar_senha, name='trocar-senha'),
     path('meus-dados/', contas.meus_dados, name='meus-dados'),
+    path('minha-conta/privacidade/', contas.privacidade_conta, name='privacidade-conta'),
+    path('minha-conta/privacidade/gerenciar/', contas.privacidade_gerenciar, name='privacidade-gerenciar'),
+    path('minha-conta/privacidade/revogar/', contas.privacidade_revogar, name='privacidade-revogar'),
+    path('minha-conta/privacidade/exportar/', contas.privacidade_exportar_minha,
+         name='privacidade-exportar-minha'),
+    path('minha-conta/privacidade/excluir/', contas.privacidade_excluir_minha,
+         name='privacidade-excluir-minha'),
+    path('minha-conta/privacidade/menor/<int:pk>/exportar/', contas.privacidade_exportar_menor,
+         name='privacidade-exportar-menor'),
+    path('minha-conta/privacidade/menor/<int:pk>/excluir/', contas.privacidade_excluir_menor,
+         name='privacidade-excluir-menor'),
     path('meus-dados/foto/', contas.foto_perfil, name='foto-perfil'),
     path('meus-dados/foto/alterar/', contas.alterar_foto_perfil, name='foto-perfil-alterar'),
     path('meus-dados/foto/remover/', contas.remover_foto_perfil, name='foto-perfil-remover'),
     path('aceitar-termos/', contas.aceitar_termos, name='aceitar-termos'),
+    path('aguardando-autorizacao/', contas.aguardando_autorizacao, name='aguardando-autorizacao'),
+    path('autorizar-acesso-menor/', contas.autorizar_acesso_menor, name='autorizar-acesso-menor'),
 
     #paginas publicas
     path('sobre/', TemplateView.as_view(template_name='aplicacao/publico/sobre.html'), name='sobre'),
@@ -68,6 +79,8 @@ urlpatterns = [
     path('solicitacoes-de-senha/', senhas.lista_solicitacoes, name='solicitacao-senha-listar'),
     path('solicitacoes-de-senha/<int:pk>/atender/', senhas.atender_solicitacao,
          name='solicitacao-senha-atender'),
+    path('solicitacoes-de-senha/<int:pk>/negar/', senhas.negar_solicitacao,
+         name='solicitacao-senha-negar'),
 
     #vinculos
     path('vinculos/', vinculos.vinculos_unificados, name='vinculo-listar'),
@@ -90,6 +103,7 @@ urlpatterns = [
     path('atividades/historico/', atividades.atividades_historico, name='atividade-historico'),
     path('atividades/nova/', atividades.atividade_criar, name='atividade-criar'),
     path('atividades/<int:pk>/editar/', atividades.atividade_editar, name='atividade-editar'),
+    path('atividades/<int:pk>/cancelar/', atividades.atividade_cancelar, name='atividade-cancelar'),
     path('atividades/<int:pk>/excluir/', atividades.atividade_excluir, name='atividade-excluir'),
     path('aprovacoes/', atividades.aprovacoes, name='aprovacoes'),
 

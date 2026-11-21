@@ -13,6 +13,7 @@ from aplicacao.servicos.acesso import (alunos_area_estudante, alunos_com_funcao,
 from aplicacao.servicos.arquivos import validar_anexo_pedagogico
 from aplicacao.servicos.auditoria import registrar
 from aplicacao.servicos.documentos_legais import documentos_aceitos
+from aplicacao.servicos.autorizacao_menores import acesso_menor_autorizado, menor_de_12
 from aplicacao.servicos.duplo_fator import exige_segundo_fator, segundo_fator_verificado
 from aplicacao.forms import FiltroPainel
 from aplicacao.servicos.indicadores import dados_metas, dados_painel
@@ -24,7 +25,12 @@ class AcessoElo(BasePermission):
 
     def has_permission(self, request, view):
         perfil = perfil_ativo(request.user)
-        if perfil is None or perfil.troca_senha_obrigatoria or not documentos_aceitos(perfil):
+        if perfil is None or perfil.troca_senha_obrigatoria:
+            return False
+        if perfil.tipo_perfil == 'ALUNO' and menor_de_12(perfil.aluno_perfil.data_nascimento):
+            if not acesso_menor_autorizado(perfil.aluno_perfil):
+                return False
+        elif not documentos_aceitos(perfil):
             return False
         if exige_segundo_fator(request.user, perfil) and not segundo_fator_verificado(request):
             return False

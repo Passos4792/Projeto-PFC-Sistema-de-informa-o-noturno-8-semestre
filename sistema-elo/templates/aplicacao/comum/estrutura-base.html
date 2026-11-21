@@ -11,14 +11,15 @@
         <link rel="stylesheet" href="{% static 'aplicacao/css/base/fundamentos.css' %}?v=20261110-organizacao">
         <link rel="stylesheet" href="{% static 'aplicacao/css/base/estrutura.css' %}?v=20261112-links-voltar">
         <link rel="stylesheet" href="{% static 'aplicacao/css/base/publico.css' %}?v=20261110-organizacao">
-        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/interface.css' %}?v=20261112-senha-cadastro">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/interface.css' %}?v=20261119-descartar-registro">
         <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/acompanhamento.css' %}?v=20261112-progresso">
-        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/registros.css' %}?v=20261112-busca-padrao-3">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/registros.css' %}?v=20261119-cadastros-pessoas">
         {% block estilos_pagina %}{% endblock %}
-        <link rel="stylesheet" href="{% static 'aplicacao/css/base/tema.css' %}?v=20261112-icones-outline">
-        <link rel="stylesheet" href="{% static 'aplicacao/css/base/perfil.css' %}?v=20261112-menu-fixo">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/tema.css' %}?v=20261119-cadastros-quadro-unico">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/base/perfil.css' %}?v=20261119-seta-perfil">
         {% block estilos_finais %}{% endblock %}
-        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/selecao-pesquisavel.css' %}?v=20261113-busca-select">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/selecao-pesquisavel.css' %}?v=20261119-seta-select">
+        <link rel="stylesheet" href="{% static 'aplicacao/css/componentes/padrao-interface.css' %}?v=20261119-identidade-global">
     </head>
 
     <body>
@@ -76,10 +77,23 @@
                         {% if request.perfil_elo.gestor %}
                             <a href="{% url 'auditoria' %}" class="{% if pagina_ativa == 'auditoria' %}ativo{% endif %}" data-elo-cor="azul"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-list-check"></use></svg></span><b>Auditoria</b></a>
                         {% endif %}
-                        <a href="{% url 'usuario-criar' %}" class="{% if pagina_ativa == 'usuarios' %}ativo{% endif %}" data-elo-cor="amarelo"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-user-plus"></use></svg></span><b>Cadastrar usuário</b></a>
-                        <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Alunos</b></a>
-                        <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-presentation"></use></svg></span><b>Professores</b></a>
-                        <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-users"></use></svg></span><b>Responsáveis</b></a>
+                        {# O texto abre o cadastro; somente a seta expande os tipos de usuário. #}
+                        <div class="menu-cadastros">
+                            <div class="menu-cadastros-cabecalho{% if pagina_ativa == 'usuarios' or pagina_ativa == 'alunos' or pagina_ativa == 'professores' or pagina_ativa == 'responsaveis' %} grupo-ativo{% endif %}">
+                                <a href="{% url 'usuario-criar' %}" class="link-cadastro-principal {% if pagina_ativa == 'usuarios' %}ativo{% endif %}" data-elo-cor="amarelo">
+                                    <span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-user-plus"></use></svg></span>
+                                    <b>Cadastrar usuário</b>
+                                </a>
+                                <button type="button" class="alternar-cadastros" aria-controls="submenu-cadastros" aria-label="{% if pagina_ativa == 'alunos' or pagina_ativa == 'professores' or pagina_ativa == 'responsaveis' %}Ocultar{% else %}Mostrar{% endif %} tipos de usuário" aria-expanded="{% if pagina_ativa == 'alunos' or pagina_ativa == 'professores' or pagina_ativa == 'responsaveis' %}true{% else %}false{% endif %}" title="Mostrar ou ocultar Alunos, Professores e Responsáveis">
+                                    <svg class="elo-icone seta-cadastros" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg>
+                                </button>
+                            </div>
+                            <div id="submenu-cadastros" class="submenu-cadastros" aria-label="Tipos de usuário" {% if pagina_ativa != 'alunos' and pagina_ativa != 'professores' and pagina_ativa != 'responsaveis' %}hidden{% endif %}>
+                                <a href="{% url 'aluno-listar' %}" class="{% if pagina_ativa == 'alunos' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-graduation-cap"></use></svg></span><b>Alunos</b></a>
+                                <a href="{% url 'professor-listar' %}" class="{% if pagina_ativa == 'professores' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-presentation"></use></svg></span><b>Professores</b></a>
+                                <a href="{% url 'responsavel-listar' %}" class="{% if pagina_ativa == 'responsaveis' %}ativo{% endif %}" data-elo-cor="menta"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-users"></use></svg></span><b>Responsáveis</b></a>
+                            </div>
+                        </div>
                         {% if request.perfil_elo.gestor %}
                         <a href="{% url 'solicitacao-senha-listar' %}" class="{% if pagina_ativa == 'solicitacoes-senha' %}ativo{% endif %}" data-elo-cor="amarelo"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-key"></use></svg></span><b>Pedidos de senha {% if pedidos_senha_pendentes %}({{ pedidos_senha_pendentes }}){% endif %}</b></a>
                         <a href="{% url 'vinculo-listar' %}" class="{% if pagina_ativa == 'vinculos' %}ativo{% endif %}" data-elo-cor="lilas"><span class="icone-menu"><svg class="elo-icone" aria-hidden="true" focusable="false"><use href="#elo-icone-link"></use></svg></span><b>Vínculos dos alunos</b></a>
@@ -146,8 +160,9 @@
 
         </div>
 
-        <script src="{% static 'aplicacao/js/menu-lateral.js' %}?v=20261112-seta-centralizada"></script>
+        <script src="{% static 'aplicacao/js/menu-lateral.js' %}?v=20261119-cadastros-quadro-unico"></script>
         <script src="{% static 'aplicacao/js/acoes-formulario.js' %}?v=20261112-dialogo-documentos"></script>
-        <script src="{% static 'aplicacao/js/selecao-pesquisavel.js' %}?v=20261113-busca-select"></script>
+        <script src="{% static 'aplicacao/js/confirmar-descarte.js' %}?v=20261119-saida-formulario" defer></script>
+        <script src="{% static 'aplicacao/js/selecao-pesquisavel.js' %}?v=20261119-seta-select"></script>
     </body>
 </html>

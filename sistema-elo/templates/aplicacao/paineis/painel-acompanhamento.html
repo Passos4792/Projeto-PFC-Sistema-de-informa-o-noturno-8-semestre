@@ -92,7 +92,7 @@
                 {% if meta.descricao %}<p class="descricao-meta">{{ meta.descricao }}</p>{% endif %}
                 <div class="progresso-numeros"><strong>{{ meta.realizadas }} / {{ meta.alvo }}</strong><span>atividades realizadas</span></div>
                 <progress max="100" value="{{ meta.percentual }}" aria-label="Progresso da meta {{ meta.titulo }}">{{ meta.percentual }}%</progress>
-                <p class="nota-painel">{{ meta.inicio_formatado }}{% if meta.fim %} a {{ meta.fim_formatado }}{% endif %} · {{ meta.atribuidas }} atividade(s) cadastrada(s) no período</p>
+                <p class="nota-painel">{{ meta.inicio_formatado }}{% if meta.fim %} a {{ meta.fim_formatado }}{% endif %} · {{ meta.atribuidas }} atividade{{ meta.atribuidas|pluralize }} cadastrada{{ meta.atribuidas|pluralize }} no período</p>
                 {% if professor %}<div class="acoes-cartao"><a href="{% url 'meta-editar' meta.id %}">Editar</a><a href="{% url 'meta-excluir' meta.id %}">Excluir</a></div>{% endif %}
             </article>
         {% empty %}<div class="painel vazio-painel"><h3>Nenhuma meta encontrada</h3><p>{% if filtro_metas_ativo %}Tente outro termo ou escolha outra aba.{% elif professor %}Cadastre uma meta e defina o período e a quantidade de atividades.{% else %}As metas definidas pelo professor aparecerão aqui.{% endif %}</p></div>{% endfor %}

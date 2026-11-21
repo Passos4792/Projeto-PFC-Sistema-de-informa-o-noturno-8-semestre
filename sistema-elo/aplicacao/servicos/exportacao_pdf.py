@@ -112,7 +112,8 @@ def gerar_pdf_registro(item, linhas, *, documento):
     return buffer.getvalue()
 
 
-def gerar_pdf_prontuario_aluno(aluno, documentos, relatorios):
+def gerar_pdf_prontuario_aluno(aluno, documentos, relatorios, *, exportacao_titular=False,
+                              metas=(), atividades=()):
     from django.utils import timezone
     from reportlab.platypus import PageBreak
     from aplicacao.forms.documentos import CAMPOS_DOCUMENTOS
@@ -140,18 +141,25 @@ def gerar_pdf_prontuario_aluno(aluno, documentos, relatorios):
         Paragraph('ELO', estilos['marca']),
         Paragraph('Histórico pedagógico do aluno', estilos['titulo']),
         Paragraph(f'<b>Aluno:</b> {_paragrafo_seguro(aluno.nome_completo)}', estilos['texto']),
-        Paragraph(f'<b>Situação:</b> Inativo', estilos['texto']),
-        Paragraph(f'<b>Inativado em:</b> {timezone.localtime(aluno.inativado_em):%d/%m/%Y}', estilos['texto']),
-        Paragraph(f'<b>Disponível até:</b> {aluno.documentos_disponiveis_ate:%d/%m/%Y}', estilos['texto']),
+        Paragraph(f"<b>Situação:</b> {'Ativo' if aluno.ativo else 'Inativo'}", estilos['texto']),
+    ]
+    if aluno.inativado_em:
+        pagina.append(Paragraph(f'<b>Inativado em:</b> {timezone.localtime(aluno.inativado_em):%d/%m/%Y}', estilos['texto']))
+        if aluno.documentos_disponiveis_ate:
+            pagina.append(Paragraph(f'<b>Disponível até:</b> {aluno.documentos_disponiveis_ate:%d/%m/%Y}', estilos['texto']))
+    pagina.extend([
         Paragraph(f'<b>Documentos:</b> {len(documentos)}', estilos['texto']),
         Paragraph(f'<b>Relatórios:</b> {len(relatorios)}', estilos['texto']),
         Spacer(1, 7*mm),
-        Paragraph('Este arquivo reúne os registros cadastrados no ELO no momento da exportação, '
-                  'inclusive rascunhos e itens internos. Contém informações restritas de uma criança '
-                  'ou adolescente e deve ser compartilhado somente com pessoas autorizadas.', estilos['nota']),
+        Paragraph('Este arquivo reúne registros pedagógicos cadastrados no ELO no momento da exportação. '
+                  'Contém informações restritas e deve ser compartilhado somente com pessoas autorizadas.', estilos['nota']),
         Paragraph('O arquivo é gerado sob demanda. Não constitui assinatura eletrônica oficial nem '
                   'substitui a validação pela instituição de ensino.', estilos['nota']),
-    ]
+    ])
+    if exportacao_titular:
+        pagina.append(Paragraph('Esta cópia contém os registros pedagógicos publicados à família e '
+                                'as metas e atividades vinculadas. Rascunhos internos e arquivos anexos '
+                                'não estão incluídos; dados adicionais podem ser solicitados à escola.', estilos['nota']))
     if not documentos and not relatorios:
         pagina.append(Paragraph('Não existem documentos ou relatórios pedagógicos cadastrados '
                                 'para este aluno até a data da exportação.', estilos['texto']))
@@ -192,5 +200,57 @@ def gerar_pdf_prontuario_aluno(aluno, documentos, relatorios):
         linha('Última atualização', timezone.localtime(rel.atualizado_em).strftime('%d/%m/%Y %H:%M'))
         linha('Relato pedagógico', rel.relato)
 
+    if exportacao_titular:
+        pagina.append(PageBreak())
+        pagina.append(Paragraph('Metas e atividades do estudante', estilos['secao']))
+        pagina.append(Paragraph(f'Metas: {len(metas)}. Atividades: {len(atividades)}.', estilos['texto']))
+        if not metas and not atividades:
+            pagina.append(Paragraph('Sem registros de metas ou atividades.', estilos['texto']))
+        for meta in metas:
+            linha('Meta: ' + meta.titulo, meta.descricao)
+            linha('Prazo', meta.data_prazo.strftime('%d/%m/%Y') if meta.data_prazo else 'Não definido')
+            linha('Situação', meta.get_situacao_display())
+        for atividade in atividades:
+            linha('Atividade: ' + atividade.titulo, atividade.descricao)
+            linha('Situação', atividade.get_situacao_display())
+            linha('Entrega prevista', atividade.data_entrega.strftime('%d/%m/%Y') if atividade.data_entrega else 'Não definida')
+            linha('Material de apoio', atividade.material_nome or (atividade.material_apoio.name if atividade.material_apoio else 'Não anexado'))
+            for solicitacao in atividade.solicitacoes.all():
+                linha('Envio / resposta', solicitacao.resposta_aluno or solicitacao.mensagem)
+                linha('Situação do envio', solicitacao.get_situacao_display())
+                linha('Arquivo enviado', solicitacao.anexo_nome or (solicitacao.anexo.name if solicitacao.anexo else 'Não anexado'))
     pdf.build(pagina, onFirstPage=_rodape, onLaterPages=_rodape)
+    return buffer.getvalue()
+
+
+def gerar_pdf_dados_responsavel(responsavel):
+    """Cópia simples dos dados de cadastro do próprio adulto, sem dados de alunos."""
+    from django.utils import timezone
+    estilos = {
+        'titulo': ParagraphStyle('ContaTituloELO', fontName='Helvetica-Bold', fontSize=17,
+                                 leading=23, textColor=AZUL, spaceAfter=14),
+        'texto': ParagraphStyle('ContaTextoELO', fontName='Helvetica', fontSize=10,
+                                leading=16, textColor=TEXTO, spaceAfter=9),
+    }
+    perfil = responsavel.usuario
+    buffer = BytesIO()
+    pdf = SimpleDocTemplate(buffer, pagesize=A4, leftMargin=20*mm, rightMargin=20*mm,
+                            topMargin=22*mm, bottomMargin=26*mm,
+                            title='Dados da conta - ELO', author='ELO')
+    dados = [
+        ('Nome', responsavel.nome_completo),
+        ('Login', perfil.usuario),
+        ('Data de nascimento', responsavel.data_nascimento.strftime('%d/%m/%Y') if responsavel.data_nascimento else 'Não informado'),
+        ('E-mail', perfil.conta.email if perfil.conta_id else 'Não informado'),
+        ('Situação', 'Ativo' if responsavel.ativo else 'Inativo'),
+        ('Data da exportação', timezone.localtime(timezone.now()).strftime('%d/%m/%Y %H:%M')),
+    ]
+    elementos = [Paragraph('ELO — Dados da minha conta', estilos['titulo'])]
+    for rotulo, valor in dados:
+        elementos.append(Paragraph(f'<b>{escape(rotulo)}:</b> {_paragrafo_seguro(valor)}', estilos['texto']))
+    elementos.append(Spacer(1, 8*mm))
+    elementos.append(Paragraph('Esta cópia reúne os dados pessoais do cadastro de acesso do responsável. '
+                              'Históricos e documentos pedagógicos de estudantes são exportados '
+                              'individualmente, quando autorizado.', estilos['texto']))
+    pdf.build(elementos, onFirstPage=_rodape, onLaterPages=_rodape)
     return buffer.getvalue()

@@ -34,3 +34,115 @@
 .painel-arquivo-inativo h2 { font-size: 1.15rem; margin: 0 0 8px; }
 .painel-arquivo-inativo p { line-height: 1.55; margin: 8px 0 14px; }
 .painel-arquivo-inativo .botao-secundario { display: inline-flex; margin-top: 5px; }
+
+/* Atividades (professor/gestor): status alinhados, sem quebra de linha.
+   A tabela continua rolável horizontalmente nas telas estreitas. */
+.tabela-atividades-gestao {
+    min-width: 1060px;
+}
+.tabela-atividades-gestao .coluna-situacao {
+    min-width: 200px;
+    width: 200px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.tabela-atividades-gestao .estado-atividade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 7px 12px;
+    min-height: 30px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: .79rem;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.tabela-atividades-gestao .estado-atividade--concluida {
+    color: #28724e;
+    background: #e9f7ee;
+    border-color: #bfe4cd;
+}
+.tabela-atividades-gestao .estado-atividade--pendente {
+    color: #88621b;
+    background: #fff5dc;
+    border-color: #f0ddac;
+}
+.tabela-atividades-gestao .estado-atividade--avaliacao {
+    color: #3d659d;
+    background: #ebf3ff;
+    border-color: #c9dcf8;
+}
+.tabela-atividades-gestao .estado-atividade--cancelada {
+    color: #677183;
+    background: #f1f3f6;
+    border-color: #d9dee6;
+}
+
+/* ELO | Cadastros: apresentação igual para Alunos, Professores e Responsáveis.
+   A foto pessoal permanece exclusiva da área autenticada "Meus dados";
+   as listas usam o mesmo avatar com iniciais, sem expor arquivos de usuários. */
+.estrutura-pagina .conteudo .painel-pessoas .elo-pessoa-identidade {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 175px;
+}
+.estrutura-pagina .conteudo .painel-pessoas .elo-pessoa-avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    border: 1px solid #bed3e9;
+    border-radius: 50%;
+    background: #eaf3fb;
+    color: #365d8b;
+    font-size: .81rem;
+    font-weight: 900;
+    letter-spacing: .035em;
+    line-height: 1;
+}
+.estrutura-pagina .conteudo .painel-pessoas .elo-pessoa-nome {
+    color: #304762;
+    font-size: .92rem;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+}
+.estrutura-pagina .conteudo .painel-pessoas .situacao {
+    display: inline-flex;
+    min-height: 30px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.estrutura-pagina .conteudo .painel-pessoas .elo-pessoas-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    min-width: 150px;
+}
+.estrutura-pagina .conteudo .painel-pessoas .elo-pessoas-acoes :is(a, button) {
+    margin: 0;
+}
+.estrutura-pagina .conteudo .painel-pessoas table th:first-child,
+.estrutura-pagina .conteudo .painel-pessoas table td:first-child {
+    min-width: 200px;
+}
+.estrutura-pagina .conteudo .painel-pessoas table th:last-child,
+.estrutura-pagina .conteudo .painel-pessoas table td:last-child {
+    min-width: 174px;
+}
+@media (max-width: 700px) {
+    .estrutura-pagina .conteudo .painel-pessoas .elo-pessoa-identidade { min-width: 158px; }
+    .estrutura-pagina .conteudo .painel-pessoas .elo-pessoa-avatar { flex-basis: 36px; width: 36px; height: 36px; }
+    .estrutura-pagina .conteudo .painel-pessoas .elo-pessoas-acoes { min-width: 135px; }
+}

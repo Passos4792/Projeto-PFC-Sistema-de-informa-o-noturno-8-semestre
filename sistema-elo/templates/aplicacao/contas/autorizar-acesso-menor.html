@@ -1,0 +1,51 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/documentos-legais.css' %}">
+{% endblock %}
+{% block titulo_pagina %}ELO - Autorizar acesso de menores{% endblock %}
+{% block conteudo %}
+<section class="painel documento-legal" aria-labelledby="titulo-menores">
+    <div class="cabecalho-documento">
+        <span class="etiqueta">Proteção de crianças</span>
+        <h1 id="titulo-menores">Autorizar acesso de menores de 12 anos</h1>
+        <p>Você pode autorizar individualmente o acesso das crianças vinculadas à sua conta. O seu aceite dos Termos de Uso, sozinho, não libera a conta da criança.</p>
+    </div>
+    <div class="corpo-documento">
+        <p>Antes de autorizar, consulte os <a href="{% url 'termos-uso' %}" target="_blank" rel="noopener noreferrer">Termos de Uso</a> e a <a href="{% url 'politica-privacidade' %}" target="_blank" rel="noopener noreferrer">Política de Privacidade</a>. A instituição deve confirmar a legitimidade do responsável cadastrado.</p>
+        {% if pendentes %}
+            {% for aluno in pendentes %}
+            <form method="post" class="formulario-aceite">
+                {% csrf_token %}
+                <input type="hidden" name="aluno_id" value="{{ aluno.pk }}">
+                <input type="hidden" name="acao" value="autorizar">
+                <h2>{{ aluno.nome_completo }}</h2>
+                <label class="caixa-aceite">
+                    <input type="checkbox" name="autorizo" value="on" required>
+                    <span><strong>Autorizo expressamente o acesso de {{ aluno.nome_completo }} ao perfil de estudante do ELO</strong>, na condição de seu responsável legal. Estou ciente das finalidades educacionais, dos registros e das condições de privacidade descritos nos documentos acima.</span>
+                </label>
+                <p class="observacao-aceite">Esta autorização é específica para a conta de {{ aluno.nome_completo }}. Não autoriza outras finalidades de tratamento de dados nem substitui a avaliação das bases legais pela instituição.</p>
+                <button class="botao-principal botao-continuar" type="submit">Autorizar acesso de {{ aluno.nome }}</button>
+            </form>
+            {% endfor %}
+        {% else %}
+            <p>Não há crianças menores de 12 anos aguardando autorização vinculadas à sua conta.</p>
+        {% endif %}
+        {% if autorizados %}
+            <h2>Autorizações já registradas por você</h2>
+            {% for aluno in autorizados %}
+            <form method="post" class="formulario-aceite">
+                {% csrf_token %}
+                <input type="hidden" name="aluno_id" value="{{ aluno.pk }}">
+                <input type="hidden" name="acao" value="revogar">
+                <p>{{ aluno.nome_completo }}</p>
+                <button class="botao-secundario" type="submit">Revogar minha autorização para {{ aluno.nome }}</button>
+            </form>
+            {% endfor %}
+            <p class="observacao-aceite">Se outro responsável vinculado também tiver autorizado o acesso, a criança poderá continuar utilizando o ELO com base naquela autorização.</p>
+        {% endif %}
+        <p class="versao-documento">Termos v{{ versao_termos }} · Política v{{ versao_privacidade }}</p>
+        <a class="botao-secundario" href="{% url 'pagina-inicial' %}">Voltar ao painel</a>
+    </div>
+</section>
+{% endblock %}

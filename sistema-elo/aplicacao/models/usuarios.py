@@ -16,6 +16,9 @@ class Usuario(models.Model):
     troca_senha_obrigatoria = models.BooleanField(default=True)
     foto_perfil = models.FileField(upload_to="fotos_perfil/", blank=True)
 
+    # Encerramento da conta de login a pedido do titular; o histórico escolar
+    # associado pode permanecer pelo período de retenção aplicável.
+    conta_encerrada_em = models.DateTimeField(null=True, blank=True, editable=False, db_index=True)
     documentos_aceitos_em = models.DateTimeField(null=True, blank=True)
     versao_termos_aceita = models.CharField(max_length=20, blank=True)
     versao_privacidade_ciente = models.CharField(max_length=20, blank=True)
@@ -130,3 +133,25 @@ class Aluno(PessoaBase):
         ordering = ["nome", "sobrenome"]
         verbose_name = "aluno"
         verbose_name_plural = "alunos"
+
+
+class AutorizacaoAcessoMenor(models.Model):
+    """Autorização explícita do responsável para liberar a conta de uma criança.
+
+    O aceite genérico da conta do responsável não equivale a esta autorização.
+    Um registro só é válido enquanto o vínculo familiar e os documentos atuais
+    estiverem vigentes; alterações de versão exigem nova manifestação.
+    """
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='autorizacoes_acesso')
+    responsavel = models.ForeignKey(Responsavel, on_delete=models.CASCADE, related_name='autorizacoes_acesso')
+    versao_termos = models.CharField(max_length=20)
+    versao_privacidade = models.CharField(max_length=20)
+    autorizado_em = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'autorizacao_acesso_menor'
+        verbose_name = 'autorização de acesso de menor'
+        verbose_name_plural = 'autorizações de acesso de menores'
+        constraints = [
+            models.UniqueConstraint(fields=['aluno', 'responsavel'], name='elo_autorizacao_menor_unica'),
+        ]

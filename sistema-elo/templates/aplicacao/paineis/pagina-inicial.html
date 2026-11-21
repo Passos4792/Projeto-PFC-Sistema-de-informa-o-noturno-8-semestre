@@ -62,6 +62,13 @@
         <p class="progresso-vazio">Nenhum aluno disponível para acompanhamento no momento.</p>
     {% endif %}
 </section>
+{% if eh_responsavel and menores_aguardando_autorizacao %}
+<section class="painel atalhos-inicio" aria-labelledby="titulo-autorizacoes-pendentes">
+    <h2 id="titulo-autorizacoes-pendentes">Autorização de acesso pendente</h2>
+    <p>Há criança(s) menor(es) de 12 anos vinculada(s) à sua conta aguardando autorização específica para acessar o ELO.</p>
+    <a class="botao-secundario" href="{% url 'autorizar-acesso-menor' %}">Autorizar acesso de menores</a>
+</section>
+{% endif %}
 {% if gestor %}
 <section class="painel atalhos-inicio">
     <h2>O que você deseja acompanhar?</h2>

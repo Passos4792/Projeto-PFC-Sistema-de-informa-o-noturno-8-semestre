@@ -94,3 +94,8 @@
 .lista-pedidos-senha th { color: #446aa7; font-size: 12px; text-transform: uppercase; }
 .lista-pedidos-senha .botao-extra { white-space: nowrap; }
 @media (max-width: 700px) { .lista-pedidos-senha { display: block; overflow-x: auto; } }
+
+/* Botões alinhados para ações sobre pedidos de senha. */
+.acoes-pedido-senha { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 245px; }
+.acoes-pedido-senha form { margin: 0; }
+.acoes-pedido-senha :is(a, button) { white-space: nowrap; }

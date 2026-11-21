@@ -1048,3 +1048,26 @@ body.menu-minimizado .links-legais-menu {
 @media (max-width: 580px) {
     .formulario-cadastro .grupo-destaque .campo-formulario { max-width: 100%; }
 }
+
+/* Confirmação de saída apenas quando há alterações ainda não salvas. */
+.elo-dialogo-descarte {
+    width: min(450px, calc(100% - 32px));
+    max-width: 100%;
+    padding: 0;
+    border: 1px solid #d8e4ef;
+    border-radius: 20px;
+    background: #fffdfb;
+    color: #304863;
+    box-shadow: 0 24px 80px rgba(26, 42, 61, .22);
+}
+.elo-dialogo-descarte::backdrop { background: rgba(33, 47, 67, .42); }
+.elo-dialogo-descarte__corpo { padding: clamp(20px, 4vw, 28px); }
+.elo-dialogo-descarte h2 { margin: 0 0 12px; font-size: 1.4rem; font-weight: 800; color: #273f5e; }
+.elo-dialogo-descarte p { margin: 0; font-size: 1rem; line-height: 1.5; color: #586c82; }
+.elo-dialogo-descarte__acoes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+.elo-dialogo-descarte__acoes button { min-height: 44px; padding: 10px 16px; border-radius: 12px; cursor: pointer; }
+.elo-dialogo-descarte button:focus-visible { outline: 3px solid #6189b3; outline-offset: 2px; }
+@media (max-width: 480px) {
+    .elo-dialogo-descarte__acoes { flex-direction: column-reverse; }
+    .elo-dialogo-descarte__acoes button { width: 100%; }
+}

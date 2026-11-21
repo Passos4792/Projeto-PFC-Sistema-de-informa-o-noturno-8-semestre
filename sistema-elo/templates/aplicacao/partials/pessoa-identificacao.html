@@ -1,0 +1,5 @@
+{# Mesmo componente de nome/avatar nas listas de Alunos, Professores e Responsáveis. #}
+<div class="elo-pessoa-identidade">
+    <span class="elo-pessoa-avatar" aria-hidden="true">{{ pessoa.nome|first|upper }}{{ pessoa.sobrenome|first|upper }}</span>
+    <span class="elo-pessoa-nome">{{ pessoa.nome_completo }}</span>
+</div>

@@ -1,0 +1,23 @@
+{% extends 'aplicacao/comum/estrutura-publica.html' %}
+{% load static %}
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/documentos-legais.css' %}">
+{% endblock %}
+{% block titulo_pagina %}ELO - Aguardando autorização{% endblock %}
+{% block conteudo %}
+<section class="painel cartao-publico documento-legal" aria-labelledby="titulo-autorizacao">
+    <div class="cabecalho-documento">
+        <span class="etiqueta">Proteção de crianças</span>
+        <h1 id="titulo-autorizacao">Aguardando autorização do responsável</h1>
+    </div>
+    <div class="corpo-documento">
+        <p>Seu perfil no ELO só ficará disponível depois que um responsável vinculado a você aceitar os Termos de Uso e autorizar seu acesso.</p>
+        <p>Peça ao seu responsável para entrar na própria conta do ELO e acessar <strong>Autorizar acesso de menores</strong>. Você não precisa aceitar os termos por conta própria.</p>
+        <p>Depois da autorização, entre novamente ou atualize esta página para continuar.</p>
+    </div>
+    <form method="post" action="{% url 'logout' %}" class="formulario-aceite">
+        {% csrf_token %}
+        <button class="botao-principal botao-continuar" type="submit">Sair da conta</button>
+    </form>
+</section>
+{% endblock %}

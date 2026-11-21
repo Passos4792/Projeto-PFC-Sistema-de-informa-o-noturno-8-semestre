@@ -1,0 +1,34 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Revogar aceite dos documentos{% endblock %}
+{% block conteudo %}
+<div class="pagina-meus-dados">
+  <header class="topo-pagina"><div>
+    <p class="caminho"><a class="elo-link-voltar" href="{% url 'privacidade-conta' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar à privacidade</span></a></p>
+    <h1>Revogar Termos de Uso e Política de Privacidade</h1>
+    <p class="subtitulo">Confirme a revogação do aceite dos documentos da sua conta.</p>
+  </div></header>
+  <section class="painel cartao-meus-dados">
+    <h2>O que acontece ao confirmar?</h2>
+    <p>O ELO deixará de considerar vigente o seu aceite dos Termos de Uso e o registro de ciência da Política de Privacidade. Você sairá da conta e não poderá acessar as áreas internas até aceitar novamente os documentos.</p>
+    {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+    <p class="privacidade-alerta"><strong>Atenção:</strong> as crianças menores de 12 anos vinculadas a você também terão o acesso suspenso, mesmo que já estejam com uma sessão aberta. As autorizações específicas concedidas por você serão revogadas. Após novo aceite, poderá ser necessário autorizá-las novamente.</p>
+    {% endif %}
+    <p><strong>Esta ação não exclui a conta nem os documentos pedagógicos.</strong> Caso deseje solicitar o encerramento da conta ou exportar os dados, volte e escolha “Gerenciar meus dados e conta”.</p>
+    <p>O registro de ciência da Política de Privacidade não equivale ao consentimento para todo tratamento de dados. Os tratamentos previstos em outras bases legais e as obrigações de conservação devem ser avaliados pela instituição.</p>
+    {% if erro %}<p role="alert" style="color:#a12c2c"><strong>{{ erro }}</strong></p>{% endif %}
+    <form method="post" class="formulario-senha" autocomplete="off" novalidate>
+      {% csrf_token %}
+      <div class="grupo-campo"><label for="id_senha_revogacao">Sua senha atual</label>
+        <input type="password" id="id_senha_revogacao" name="senha" autocomplete="current-password" required></div>
+      <div class="grupo-campo"><label for="id_confirmacao_revogacao">Para confirmar, digite REVOGAR</label>
+        <input type="text" id="id_confirmacao_revogacao" name="confirmacao" required></div>
+      <div class="grupo-campo"><label><input type="checkbox" name="confirmo" required>
+        Entendi que meu acesso ficará suspenso e{% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %} os menores vinculados também serão bloqueados{% endif %} até a regularização dos aceites e autorizações.</label></div>
+      <div class="acoes-formulario">
+        <a class="botao-secundario" href="{% url 'privacidade-conta' %}">Cancelar</a>
+        <button type="submit" class="botao-perigo">Confirmar revogação</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}

@@ -21,7 +21,7 @@
 </nav>
 <section class="painel elo-lista-atividades" aria-labelledby="titulo-lista-atividades">
     <div class="painel-cabecalho elo-atividades-cabecalho">
-        <div><h2 id="titulo-lista-atividades">Atividades cadastradas</h2><p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} atividade(s) encontrada(s) · {{ atividades|length }} nesta página.</p></div>
+        <div><h2 id="titulo-lista-atividades">Atividades cadastradas</h2><p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} atividade{{ pagina.paginator.count|pluralize }} encontrada{{ pagina.paginator.count|pluralize }} · {{ atividades|length }} nesta página.</p></div>
         <form method="get" class="busca" role="search" data-busca-automatica>
             {% if request.GET.aluno %}<input type="hidden" name="aluno" value="{{ request.GET.aluno }}">{% endif %}
             <input type="hidden" name="filtro" value="{{ visao }}">

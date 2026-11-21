@@ -1,7 +1,7 @@
 {% extends 'aplicacao/comum/estrutura-base.html' %}
 {% load static %}
 {% block estilos_pagina %}
-<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261112-requisitos">
+<link rel="stylesheet" href="{% static 'aplicacao/css/paginas/senhas.css' %}?v=20261119-cancelamento-pedidos">
 {% endblock %}
 {% block titulo_pagina %}ELO - Pedidos de senha{% endblock %}
 {% block conteudo %}
@@ -16,14 +16,16 @@
     <a href="?filtro=todas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'todas' %}aria-current="page"{% endif %}>Todos</a>
     <a href="?filtro=pendentes{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'pendentes' %}aria-current="page"{% endif %}>Pendentes{% if pedidos_senha_pendentes %} ({{ pedidos_senha_pendentes }}){% endif %}</a>
     <a href="?filtro=atendidas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'atendidas' %}aria-current="page"{% endif %}>Atendidos</a>
+    <a href="?filtro=canceladas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'canceladas' %}aria-current="page"{% endif %}>Cancelados</a>
+    <a href="?filtro=negadas{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}" {% if visao == 'negadas' %}aria-current="page"{% endif %}>Negados</a>
 </nav>
 <section class="painel painel-lista">
     <div class="painel-cabecalho cabecalho-registros">
         <div class="resumo-registros"><strong>{{ total_cadastrados }}</strong><span>pedidos</span></div>
         <div>
             <h2>Solicitações recebidas</h2>
-            <p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} registro(s) encontrado(s) · {{ pedidos|length }} nesta página.</p>
-            <p>Confira o vínculo e a identidade antes de criar uma senha temporária.</p>
+            <p data-contagem-lista aria-live="polite">{{ pagina.paginator.count }} registro{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }} · {{ pedidos|length }} nesta página.</p>
+            <p>Confira o vínculo e a identidade antes de criar uma senha temporária. Um pedido cancelado ou negado não pode mais ser atendido.</p>
         </div>
         <form method="get" class="busca" role="search" data-busca-automatica>
             <input type="hidden" name="filtro" value="{{ visao }}">
@@ -48,10 +50,19 @@
                             {% if pedido.usuario_alvo_id == request.perfil_elo.pk %}
                                 <span>Solicite atendimento a outro gestor</span>
                             {% else %}
-                                <a class="botao-extra" href="{% url 'solicitacao-senha-atender' pedido.pk %}">Atender pedido</a>
+                                <div class="acoes-pedido-senha">
+                                    <a class="botao-extra" href="{% url 'solicitacao-senha-atender' pedido.pk %}">Atender pedido</a>
+                                    <form method="post" action="{% url 'solicitacao-senha-negar' pedido.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="botao-perigo-contorno"
+                                            data-confirmar="O pedido será negado e não poderá ser atendido depois. A senha atual do usuário não será modificada."
+                                            data-titulo-confirmacao="Negar pedido de senha?"
+                                            data-rotulo-confirmacao="Sim, negar pedido">Negar pedido</button>
+                                    </form>
+                                </div>
                             {% endif %}
                         {% else %}
-                            <span>Atendida em {{ pedido.atendida_em|date:'d/m/Y H:i' }}</span>
+                            <span>{{ pedido.get_situacao_display }} em {{ pedido.atendida_em|date:'d/m/Y H:i' }}</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -64,5 +75,18 @@
     {% include 'aplicacao/partials/paginacao.html' with pagina=pagina filtros=filtros_paginacao titulo='pedidos de senha' %}
     </div>
 </section>
+<dialog id="elo-dialogo-confirmacao" class="elo-dialogo-confirmacao"
+        aria-labelledby="elo-dialogo-titulo" aria-describedby="elo-dialogo-mensagem">
+    <div class="elo-dialogo-conteudo">
+        <div class="elo-dialogo-cabecalho">
+            <h2 id="elo-dialogo-titulo">Confirmar ação</h2>
+            <p id="elo-dialogo-mensagem"></p>
+        </div>
+        <div class="elo-dialogo-acoes">
+            <button type="button" class="botao-secundario" data-fechar-dialogo>Voltar</button>
+            <button type="button" class="botao-perigo" data-confirmar-dialogo>Negar pedido</button>
+        </div>
+    </div>
+</dialog>
 <script src="{% static 'aplicacao/js/busca-lista.js' %}?v=20261112-busca-padrao" defer></script>
 {% endblock %}

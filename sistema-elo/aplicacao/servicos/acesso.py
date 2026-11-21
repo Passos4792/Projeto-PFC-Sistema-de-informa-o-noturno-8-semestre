@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.cache import add_never_cache_headers
 from aplicacao.servicos.auditoria import registrar, registrar_consulta
 from aplicacao.servicos.documentos_legais import documentos_aceitos
+from aplicacao.servicos.autorizacao_menores import acesso_menor_autorizado, menor_de_12
 from aplicacao.servicos.duplo_fator import exige_segundo_fator, obter_configuracao, segundo_fator_verificado
 from aplicacao.servicos.limite_login import autenticar_com_limite
 from aplicacao.models import Aluno, Professor
@@ -43,13 +44,17 @@ ROTAS_ADMINISTRACAO = frozenset({
 ROTAS_AEE = frozenset({
     'meta-criar', 'meta-editar', 'meta-excluir',
     'atividade-listar', 'atividade-historico', 'atividade-criar', 'atividade-editar', 'atividade-excluir',
+    'atividade-cancelar',
     'aprovacoes',
 })
 
-ROTAS_SOLICITACOES_SENHA = frozenset({'solicitacao-senha-listar', 'solicitacao-senha-atender'})
+ROTAS_SOLICITACOES_SENHA = frozenset({'solicitacao-senha-listar', 'solicitacao-senha-atender', 'solicitacao-senha-negar'})
 ROTAS_ACESSO_ALUNOS = ROTAS_SOLICITACOES_SENHA | {'aluno-listar', 'usuario-redefinir-senha', 'usuario-ativar-acesso'}
 ROTAS_PAINEIS = frozenset({'meta-listar'})
-ROTAS_CONTA = frozenset({'meus-dados', 'foto-perfil', 'foto-perfil-alterar', 'foto-perfil-remover', 'pagina-inicial'})
+ROTAS_CONTA = frozenset({'meus-dados', 'foto-perfil', 'foto-perfil-alterar', 'foto-perfil-remover', 'pagina-inicial',
+                          'privacidade-conta', 'privacidade-gerenciar', 'privacidade-revogar',
+                          'privacidade-exportar-minha', 'privacidade-excluir-minha',
+                          'privacidade-exportar-menor', 'privacidade-excluir-menor'})
 
 ROTAS_AREA_ESTUDANTE = frozenset({
     'minhas-atividades', 'atividade-enviar',
@@ -74,7 +79,7 @@ def perfil_ativo(user):
     try:
         perfil = user.perfil_elo
         pessoa = getattr(perfil, perfil.tipo_perfil.lower() + '_perfil')
-        return perfil if pessoa.ativo else None
+        return perfil if pessoa.ativo and perfil.conta_encerrada_em is None else None
     except (ObjectDoesNotExist, AttributeError):
         return None
 
@@ -90,9 +95,21 @@ class BackendElo(ModelBackend):
         if password is None:
             return None
         autenticar = super().authenticate
-        return autenticar_com_limite(request, username,
-                                     lambda nome: autenticar(request, username=_login_gravado(nome),
-                                                             password=password, **kwargs))
+
+        def autenticar_preservando_confianca(nome):
+            from django.contrib.auth import get_user_model
+            login = _login_gravado(nome)
+            hash_anterior = get_user_model().objects.filter(username=login).values_list(
+                'password', flat=True).first()
+            usuario = autenticar(request, username=login, password=password, **kwargs)
+            if usuario is not None and hash_anterior and usuario.password != hash_anterior:
+                # O Django regravou o hash da MESMA senha (ex.: mais iterações após
+                # atualização). Isso não é troca de senha: mantém os navegadores confiáveis.
+                from aplicacao.servicos.duplo_fator import atualizar_assinatura_apos_rehash
+                atualizar_assinatura_apos_rehash(usuario, hash_anterior)
+            return usuario
+
+        return autenticar_com_limite(request, username, autenticar_preservando_confianca)
 
     def user_can_authenticate(self, user):
         return super().user_can_authenticate(user) and (user.is_superuser or perfil_ativo(user) is not None)
@@ -112,6 +129,8 @@ def alunos_permitidos(perfil):
         ).distinct()
     if perfil.tipo_perfil == 'ALUNO':
         return Aluno.objects.filter(usuario=perfil)
+    # A autorização do menor bloqueia o LOGIN da criança, não a visualização
+    # dos dados pelo responsável que já possui vínculo familiar ativo.
     return Aluno.objects.filter(
         Q(vinculo__responsavel__usuario=perfil, vinculo__ativo=True) |
         Q(vinculos_familiares__responsavel__usuario=perfil, vinculos_familiares__ativo=True)
@@ -156,6 +175,8 @@ def alunos_area_estudante(perfil):
     if perfil.tipo_perfil == 'ALUNO':
         return Aluno.objects.filter(usuario=perfil)
     if perfil.tipo_perfil == 'RESPONSAVEL':
+        # Mesclagem de perfis já concedida pelo vínculo ativo permanece
+        # acessível ao adulto, mesmo com o login do menor ainda bloqueado.
         return Aluno.objects.filter(
             Q(vinculo__responsavel__usuario=perfil, vinculo__ativo=True,
               vinculo__mesclar_perfis=True) |
@@ -225,9 +246,25 @@ class ControleAcesso:
         if perfil is not None:
             request.perfil_elo = perfil
 
+        # Criança menor de 12 anos não aceita os termos por conta própria.
+        # Antes de liberar qualquer tela ou API, exige autorização específica
+        # de ao menos um responsável ativo e vinculado que aceitou os termos.
+        menor_sem_autorizacao = False
+        aluno_menor = False
+        if perfil is not None and perfil.tipo_perfil == 'ALUNO':
+            aluno = perfil.aluno_perfil
+            aluno_menor = menor_de_12(aluno.data_nascimento)
+            menor_sem_autorizacao = aluno_menor and not acesso_menor_autorizado(aluno)
+        if menor_sem_autorizacao:
+            if nome == 'aguardando-autorizacao':
+                return None
+            if nome and nome.startswith('api-'):
+                return JsonResponse({'detail': 'Acesso aguardando autorização do responsável vinculado.'}, status=403)
+            return redirect('aguardando-autorizacao')
+
         if perfil is not None and perfil.troca_senha_obrigatoria:
             if nome and nome.startswith('api-'):
-                return None
+                return JsonResponse({'detail': 'Troca de senha obrigatória antes de acessar a API.'}, status=403)
             if nome == 'trocar-senha':
                 return None
             return redirect('trocar-senha')
@@ -246,18 +283,27 @@ class ControleAcesso:
         if nome in ROTAS_SEGUNDO_FATOR:
             return None
         if nome and nome.startswith('api-'):
+            # O aceite revogado também bloqueia APIs, não só páginas HTML.
+            if perfil is not None and not aluno_menor and not documentos_aceitos(perfil):
+                return JsonResponse({'detail': 'Aceite dos documentos pendente ou revogado.'}, status=403)
             return None
         if nome == 'trocar-senha':
             return None
         if perfil is None:
             raise PermissionDenied('Conta técnica restrita à administração.')
 
+        if nome == 'aguardando-autorizacao':
+            return redirect('inicio')
         if nome == 'aceitar-termos':
-            return None
-        if not documentos_aceitos(perfil):
+            return None if not aluno_menor else redirect('inicio')
+        if not aluno_menor and not documentos_aceitos(perfil):
             destino = reverse('aceitar-termos') + '?' + urlencode({'next': request.get_full_path()})
             return redirect(destino)
 
+        if nome == 'autorizar-acesso-menor':
+            if perfil.tipo_perfil != 'RESPONSAVEL':
+                raise PermissionDenied('Somente responsáveis podem autorizar o acesso de crianças.')
+            return None
         if nome in ROTAS_CONTA:
             return None
         if nome in ROTAS_DOCUMENTOS:

@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from aplicacao.forms.idioma import traduzir_opcoes
-from aplicacao.models import Atividade, Conteudo, Disciplina, MetaAluno
+from aplicacao.models import Atividade, Conteudo, Disciplina, MetaAluno, SolicitacaoConclusao
 from aplicacao.forms.base import FormularioBase
 
 
@@ -67,7 +67,11 @@ class FormularioAtividade(FormularioBase):
         self.fields['meta'].help_text = 'Opcional. Escolha qualquer meta deste aluno, independentemente do conteúdo. As metas por período contam atividades pela data de entrega.'
         self.fields['meta'].empty_label = 'Sem meta específica'
         self.fields['situacao'].help_text = 'Entregas pendentes de aprovação podem ser avaliadas na página Atividades.'
-        if self.instance.situacao != 'CONCLUIDA':
+        # Uma atividade reaberta (Concluída -> Pendente) que já teve entrega aprovada
+        # pode voltar a ser concluída pelo professor sem exigir um novo envio.
+        ja_aprovada = bool(self.instance.pk) and SolicitacaoConclusao.objects.filter(
+            atividade_id=self.instance.pk, situacao='APROVADA').exists()
+        if self.instance.situacao != 'CONCLUIDA' and not ja_aprovada:
             self.fields['situacao'].choices = [('PENDENTE', 'Pendente'), ('CANCELADA', 'Cancelada')]
         aluno = self.data.get('aluno') if self.is_bound else self.instance.aluno_id
         self.fields['meta'].queryset = MetaAluno.objects.filter(aluno_id=aluno) if str(aluno or '').isdigit() else MetaAluno.objects.none()

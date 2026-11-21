@@ -65,6 +65,7 @@ def alunos(request):
     linhas = [
         {
             "valores": [aluno.nome_completo, aluno.usuario, _data(aluno.data_nascimento), _texto_ativo(aluno.ativo)],
+            "pessoa": aluno,  # Avatar e nome no padrão visual dos três cadastros.
             "url_editar": reverse("aluno-editar", args=[aluno.pk]) if request.perfil_elo.gestor else None,
             "url_excluir": reverse("aluno-excluir", args=[aluno.pk]) if request.perfil_elo.gestor else None,
             "url_senha": reverse('usuario-redefinir-senha', args=[aluno.usuario_id]) if aluno.usuario.conta_id else None,
@@ -133,6 +134,7 @@ def responsaveis(request):
     linhas = [
         {
             "valores": [responsavel.nome_completo, responsavel.usuario, _texto_ativo(responsavel.ativo)],
+            "pessoa": responsavel,  # Mesmo componente visual dos alunos e professores.
             "url_editar": reverse("responsavel-editar", args=[responsavel.pk]),
             "url_excluir": reverse("responsavel-excluir", args=[responsavel.pk]),
             "url_senha": reverse('usuario-redefinir-senha', args=[responsavel.usuario_id]) if responsavel.usuario.conta_id else None,

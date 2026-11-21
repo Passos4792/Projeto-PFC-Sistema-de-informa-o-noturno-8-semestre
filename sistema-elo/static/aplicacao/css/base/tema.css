@@ -310,3 +310,109 @@ body { background: var(--elo-fundo); -webkit-font-smoothing: antialiased; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Um único contorno para o cadastro e a seta, com duas ações independentes. */
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  margin: 1px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho:hover,
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho:focus-within,
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho.grupo-ativo {
+  background: #fffaef;
+  border-color: #eddba9;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho.grupo-ativo {
+  box-shadow: inset 3px 0 0 #785e23;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros-cabecalho:focus-within {
+  outline: 2px solid var(--elo-acao);
+  outline-offset: 2px;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .link-cadastro-principal {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding-right: 3px;
+  border: 1px solid transparent;
+  border-radius: 9px 0 0 9px;
+  background: transparent;
+  box-shadow: none;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .link-cadastro-principal:hover,
+.estrutura-pagina .menu-navegacao .menu-cadastros .link-cadastro-principal.ativo {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  min-height: 34px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: 0 9px 9px 0;
+  color: #536d89;
+  background: transparent;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros:hover {
+  color: #345779;
+  background: transparent;
+  border-color: transparent;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .link-cadastro-principal:focus-visible,
+.estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros:focus-visible {
+  outline: none; /* O foco é exibido no contorno do grupo inteiro. */
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .seta-cadastros {
+  width: 17px;
+  height: 17px;
+  transition: transform .2s ease;
+}
+.estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros[aria-expanded="true"] .seta-cadastros {
+  transform: rotate(180deg);
+}
+.estrutura-pagina .menu-navegacao .submenu-cadastros[hidden] { display: none !important; }
+.estrutura-pagina .menu-navegacao .submenu-cadastros {
+  margin: 1px 0 7px 15px;
+  padding-left: 9px;
+  border-left: 2px solid #e4eaf0;
+}
+.estrutura-pagina .menu-navegacao .submenu-cadastros a {
+  min-height: 36px;
+  padding: 5px 8px;
+  margin: 2px 0;
+  font-size: .82rem;
+  gap: 9px;
+  border-radius: 10px;
+}
+.estrutura-pagina .menu-navegacao .submenu-cadastros a span.icone-menu {
+  width: 25px;
+  height: 25px;
+  flex-basis: 25px;
+}
+@media (min-width: 801px) and (max-height: 820px) {
+  .estrutura-pagina .menu-navegacao .submenu-cadastros a { min-height: 31px; }
+}
+/* A seta desaparece com a barra recolhida; o link de cadastro permanece. */
+body.menu-minimizado .estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros,
+body.menu-minimizado .estrutura-pagina .menu-navegacao .submenu-cadastros { display: none; }
+body.menu-minimizado .estrutura-pagina .menu-navegacao .menu-cadastros .link-cadastro-principal {
+  flex-basis: 100%;
+  justify-content: center;
+}
+@media (max-width: 800px) {
+  .estrutura-pagina .menu-navegacao .menu-cadastros .alternar-cadastros { min-height: 43px; height: 43px; }
+}

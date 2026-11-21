@@ -1,0 +1,24 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Privacidade e dados{% endblock %}
+{% block conteudo %}
+<div class="pagina-meus-dados">
+  <header class="topo-pagina"><div>
+    <p class="caminho"><a class="elo-link-voltar" href="{% url 'meus-dados' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar aos meus dados</span></a></p>
+    <h1>Privacidade e dados</h1>
+    <p class="subtitulo">Escolha o que deseja fazer com seus dados e com o acesso ao ELO.</p>
+  </div></header>
+  <div class="grade-meus-dados opcoes-privacidade">
+    <section class="painel cartao-meus-dados" aria-labelledby="gerenciar-privacidade-titulo">
+      <h2 id="gerenciar-privacidade-titulo">Gerenciar meus dados e conta</h2>
+      <p>Baixe seus dados disponíveis em PDF, consulte os dados das crianças sob sua responsabilidade principal e escolha se deseja encerrar alguma conta.</p>
+      <a class="botao-secundario" href="{% url 'privacidade-gerenciar' %}">Gerenciar dados e contas</a>
+    </section>
+    <section class="painel cartao-meus-dados" aria-labelledby="revogar-privacidade-titulo">
+      <h2 id="revogar-privacidade-titulo">Revogar Termos de Uso e Política de Privacidade</h2>
+      <p>Retire seu aceite dos Termos de Uso e o registro de ciência da Política de Privacidade. Seu acesso ficará suspenso até novo aceite.
+      {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %} As crianças menores de 12 anos vinculadas também perderão o acesso enquanto sua revogação permanecer ativa.{% endif %}</p>
+      <a class="botao-perigo-contorno" href="{% url 'privacidade-revogar' %}">Revogar aceite dos documentos</a>
+    </section>
+  </div>
+</div>
+{% endblock %}

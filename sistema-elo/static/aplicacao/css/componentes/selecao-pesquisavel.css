@@ -50,7 +50,21 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.elo-selecao-seta { flex: none; color: #476a92; font-size: 1.25em; line-height: 1; }
+.elo-selecao-seta {
+    display: block;
+    flex: none;
+    align-self: center;
+    width: 18px;
+    height: 18px;
+    color: #476a92;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .16s ease;
+}
+.elo-selecao-gatilho[aria-expanded="true"] .elo-selecao-seta { transform: rotate(180deg); }
 .elo-selecao-painel {
     position: fixed;
     z-index: 10000;

@@ -14,6 +14,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 
 from aplicacao.servicos.acesso import perfil_ativo
 from aplicacao.servicos.limite_login import autenticar_com_limite
+from aplicacao.servicos.solicitacoes_senha import cancelar_pedidos_apos_login
 from aplicacao.servicos.auditoria import referencia_tentativa, registrar
 from aplicacao.servicos.duplo_fator import (
     COOKIE_CONFIAVEL, criar_codigos_recuperacao, decifrar_segredo, eh_conta_administrativa,
@@ -77,6 +78,8 @@ def configurar(request):
                 codigos = criar_codigos_recuperacao(request.user)
             config.refresh_from_db()
             marcar_sessao_verificada(request, config)
+            if cancelar_pedidos_apos_login(request.user, request):
+                messages.info(request, 'Pedido de troca de senha cancelado: acesso confirmado.')
             registrar('PERMISSAO', request=request, entidade='segundo fator',
                       detalhes='Microsoft Authenticator (TOTP) configurado.')
             resposta = render(request, 'aplicacao/seguranca/2fa-codigos.html', {'codigos': codigos,
@@ -106,6 +109,8 @@ def verificar(request):
     if request.method == 'POST':
         if validar_codigo(request.user, request.POST.get('codigo')):
             marcar_sessao_verificada(request, config)
+            if cancelar_pedidos_apos_login(request.user, request):
+                messages.info(request, 'Pedido de troca de senha cancelado: acesso confirmado.')
             registrar('PERMISSAO', request=request, entidade='segundo fator',
                       detalhes='Autenticação em duas etapas confirmada.')
             resposta = redirect(_destino_seguro(request))

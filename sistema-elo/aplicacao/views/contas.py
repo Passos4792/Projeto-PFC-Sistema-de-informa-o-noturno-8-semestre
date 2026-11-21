@@ -15,11 +15,12 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
 from aplicacao.servicos.acesso import alunos_com_funcao
+from aplicacao.servicos.autorizacao_menores import acesso_menor_autorizado, menor_de_12, menores_pendentes, alunos_menores_vinculados
 from aplicacao.servicos.auditoria import registrar
 from aplicacao.servicos.documentos_legais import DATA_VIGENCIA, documentos_aceitos, VERSAO_PRIVACIDADE, VERSAO_TERMOS
 from aplicacao.servicos.duplo_fator import obter_configuracao, redefinir_segundo_fator
 from aplicacao.forms import AceiteDocumentos, CadastroUsuario, RedefinicaoSenha, TrocaSenhaInicial
-from aplicacao.models import Professor, Usuario
+from aplicacao.models import Professor, Usuario, AutorizacaoAcessoMenor
 
 
 @sensitive_post_parameters('old_password', 'new_password1', 'new_password2')
@@ -117,6 +118,8 @@ def aceitar_termos(request):
     perfil = request.perfil_elo
     proximo = request.POST.get('next') or request.GET.get('next') or ''
 
+    if perfil.tipo_perfil == 'ALUNO' and menor_de_12(perfil.aluno_perfil.data_nascimento):
+        return redirect('inicio')  # middleware direciona para a espera se estiver bloqueado
     if documentos_aceitos(perfil):
         return redirect('inicio')
 
@@ -139,6 +142,11 @@ def aceitar_termos(request):
             detalhes=f'Termos v{VERSAO_TERMOS}; Política v{VERSAO_PRIVACIDADE}',
         )
 
+        # O aceite geral do responsável não gera autorização automática.
+        # É necessária manifestação específica para cada criança vinculada.
+        if perfil.tipo_perfil == 'RESPONSAVEL' and menores_pendentes(perfil):
+            return redirect('autorizar-acesso-menor')
+
         if proximo and url_has_allowed_host_and_scheme(
             proximo, allowed_hosts={request.get_host()}, require_https=request.is_secure()
         ):
@@ -152,6 +160,82 @@ def aceitar_termos(request):
         'versao_privacidade': VERSAO_PRIVACIDADE,
         'data_vigencia': DATA_VIGENCIA,
         'next': proximo,
+    })
+
+
+@require_GET
+def aguardando_autorizacao(request):
+    """Tela informativa para a criança sem acesso: nunca recebe formulário de aceite."""
+    perfil = request.perfil_elo
+    if perfil.tipo_perfil != 'ALUNO' or not menor_de_12(perfil.aluno_perfil.data_nascimento):
+        return redirect('inicio')
+    if acesso_menor_autorizado(perfil.aluno_perfil):
+        return redirect('inicio')
+    return render(request, 'aplicacao/contas/aguardando-autorizacao.html')
+
+
+@require_http_methods(['GET', 'POST'])
+def autorizar_acesso_menor(request):
+    """Autorização individual, destacada e auditável para cada criança vinculada."""
+    perfil = request.perfil_elo
+    if perfil.tipo_perfil != 'RESPONSAVEL' or not documentos_aceitos(perfil):
+        raise PermissionDenied('A autorização exige acesso de responsável e aceite vigente dos termos.')
+    pendentes = menores_pendentes(perfil)
+    vinculados = alunos_menores_vinculados(perfil)
+
+    if request.method == 'POST':
+        # Só aceitamos IDs de crianças atualmente vinculadas ao usuário autenticado.
+        identificador = request.POST.get('aluno_id', '')
+        acao = request.POST.get('acao', 'autorizar')
+        if acao == 'revogar':
+            aluno = next((item for item in vinculados if str(item.pk) == identificador), None)
+            if aluno is None:
+                messages.error(request, 'Criança não vinculada à sua conta.')
+            else:
+                with transaction.atomic():
+                    eliminados, _ = AutorizacaoAcessoMenor.objects.filter(
+                        aluno=aluno, responsavel=perfil.responsavel_perfil,
+                    ).delete()
+                    if eliminados:
+                        registrar('DOCUMENTOS', request=request, entidade='Autorização de acesso de menor',
+                                  objeto_id=str(aluno.pk), detalhes='Autorização específica revogada pelo responsável.')
+                messages.success(request, f'Sua autorização de acesso de {aluno.nome_completo} foi revogada.')
+                return redirect('autorizar-acesso-menor')
+        elif acao == 'autorizar':
+            aluno = next((item for item in pendentes if str(item.pk) == identificador), None)
+            if aluno is None or request.POST.get('autorizo') != 'on':
+                messages.error(request, 'Selecione uma criança vinculada e confirme expressamente a autorização.')
+            else:
+                with transaction.atomic():
+                    autorizacao, _ = AutorizacaoAcessoMenor.objects.update_or_create(
+                        aluno=aluno,
+                        responsavel=perfil.responsavel_perfil,
+                        defaults={
+                            'versao_termos': VERSAO_TERMOS,
+                            'versao_privacidade': VERSAO_PRIVACIDADE,
+                            'autorizado_em': timezone.now(),
+                        },
+                    )
+                    registrar('DOCUMENTOS', request=request, objeto=autorizacao,
+                              detalhes=(f'Autorização específica de acesso: aluno #{aluno.pk}; '
+                                        f'Termos v{VERSAO_TERMOS}; Política v{VERSAO_PRIVACIDADE}.'))
+                messages.success(request, f'Acesso de {aluno.nome_completo} autorizado com sucesso.')
+                return redirect('autorizar-acesso-menor')
+        else:
+            messages.error(request, 'Operação inválida.')
+
+    ids_autorizados = set(AutorizacaoAcessoMenor.objects.filter(
+        responsavel=perfil.responsavel_perfil,
+        versao_termos=VERSAO_TERMOS,
+        versao_privacidade=VERSAO_PRIVACIDADE,
+        autorizado_em__gte=perfil.documentos_aceitos_em,
+    ).values_list('aluno_id', flat=True))
+    autorizados = [aluno for aluno in vinculados if aluno.pk in ids_autorizados]
+    return render(request, 'aplicacao/contas/autorizar-acesso-menor.html', {
+        'pendentes': pendentes,
+        'autorizados': autorizados,
+        'versao_termos': VERSAO_TERMOS,
+        'versao_privacidade': VERSAO_PRIVACIDADE,
     })
 
 
@@ -177,8 +261,10 @@ def inicio(request):
 @never_cache
 def meus_dados(request):
     from aplicacao.servicos import google_calendar as google
+    from aplicacao.servicos.privacidade_contas import perfil_pode_encerrar_proprio
     return render(request, 'aplicacao/contas/meus-dados.html', {
         'pagina_ativa': 'meus-dados',
+        'pode_gerenciar_privacidade': perfil_pode_encerrar_proprio(request.perfil_elo),
         'google_configurado': google.configurado(),
     })
 
@@ -256,3 +342,9 @@ def remover_foto_perfil(request):
         registrar('EDICAO', request=request, objeto=perfil, detalhes='Foto de perfil removida.')
     messages.success(request, 'A foto foi removida. Suas iniciais serão exibidas.')
     return redirect('meus-dados')
+
+# As rotas permanecem agrupadas em `contas` para não alterar a organização de URLs.
+from aplicacao.views.privacidade import (
+    privacidade_conta, privacidade_gerenciar, privacidade_revogar, privacidade_excluir_menor, privacidade_excluir_minha,
+    privacidade_exportar_menor, privacidade_exportar_minha,
+)

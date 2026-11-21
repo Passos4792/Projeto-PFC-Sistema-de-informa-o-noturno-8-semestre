@@ -14,7 +14,7 @@
   <div class="painel-cabecalho"><div><h2>{% if selecionado %}Editar vínculos de {{ selecionado.nome_completo }}{% else %}Cadastrar vínculos{% endif %}</h2>
     <p>Selecione os profissionais responsáveis por cada função. Campos opcionais podem ficar vazios.</p></div>
   </div>
-  <form class="elo-form-vinculos" method="post" novalidate>
+  <form class="elo-form-vinculos" method="post" novalidate data-proteger-rascunho>
     {% csrf_token %}<input type="hidden" name="acao" value="salvar_ficha">
     {% for erro in formulario.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}
     <fieldset class="elo-vinculos-grupo"><legend>Estudante e família</legend>
@@ -43,7 +43,7 @@
 </section>
 <section class="painel elo-vinculos-ficha elo-vinculos-secundarios">
   <div class="painel-cabecalho"><div><h2>Outros responsáveis</h2><p>Adicione outro familiar sem alterar o responsável principal.</p></div></div>
-  <form method="post" class="elo-form-vinculos" novalidate>{% csrf_token %}<input type="hidden" name="acao" value="adicionar_familiar">
+  <form method="post" class="elo-form-vinculos" novalidate data-proteger-rascunho>{% csrf_token %}<input type="hidden" name="acao" value="adicionar_familiar">
     <div class="elo-vinculos-grade">{% for campo in familiar_form %}{% if campo.name == 'aluno' or campo.name == 'responsavel' %}<div class="grupo-campo"><label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% for erro in campo.errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}</div>{% endif %}{% endfor %}</div>
     <div class="elo-switch-cartao elo-switch-familia"><label class="elo-switch-linha" for="{{ familiar_form.mesclar_perfis.id_for_label }}"><span class="elo-switch"><input type="checkbox" name="mesclar_perfis" id="{{ familiar_form.mesclar_perfis.id_for_label }}" {% if familiar_form.mesclar_perfis.value %}checked{% endif %}><span class="elo-switch-trilho" aria-hidden="true"></span></span><span><strong>Mesclar perfis com este responsável</strong><small>Autorizar este familiar a ajudar o aluno diretamente nas atividades.</small></span></label></div>
     {% for erro in familiar_form.non_field_errors %}<p class="erro-campo">{{ erro }}</p>{% endfor %}

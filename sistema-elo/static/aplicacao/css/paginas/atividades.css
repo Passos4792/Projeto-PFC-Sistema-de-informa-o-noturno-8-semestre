@@ -133,8 +133,7 @@
 .elo-calendario-conteudo form { margin-top: 10px; }
 .elo-detalhe-atividade { max-width: 1010px; }
 .elo-voltar { margin: 2px 0 18px; }
-.elo-voltar a { color: #6796ce; text-decoration: none; font-size: .87rem; font-weight: 600; }
-.elo-voltar a:hover { text-decoration: underline; }
+.elo-voltar .elo-link-voltar { font-size: 1rem; font-weight: 800; }
 .elo-detalhe-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 8px; }
 .elo-detalhe-titulo { display: flex; align-items: center; gap: 13px; min-width: 0; }
 .elo-detalhe-icone { width: 48px; height: 48px; border-radius: 12px; font-size: 26px; flex-basis: 48px; }
@@ -204,3 +203,117 @@
   .elo-material-apoio { align-items: flex-start; flex-wrap: wrap; }
   .elo-material-apoio a { width: 100%; text-align: center; }
 }
+
+
+/* Ações do histórico: todas começam à esquerda e permanecem em linha única.
+   Grade de quatro posições: Avaliar (quando houver), Detalhes, Editar e ⋮.
+   A última posição é fixa para alinhar os três pontinhos verticalmente. */
+.estrutura-pagina .conteudo .tabela-atividades-gestao td.acoes-atividade-tabela {
+    min-width: 310px;
+    width: 310px;
+    padding-left: 16px;
+    padding-right: 16px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.estrutura-pagina .conteudo .tabela-atividades-gestao th:last-child {
+    min-width: 310px;
+    text-align: left;
+}
+.tabela-atividades-gestao .acoes-atividade-conteudo {
+    display: grid;
+    grid-template-columns: 74px 82px 66px 38px;
+    align-items: center;
+    justify-content: start;
+    column-gap: 7px;
+    width: max-content;
+    min-width: 0;
+    white-space: nowrap;
+}
+.estrutura-pagina .conteudo .tabela-atividades-gestao .acoes-atividade-conteudo > a {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 7px 7px;
+    margin: 0;
+    width: 100%;
+    white-space: nowrap;
+    font-size: .79rem;
+}
+.tabela-atividades-gestao .acao-avaliar { grid-column: 1; }
+.tabela-atividades-gestao .acao-detalhes { grid-column: 1; }
+.tabela-atividades-gestao .acao-detalhes.com-avaliacao { grid-column: 2; }
+.tabela-atividades-gestao .acao-editar { grid-column: 2; }
+.tabela-atividades-gestao .acao-editar.com-avaliacao { grid-column: 3; }
+.tabela-atividades-gestao .menu-acoes-linha {
+    grid-column: 4;
+    position: relative;
+    display: block;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    white-space: normal;
+}
+.tabela-atividades-gestao .menu-acoes-linha > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #c9d8e7;
+    border-radius: 12px;
+    background: #fffefd;
+    color: #496685;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+.tabela-atividades-gestao .menu-acoes-linha > summary::-webkit-details-marker { display: none; }
+.tabela-atividades-gestao .menu-acoes-linha > summary:hover,
+.tabela-atividades-gestao .menu-acoes-linha[open] > summary { background: #eff5fb; border-color: #9db8d4; }
+.tabela-atividades-gestao .menu-acoes-linha > summary:focus-visible { outline: 3px solid #5c86b4; outline-offset: 3px; }
+.tabela-atividades-gestao .menu-acoes-linha-opcoes {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    display: block;
+    box-sizing: border-box;
+    width: 205px;
+    padding: 7px;
+    border: 1px solid #d9e5f0;
+    border-radius: 12px;
+    background: #fffefd;
+    box-shadow: 0 14px 28px rgba(49,72,98,.12);
+}
+.tabela-atividades-gestao .menu-acoes-linha-opcoes form { margin: 0; }
+.tabela-atividades-gestao .menu-acoes-linha-opcoes .acao-menu {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 40px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #38597c;
+    font: inherit;
+    font-size: .87rem;
+    font-weight: 800;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+}
+.tabela-atividades-gestao .menu-acoes-linha-opcoes .acao-menu--cancelar { color: #876126; }
+.tabela-atividades-gestao .menu-acoes-linha-opcoes .acao-menu--cancelar:hover { background: #fff7e6; }
+.tabela-atividades-gestao .menu-acoes-linha-opcoes .acao-menu--excluir { color: #983f39; }
+.tabela-atividades-gestao .menu-acoes-linha-opcoes .acao-menu--excluir:hover { background: #fff2ef; }

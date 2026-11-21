@@ -18,7 +18,7 @@ class FormularioProfessor(FormularioPessoaBase):
 
     class Meta:
         model = Professor
-        fields = ["nome", "sobrenome", "nome_usuario", "funcao", "data_nascimento", "ativo"]
+        fields = ["nome", "sobrenome", "nome_usuario", "data_nascimento", "funcao", "ativo"]
         widgets = {"data_nascimento": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"})}
 
 

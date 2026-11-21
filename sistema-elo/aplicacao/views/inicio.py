@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 from aplicacao.servicos.acesso import alunos_com_funcao, alunos_permitidos, id_seguro
+from aplicacao.servicos.autorizacao_menores import menores_pendentes
 from aplicacao.forms import FiltroAuditoria
 from aplicacao.servicos.indicadores import dados_metas
 from aplicacao.models import Aluno, Atividade, Professor, RegistroAuditoria
@@ -50,6 +51,7 @@ def pagina_inicial(request):
         'eh_professor': eh_professor,
         'eh_responsavel': perfil.tipo_perfil == 'RESPONSAVEL',
         'eh_aluno': perfil.tipo_perfil == 'ALUNO',
+        'menores_aguardando_autorizacao': menores_pendentes(perfil) if perfil.tipo_perfil == 'RESPONSAVEL' else [],
         'alunos_disponiveis': alunos,
         'mostrar_filtro_aluno': len(alunos) > 1 and perfil.tipo_perfil != 'ALUNO',
         'aluno_selecionado': aluno,

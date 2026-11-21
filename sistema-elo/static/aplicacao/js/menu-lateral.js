@@ -15,3 +15,15 @@ if (botaoMenu) {
         atualizarMenu();
     });
 }
+
+// O link do título abre o cadastro. Apenas o botão de seta abre/fecha os perfis.
+const botaoCadastros = document.querySelector('.menu-cadastros .alternar-cadastros');
+const submenuCadastros = document.getElementById('submenu-cadastros');
+if (botaoCadastros && submenuCadastros) {
+    botaoCadastros.addEventListener('click', () => {
+        const aberto = botaoCadastros.getAttribute('aria-expanded') === 'true';
+        submenuCadastros.hidden = aberto;
+        botaoCadastros.setAttribute('aria-expanded', String(!aberto));
+        botaoCadastros.setAttribute('aria-label', aberto ? 'Mostrar tipos de usuário' : 'Ocultar tipos de usuário');
+    });
+}

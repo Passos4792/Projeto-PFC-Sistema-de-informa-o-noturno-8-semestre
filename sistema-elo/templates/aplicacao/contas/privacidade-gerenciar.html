@@ -1,0 +1,38 @@
+{% extends 'aplicacao/comum/estrutura-base.html' %}
+{% block titulo_pagina %}ELO - Gerenciar meus dados e conta{% endblock %}
+{% block conteudo %}
+<div class="pagina-meus-dados">
+  <header class="topo-pagina"><div><p class="caminho"><a class="elo-link-voltar" href="{% url 'privacidade-conta' %}"><svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg><span>Voltar à privacidade</span></a></p><h1>Gerenciar meus dados e conta</h1>
+    <p class="subtitulo">Consulte suas opções de exportação e encerramento da conta.</p></div></header>
+  <div class="grade-meus-dados">
+    <section class="painel cartao-meus-dados">
+      <h2>Minha conta de acesso</h2>
+      <p>Você pode baixar uma cópia em PDF dos dados disponíveis e, se desejar, encerrar seu acesso ao ELO.</p>
+      <div class="acoes-privacidade">
+        <a class="botao-secundario" href="{% url 'privacidade-exportar-minha' %}">Baixar meus dados em PDF</a>
+        <a class="botao-perigo-contorno" href="{% url 'privacidade-excluir-minha' %}">Encerrar minha conta</a>
+      </div>
+      <p><small>Encerrar a conta remove o acesso e as credenciais, mas não elimina automaticamente documentos pedagógicos,
+      vínculos históricos ou registros cuja conservação seja necessária. A instituição deve avaliar solicitações de eliminação desses dados conforme a LGPD.</small></p>
+    </section>
+    {% if request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}
+    <section class="painel cartao-meus-dados">
+      <h2>Contas de crianças sob minha responsabilidade principal</h2>
+      <p>Apenas crianças menores de 12 anos com vínculo principal ativo podem ter sua conta encerrada por você.</p>
+      {% for aluno in criancas_principais %}
+        <div class="dados-item"><strong>{{ aluno.nome_completo }}</strong>
+          <div class="acoes-privacidade">
+            <a class="botao-secundario" href="{% url 'privacidade-exportar-menor' aluno.pk %}">Baixar dados do aluno em PDF</a>
+            <a class="botao-perigo-contorno" href="{% url 'privacidade-excluir-menor' aluno.pk %}">Encerrar conta do aluno</a>
+          </div>
+        </div>
+      {% empty %}
+        <p>Nenhuma criança menor de 12 anos com vínculo principal ativo está disponível para esta ação.</p>
+      {% endfor %}
+      <p><small>O encerramento da sua conta não encerra automaticamente a conta das crianças. Se você for o único
+      responsável que as autorizou, a conta delas poderá ficar sem acesso até nova autorização.</small></p>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

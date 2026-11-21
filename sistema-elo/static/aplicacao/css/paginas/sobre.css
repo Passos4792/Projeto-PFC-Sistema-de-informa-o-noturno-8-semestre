@@ -9,19 +9,20 @@ body.pagina-sobre-elo {
   margin: 0;
   background: var(--sobre-fundo);
   color: var(--sobre-tinta);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--elo-fonte, 'Nunito', 'Trebuchet MS', 'Segoe UI', Arial, sans-serif);
 }
+/* Duas colunas equilibradas: a marca não compete com o painel de recursos. */
 .elo-sobre {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, .86fr) minmax(0, 1.26fr);
+  grid-template-columns: minmax(0, .86fr) minmax(0, 1.22fr);
   align-items: center;
-  gap: clamp(18px, 3vw, 48px);
+  column-gap: clamp(26px, 3.3vw, 54px);
   width: 100%;
   min-height: 100vh;
   min-height: 100svh;
-  padding: clamp(28px, 5vh, 52px) max(24px, calc((100vw - 1490px) / 2)) clamp(66px, 9vh, 94px);
+  padding: clamp(32px, 5vh, 52px) max(26px, calc((100vw - 1410px) / 2)) clamp(100px, 13vh, 132px);
   overflow: hidden;
 }
 .elo-sobre-ondas {
@@ -29,9 +30,9 @@ body.pagina-sobre-elo {
   z-index: -1;
   left: 0;
   bottom: 0;
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
   pointer-events: none;
 }
 .elo-sobre-apresentacao {
@@ -39,62 +40,61 @@ body.pagina-sobre-elo {
   z-index: 1;
   width: 100%;
   min-width: 0;
-  max-width: 530px;
+  max-width: 510px;
   margin-inline: auto;
-  padding: 0 clamp(5px, 1.3vw, 18px);
+  text-align: center;
 }
 .elo-sobre-marca {
   display: grid;
   justify-items: center;
-  margin-bottom: clamp(16px, 2.5vh, 26px);
+  margin-bottom: clamp(16px, 2.5vh, 24px);
 }
 .elo-sobre-simbolo {
   display: block;
-  width: clamp(170px, 18vw, 265px);
+  width: clamp(162px, 14vw, 218px);
   max-width: 100%;
   height: auto;
 }
 .elo-sobre-nome {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: .22em;
-  width: min(100%, 375px);
+  gap: .32em;
+  width: min(100%, 310px);
   margin: 2px 0 0;
   color: #101010;
-  font-size: clamp(4.1rem, 7.5vw, 6.2rem);
+  font-size: clamp(4.1rem, 5.4vw, 5.2rem);
   font-weight: 300;
   line-height: 1;
 }
 .elo-sobre-chamada {
-  margin: 0;
+  max-width: 480px;
+  margin: 0 auto;
   color: #101010;
-  font-size: clamp(1.7rem, 2.65vw, 2.68rem);
+  font-size: clamp(1.75rem, 2.05vw, 2.13rem);
   font-weight: 850;
-  line-height: 1.1;
-  letter-spacing: -.025em;
-  text-align: left;
+  line-height: 1.17;
+  letter-spacing: -.024em;
+  text-align: center;
 }
 .elo-sobre-chamada-linha,
 .elo-sobre-chamada-destaque { display: block; }
 .elo-sobre-chamada-destaque {
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--sobre-azul);
-  white-space: nowrap;
 }
 .elo-sobre-texto {
-  width: 100%;
-  max-width: 485px;
-  margin: clamp(13px, 1.8vh, 20px) 0 0;
-  padding: clamp(13px, 1.5vw, 18px) clamp(14px, 1.55vw, 20px);
-  border-radius: 20px;
-  background: rgba(255,255,255,.94);
-  color: #727780;
-  font-size: clamp(.88rem, 1.07vw, 1.02rem);
+  width: min(100%, 450px);
+  margin: clamp(16px, 2.4vh, 23px) auto 0;
+  padding: 16px 20px;
+  border: 1px solid rgba(229, 227, 224, .85);
+  border-radius: 18px;
+  background: rgba(255,255,255,.95);
+  color: #626b79;
+  font-size: clamp(.89rem, 1.05vw, .98rem);
   line-height: 1.55;
   font-weight: 400;
   text-align: left;
-  hyphens: auto;
   overflow-wrap: break-word;
 }
 .elo-sobre-conteudo {
@@ -104,87 +104,88 @@ body.pagina-sobre-elo {
   flex-direction: column;
   min-width: 0;
   width: 100%;
-  padding: clamp(22px, 2.15vw, 35px);
-  border: 0;
-  border-radius: clamp(22px, 2.5vw, 32px);
+  max-width: 790px;
+  margin-inline: auto;
+  padding: clamp(23px, 2.25vw, 35px);
+  border-radius: 30px;
   background: rgba(255,253,251,.97);
-  box-shadow: 0 12px 40px rgba(55,70,90,.045);
+  box-shadow: 0 12px 40px rgba(55,70,90,.055);
 }
 .elo-sobre-cabecalho h2 {
-  margin: 0 0 4px;
+  margin: 0 0 6px;
   color: #111;
-  font-size: clamp(1.65rem, 2.6vw, 2.8rem);
+  font-size: clamp(2rem, 2.65vw, 2.65rem);
   font-weight: 850;
-  line-height: 1.13;
+  line-height: 1.15;
   letter-spacing: -.027em;
 }
 .elo-sobre-subtitulo {
   margin: 0;
-  color: #6b9ceb;
-  font-size: clamp(.9rem, 1.21vw, 1.26rem);
-  font-weight: 650;
-  line-height: 1.34;
+  color: #628fe1;
+  font-size: clamp(1rem, 1.22vw, 1.2rem);
+  font-weight: 750;
+  line-height: 1.4;
 }
 .elo-sobre-intro {
-  margin: 9px 0 17px;
-  color: #858585;
-  font-size: clamp(.85rem, 1.03vw, 1rem);
-  line-height: 1.43;
+  margin: 9px 0 20px;
+  color: #707780;
+  font-size: clamp(.91rem, 1.01vw, .99rem);
+  line-height: 1.48;
 }
 .elo-sobre-recursos {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(7px, .8vw, 12px);
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 13px;
   width: 100%;
 }
+/* Cada recurso usa o mesmo alinhamento de ícone, título e descrição. */
 .elo-sobre-recurso {
   display: grid;
-  grid-template-columns: 30px minmax(0,1fr);
-  column-gap: 10px;
+  grid-template-columns: 36px minmax(0,1fr);
+  grid-template-rows: auto auto;
   align-content: center;
+  align-items: start;
+  column-gap: 12px;
+  row-gap: 6px;
   min-width: 0;
-  min-height: clamp(135px, 12vw, 170px);
-  padding: clamp(14px, 1.25vw, 21px);
+  min-height: 139px;
+  padding: clamp(16px, 1.4vw, 21px);
   background: #f4f1ed;
-  border: 0;
-  border-radius: 22px;
+  border-radius: 20px;
 }
 .elo-sobre-recurso-icone {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 1 / 3;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  align-self: start;
-  margin-top: 4px;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  color: #161616;
+  width: 36px;
+  height: 36px;
+  color: #3d638d;
+  background: #e6effa;
+  border-radius: 11px;
 }
 .elo-sobre-recurso h3 {
-  grid-column: 1 / -1;
+  grid-column: 2;
   grid-row: 1;
-  margin: 0 0 10px;
-  color: #151515;
-  font-size: clamp(.94rem, 1.18vw, 1.1rem);
+  margin: 2px 0 0;
+  color: #162235;
+  font-size: clamp(.99rem, 1.1vw, 1.07rem);
   font-weight: 850;
-  text-align: center;
+  text-align: left;
   line-height: 1.3;
 }
 .elo-sobre-recurso p {
   grid-column: 2;
   grid-row: 2;
   margin: 0;
-  color: #858585;
-  font-size: clamp(.82rem, 1.04vw, .96rem);
-  line-height: 1.5;
+  color: #707780;
+  font-size: clamp(.84rem, .96vw, .94rem);
+  line-height: 1.48;
 }
 .elo-sobre-recurso svg,
 .elo-sobre-voltar svg {
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -196,47 +197,52 @@ body.pagina-sobre-elo {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  width: min(100%, 410px);
-  min-height: 40px;
-  margin: clamp(12px,1.5vw,18px) auto 0;
-  padding: 9px 22px;
+  width: min(100%, 385px);
+  min-height: 46px;
+  margin: 20px auto 0;
+  padding: 10px 20px;
   border-radius: 999px;
   color: #fff;
-  background: #699eea;
-  font-size: clamp(.88rem, 1.08vw, 1rem);
+  background: #628fe1;
+  font-size: .93rem;
   font-weight: 800;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
   transition: background-color .18s ease;
 }
-.elo-sobre-voltar svg { width: 18px; height: 18px; }
-.elo-sobre-voltar:hover { background: #4f83cc; }
+.elo-sobre-voltar svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.elo-sobre-voltar:hover { background: #4f78bf; }
 .elo-sobre-voltar:focus-visible { outline: 3px solid #203855; outline-offset: 4px; }
+/* No tablet, a apresentação fica centralizada acima dos recursos. */
 @media (max-width: 1060px) {
-  .elo-sobre { grid-template-columns: minmax(0,1fr); gap: 24px; padding: 28px 24px 90px; }
-  .elo-sobre-apresentacao { max-width: 720px; padding: 0; }
-  .elo-sobre-marca { margin-bottom: 14px; }
-  .elo-sobre-simbolo { width: clamp(145px, 22vw, 210px); }
-  .elo-sobre-nome { width: min(100%,300px); font-size: clamp(3.7rem, 7vw, 5rem); }
-  .elo-sobre-chamada { max-width: 620px; margin-inline: auto; text-align: center; font-size: clamp(1.7rem, 3.7vw, 2.1rem); }
-  .elo-sobre-texto { max-width: 600px; margin-inline: auto; }
-  .elo-sobre-conteudo { width: min(100%, 740px); margin-inline: auto; }
+  .elo-sobre {
+    grid-template-columns: minmax(0,1fr);
+    gap: 28px;
+    padding: 34px 24px 100px;
+  }
+  .elo-sobre-apresentacao { max-width: 650px; }
+  .elo-sobre-marca { margin-bottom: 16px; }
+  .elo-sobre-simbolo { width: clamp(145px, 22vw, 190px); }
+  .elo-sobre-nome { font-size: clamp(3.7rem, 7vw, 4.7rem); }
+  .elo-sobre-chamada { font-size: clamp(1.75rem, 3.5vw, 2.08rem); }
+  .elo-sobre-texto { max-width: 545px; }
+  .elo-sobre-conteudo { width: min(100%, 760px); }
   .elo-sobre-ondas { width: max(100%, 1060px); left: 50%; transform: translateX(-50%); }
 }
 @media (max-width: 620px) {
-  .elo-sobre { gap: 20px; padding: 22px 14px 85px; }
-  .elo-sobre-simbolo { width: 158px; }
-  .elo-sobre-nome { width: min(100%,250px); font-size: 3.7rem; }
-  .elo-sobre-chamada { text-align: left; font-size: clamp(1.6rem, 5.8vw, 2rem); }
-  .elo-sobre-chamada-destaque { white-space: normal; }
-  .elo-sobre-texto { margin-top: 14px; font-size: .93rem; }
-  .elo-sobre-conteudo { border-radius: 24px; padding: 22px 16px; }
+  .elo-sobre { gap: 22px; padding: 24px 14px 94px; }
+  .elo-sobre-simbolo { width: 146px; }
+  .elo-sobre-nome { font-size: 3.7rem; }
+  .elo-sobre-chamada { font-size: clamp(1.55rem, 6vw, 1.95rem); }
+  .elo-sobre-texto { margin-top: 16px; padding: 14px 16px; font-size: .92rem; }
+  .elo-sobre-conteudo { padding: 23px 17px; border-radius: 24px; }
+  .elo-sobre-cabecalho h2 { font-size: 2rem; }
   .elo-sobre-recursos { grid-template-columns: minmax(0,1fr); gap: 10px; }
-  .elo-sobre-recurso { min-height: 112px; border-radius: 18px; }
-  .elo-sobre-recurso h3 { margin-bottom: 7px; }
-  .elo-sobre-recurso p { font-size: .91rem; }
-  .elo-sobre-voltar { min-height: 45px; }
+  .elo-sobre-recurso { min-height: 110px; border-radius: 17px; padding: 16px; }
+  .elo-sobre-recurso h3 { font-size: 1rem; }
+  .elo-sobre-recurso p { font-size: .9rem; }
+  .elo-sobre-voltar { min-height: 45px; margin-top: 18px; font-size: .82rem; }
   .elo-sobre-ondas { width: max(840px, 180%); }
 }
 @media (prefers-reduced-motion: reduce) {

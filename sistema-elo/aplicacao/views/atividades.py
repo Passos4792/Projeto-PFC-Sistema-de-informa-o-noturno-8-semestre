@@ -3,16 +3,20 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import QueryDict
-from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
+from django.db import transaction
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
-from aplicacao.servicos.acesso import alunos_com_funcao, id_seguro
+from aplicacao.servicos.acesso import alunos_com_funcao, id_seguro, pode_gerenciar_pedagogia
 from aplicacao.forms import FiltroAprovacoes, FormularioAtividade, FormularioMeta
 from aplicacao.views.api import solicitacoes_permitidas
-from aplicacao.models import Atividade, MetaAluno, Professor
+from aplicacao.models import Atividade, MetaAluno, Professor, SolicitacaoConclusao
 from aplicacao.views.cadastros import alunos
 from aplicacao.views.comum import _excluir, _salvar
+from aplicacao.servicos.auditoria import registrar
 
 
 def meta_criar(request):
@@ -167,6 +171,48 @@ def atividade_editar(request, pk):
     return _salvar(
         request, FormularioAtividade, "Editar atividade", "atividades", "atividade-listar", atividade, acesso_aee=True
     )
+
+
+@transaction.atomic
+def atividade_cancelar(request, pk):
+    if request.method != 'POST':
+        raise PermissionDenied
+    atividade = get_object_or_404(Atividade.objects.select_for_update(), pk=pk)
+    perfil = request.perfil_elo
+    if perfil.tipo_perfil != 'PROFESSOR':
+        raise PermissionDenied
+    if not perfil.gestor and (
+        not pode_gerenciar_pedagogia(perfil, atividade.aluno_id) or
+        atividade.professor.usuario_id != perfil.pk
+    ):
+        raise PermissionDenied('Registro fora do seu vínculo AEE.')
+
+    destino = request.POST.get('next', '')
+    if not url_has_allowed_host_and_scheme(destino, allowed_hosts={request.get_host()},
+                                           require_https=request.is_secure()):
+        destino = 'atividade-listar'
+    if atividade.situacao == Atividade.Situacao.CANCELADA:
+        messages.info(request, 'Esta atividade já estava cancelada.')
+        return redirect(destino)
+
+    atividade.situacao = Atividade.Situacao.CANCELADA
+    atividade.save(update_fields=['situacao', 'atualizado_em'])
+    agora = timezone.now()
+    pendentes = list(SolicitacaoConclusao.objects.select_for_update().filter(atividade=atividade, situacao='PENDENTE'))
+    for solicitacao in pendentes:
+        solicitacao.situacao = 'RECUSADA'
+        if not solicitacao.resposta:
+            solicitacao.resposta = 'Atividade cancelada pelo professor.'
+        solicitacao.professor = perfil.professor_perfil
+        solicitacao.respondido_em = agora
+        solicitacao.save(update_fields=['situacao', 'resposta', 'professor', 'respondido_em'])
+        registrar('RECUSA', request=request, objeto=solicitacao,
+                  detalhes='Solicitação recusada automaticamente porque a atividade foi cancelada.')
+
+    registrar('EDICAO', request=request, objeto=atividade,
+              detalhes='Situação alterada para cancelada pelo menu de ações.')
+    messages.success(request, 'Atividade cancelada com sucesso. Ela continua no histórico e não conta mais nas metas.')
+    return redirect(destino)
 
 
 def atividade_excluir(request, pk):

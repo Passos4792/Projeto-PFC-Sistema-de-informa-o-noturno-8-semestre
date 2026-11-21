@@ -11,7 +11,10 @@
         <div>
 
             <p class="caminho">
-                Cadastro
+                <a class="elo-link-voltar" href="{{ url_voltar }}">
+                    <svg class="elo-icone elo-link-voltar__icone" aria-hidden="true" focusable="false"><use href="#elo-icone-chevron-down"></use></svg>
+                    <span>{% if pagina_ativa == 'alunos' %}Voltar aos alunos{% elif pagina_ativa == 'atividades' %}Voltar às atividades{% elif pagina_ativa == 'metas' %}Voltar às metas{% elif pagina_ativa == 'professores' %}Voltar aos professores{% elif pagina_ativa == 'responsaveis' %}Voltar aos responsáveis{% elif pagina_ativa == 'vinculos' %}Voltar aos vínculos{% elif pagina_ativa == 'usuarios' %}Voltar ao início{% else %}Voltar aos cadastros{% endif %}</span>
+                </a>
             </p>
 
             <h1>
@@ -29,7 +32,7 @@
     <section class="painel painel-formulario">
 
 
-        <form method="post" enctype="multipart/form-data" novalidate class="formulario-cadastro" data-formulario-atividade data-metas-url="{% url 'api-metas-aluno' 0 %}">
+        <form method="post" enctype="multipart/form-data" novalidate class="formulario-cadastro" data-proteger-rascunho data-formulario-atividade data-metas-url="{% url 'api-metas-aluno' 0 %}">
             {% csrf_token %}
 
             {% for campo in formulario %}
