@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 POLITICA = '; '.join([
     "default-src 'self'",
     "script-src 'self'",
@@ -18,6 +21,8 @@ class PoliticaConteudo:
 
     def __call__(self, request):
         resposta = self.get_response(request)
-        if not request.path.startswith('/admin/'):
+        caminho_admin = (getattr(settings, 'ELO_ADMIN_PATH', '') or '').strip('/')
+        admin_ativo = bool(caminho_admin) and request.path.startswith('/' + caminho_admin + '/')
+        if not admin_ativo:
             resposta.headers.setdefault('Content-Security-Policy', POLITICA)
         return resposta

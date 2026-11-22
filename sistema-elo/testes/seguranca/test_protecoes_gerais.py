@@ -99,6 +99,17 @@ class SessaoECabecalhosTests(CenarioTestCase):
         self.assertIn("script-src 'self'", politica)
         self.assertIn("frame-ancestors 'none'", politica)
 
+    @override_settings(ELO_ADMIN_PATH='acesso-tecnico-privado')
+    def test_csp_nao_quebra_painel_tecnico_em_rota_privada(self):
+        from django.http import HttpResponse
+        from aplicacao.servicos.politica_conteudo import PoliticaConteudo
+
+        middleware = PoliticaConteudo(lambda request: HttpResponse('ok'))
+        caminho_privado = RequestFactory().get('/acesso-tecnico-privado/')
+        caminho_publico = RequestFactory().get('/atividades/')
+        self.assertNotIn('Content-Security-Policy', middleware(caminho_privado))
+        self.assertIn("script-src 'self'", middleware(caminho_publico)['Content-Security-Policy'])
+
     def test_templates_nao_usam_scripts_embutidos(self):
         pasta = settings.BASE_DIR / 'templates'
         for arquivo in pasta.rglob('*.html'):

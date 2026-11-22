@@ -39,7 +39,8 @@ class PrivacidadeContasTests(CenarioTestCase):
         self.assertEqual(pdf.status_code, 200)
         self.assertEqual(pdf['Content-Type'], 'application/pdf')
         self.assertTrue(pdf.content.startswith(b'%PDF'))
-        self.assertEqual(pdf['Cache-Control'], 'no-store, no-cache, must-revalidate, private')
+        diretivas = {item.strip() for item in pdf['Cache-Control'].split(',')}
+        self.assertTrue({'no-store', 'no-cache', 'must-revalidate', 'private'} <= diretivas)
 
     def test_responsavel_secundario_nao_pode_apagar_crianca(self):
         segundo = pessoa('secundario', 'RESPONSAVEL')

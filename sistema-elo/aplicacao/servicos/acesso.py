@@ -63,6 +63,8 @@ ROTAS_AREA_ESTUDANTE = frozenset({
 
 ROTAS_ATIVIDADE = frozenset({'atividade-detalhe', 'atividade-material', 'entrega-anexo'})
 
+ROTAS_AUTORIZACAO_MENORES = frozenset({'aguardando-autorizacao', 'autorizar-acesso-menor'})
+
 
 def id_seguro(valor):
     valor = str(valor or '').strip()

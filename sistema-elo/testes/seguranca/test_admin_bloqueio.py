@@ -2,6 +2,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from testes.base import pessoa
 
 
 @override_settings(LOGIN_MAX_FALHAS=3, LOGIN_MAX_FALHAS_USUARIO=30,
@@ -35,9 +36,8 @@ class LoginAdminBloqueioTests(TestCase):
         self.assertNotIn('_auth_user_id', self.client.session)
 
     def test_usuario_comum_logado_nao_ve_nome_no_admin(self):
-        aluno = get_user_model().objects.create_user(
-            username='teste123', password='SenhaAluno@2026!')
-        self.client.force_login(aluno)
+        aluno = pessoa('teste123')
+        self.client.force_login(aluno.usuario.conta)
         resposta = self.client.get(reverse('admin:login'))
         self.assertEqual(resposta.status_code, 404)
         self.assertNotContains(resposta, 'teste123', status_code=404)
@@ -58,9 +58,8 @@ class LoginAdminBloqueioTests(TestCase):
         self.assertNotIn('_auth_user_id', self.client.session)
 
     def test_aluno_logado_nao_visualiza_indice_do_admin(self):
-        aluno = get_user_model().objects.create_user(
-            username='aluno_sem_admin', password='SenhaAluno@2026!')
-        self.client.force_login(aluno)
+        aluno = pessoa('aluno_sem_admin')
+        self.client.force_login(aluno.usuario.conta)
         resposta = self.client.get(reverse('admin:index'))
         self.assertEqual(resposta.status_code, 404)
         self.assertNotContains(resposta, 'aluno_sem_admin', status_code=404)

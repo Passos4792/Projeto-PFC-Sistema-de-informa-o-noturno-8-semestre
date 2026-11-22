@@ -136,7 +136,7 @@
                                         <form method="post" action="{% url 'atividade-cancelar' atividade.pk %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                            <button type="submit" class="acao-menu acao-menu--cancelar" onclick="return confirm('Cancelar esta atividade? Se ela já estiver concluída, deixará de contar nas metas.')">Cancelar atividade</button>
+                                            <button type="submit" class="acao-menu acao-menu--cancelar" data-confirmar="Cancelar esta atividade? Se ela já estiver concluída, deixará de contar nas metas." data-titulo-confirmacao="Cancelar atividade" data-rotulo-confirmacao="Sim, cancelar">Cancelar atividade</button>
                                         </form>
                                         {% endif %}
                                         <a class="acao-menu acao-menu--excluir" href="{% url 'atividade-excluir' atividade.pk %}">Excluir atividade</a>

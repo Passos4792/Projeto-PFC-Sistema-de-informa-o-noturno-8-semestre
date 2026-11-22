@@ -39,6 +39,13 @@
             <a class="botao-secundario" href="{% url 'privacidade-conta' %}">Acessar privacidade e dados</a>
         </section>
         {% endif %}
+        {% if menores_vinculados %}
+        <section class="painel cartao-meus-dados" aria-labelledby="titulo-acesso-menores">
+            <h2 id="titulo-acesso-menores">Acesso de menores de 12 anos</h2>
+            <p>Autorize ou revogue, a qualquer momento, o acesso ao ELO das crianças vinculadas à sua conta.</p>
+            <a class="botao-secundario" href="{% url 'autorizar-acesso-menor' %}">Gerenciar autorizações de acesso</a>
+        </section>
+        {% endif %}
         <section class="painel cartao-meus-dados cartao-integracoes" aria-labelledby="titulo-integracoes">
             <h2 id="titulo-integracoes">Integrações</h2>
             {% if request.perfil_elo.tipo_perfil == 'ALUNO' or request.perfil_elo.tipo_perfil == 'RESPONSAVEL' %}

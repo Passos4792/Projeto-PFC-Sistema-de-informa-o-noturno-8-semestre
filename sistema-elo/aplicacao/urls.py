@@ -4,10 +4,7 @@ from django.views.generic import TemplateView
 from aplicacao.views import (anexos, api, area_estudante, atividades, cadastros, contas, inicio, paineis,
                              pedagogico, seguranca, senhas, vinculos)
 
-
-#rotas
 urlpatterns = [
-    #entrada e senha
     path('', contas.inicio, name='inicio'),
     path('login/', senhas.EntradaElo.as_view(), name='login'),
     path('sair/', LogoutView.as_view(), name='logout'),
@@ -38,7 +35,6 @@ urlpatterns = [
     path('aguardando-autorizacao/', contas.aguardando_autorizacao, name='aguardando-autorizacao'),
     path('autorizar-acesso-menor/', contas.autorizar_acesso_menor, name='autorizar-acesso-menor'),
 
-    #paginas publicas
     path('sobre/', TemplateView.as_view(template_name='aplicacao/publico/sobre.html'), name='sobre'),
     path('politica-de-privacidade/', TemplateView.as_view(template_name='aplicacao/publico/politica-privacidade.html'),
          name='politica-privacidade'),
@@ -46,18 +42,15 @@ urlpatterns = [
     path('privacidade-para-alunos/', TemplateView.as_view(template_name='aplicacao/publico/privacidade-aluno.html'),
          name='privacidade-aluno'),
 
-    #painel do gestor
     path('pagina-inicial/', inicio.pagina_inicial, name='pagina-inicial'),
     path('auditoria/', inicio.auditoria, name='auditoria'),
     path('usuarios/novo/', contas.cadastrar, name='usuario-criar'),
 
-    #professores
     path('professores/', cadastros.professores, name='professor-listar'),
     path('professores/novo/', contas.cadastrar, name='professor-criar'),
     path('professores/<int:pk>/editar/', cadastros.professor_editar, name='professor-editar'),
     path('professores/<int:pk>/excluir/', cadastros.professor_excluir, name='professor-excluir'),
 
-    #alunos
     path('alunos/', cadastros.alunos, name='aluno-listar'),
     path('alunos/novo/', contas.cadastrar, name='aluno-criar'),
     path('alunos/novo-sem-login/', cadastros.aluno_criar, name='aluno-criar-sem-login'),
@@ -66,13 +59,11 @@ urlpatterns = [
     path('alunos/<int:pk>/excluir/', cadastros.aluno_excluir, name='aluno-excluir'),
     path('alunos/<int:pk>/inicio/', paineis.aluno_inicio, name='aluno-inicio'),
 
-    #responsaveis
     path('responsaveis/', cadastros.responsaveis, name='responsavel-listar'),
     path('responsaveis/novo/', contas.cadastrar, name='responsavel-criar'),
     path('responsaveis/<int:pk>/editar/', cadastros.responsavel_editar, name='responsavel-editar'),
     path('responsaveis/<int:pk>/excluir/', cadastros.responsavel_excluir, name='responsavel-excluir'),
 
-    #acesso dos usuarios
     path('usuarios/<int:pk>/redefinir-senha/', contas.redefinir_senha, name='usuario-redefinir-senha'),
     path('usuarios/<int:pk>/redefinir-2fa/', contas.redefinir_segundo_fator_usuario, name='usuario-redefinir-2fa'),
     path('usuarios/<int:pk>/ativar-acesso/', senhas.ativar_acesso, name='usuario-ativar-acesso'),
@@ -82,7 +73,6 @@ urlpatterns = [
     path('solicitacoes-de-senha/<int:pk>/negar/', senhas.negar_solicitacao,
          name='solicitacao-senha-negar'),
 
-    #vinculos
     path('vinculos/', vinculos.vinculos_unificados, name='vinculo-listar'),
     path('vinculos/novo/', vinculos.vinculos_unificados, name='vinculo-criar'),
     path('vinculos/<int:pk>/editar/', cadastros.vinculo_editar, name='vinculo-editar'),
@@ -92,13 +82,11 @@ urlpatterns = [
     path('familia/estudantes/', pedagogico.familia_estudantes, name='familia-estudantes'),
     path('profissional/estudantes/', pedagogico.profissional_estudantes, name='profissional-estudantes'),
 
-    #metas
     path('metas/', paineis.metas, name='meta-listar'),
     path('metas/nova/', atividades.meta_criar, name='meta-criar'),
     path('metas/<int:pk>/editar/', atividades.meta_editar, name='meta-editar'),
     path('metas/<int:pk>/excluir/', atividades.meta_excluir, name='meta-excluir'),
 
-    #atividades, historico e aprovacoes na mesma tela
     path('atividades/', atividades.atividades, name='atividade-listar'),
     path('atividades/historico/', atividades.atividades_historico, name='atividade-historico'),
     path('atividades/nova/', atividades.atividade_criar, name='atividade-criar'),
@@ -107,20 +95,17 @@ urlpatterns = [
     path('atividades/<int:pk>/excluir/', atividades.atividade_excluir, name='atividade-excluir'),
     path('aprovacoes/', atividades.aprovacoes, name='aprovacoes'),
 
-    #atividades do aluno
     path('minhas-atividades/', area_estudante.minhas_atividades, name='minhas-atividades'),
     path('minhas-atividades/<int:pk>/', area_estudante.atividade_detalhe, name='atividade-detalhe'),
     path('atividades/<int:pk>/enviar/', area_estudante.enviar_atividade, name='atividade-enviar'),
     path('atividades/<int:pk>/material/', anexos.baixar_material, name='atividade-material'),
     path('entregas/<int:pk>/anexo/', anexos.baixar_entrega, name='entrega-anexo'),
 
-    #google agenda
     path('google/conectar/', area_estudante.conectar, name='google-conectar'),
     path('google/retorno/', area_estudante.retorno, name='google-retorno'),
     path('google/desconectar/', area_estudante.desconectar, name='google-desconectar'),
     path('atividades/<int:pk>/sincronizar-google/', area_estudante.sincronizar, name='google-sincronizar'),
 
-    #documentos pedagogicos
     path('documentos-pedagogicos/', pedagogico.documentos_lista, name='documentos-lista'),
     path('documentos-pedagogicos/novo/<str:tipo>/', pedagogico.documento_criar, name='documento-criar'),
     path('documentos-pedagogicos/<int:pk>/', pedagogico.documento_detalhe, name='documento-detalhe'),
@@ -133,7 +118,6 @@ urlpatterns = [
     path('relatorios-pedagogicos/<int:pk>/editar/', pedagogico.relatorio_editar, name='relatorio-editar'),
     path('relatorios-pedagogicos/<int:pk>/publicar/', pedagogico.relatorio_publicar, name='relatorio-publicar'),
 
-    #api
     path('api/painel/', api.PainelApi.as_view(), name='api-painel'),
     path('api/alunos/<int:aluno_id>/metas/', api.MetasAlunoApi.as_view(), name='api-metas-aluno'),
     path('api/atividades/<int:pk>/solicitar-conclusao/', api.SolicitarConclusaoApi.as_view(),

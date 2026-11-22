@@ -1,5 +1,5 @@
 import base64
-from datetime import timedelta
+from datetime import date, timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -28,7 +28,7 @@ class Autenticacao2FATestCase(TestCase):
                 troca_senha_obrigatoria=False, documentos_aceitos_em=timezone.now(),
                 versao_termos_aceita=VERSAO_TERMOS, versao_privacidade_ciente=VERSAO_PRIVACIDADE)
             modelo.objects.create(usuario=perfil, nome='Pessoa', sobrenome='Teste',
-                                  **({'data_nascimento': timezone.localdate() - timedelta(days=365*10)} if tipo == 'ALUNO' else {}))
+                                  **({'data_nascimento': date(timezone.localdate().year - 13, 1, 1)} if tipo == 'ALUNO' else {}))
 
     def _cliente(self, usuario):
         cliente = Client()

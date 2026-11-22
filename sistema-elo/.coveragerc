@@ -9,7 +9,7 @@ omit =
 [report]
 show_missing = True
 precision = 2
-fail_under = 50
+fail_under = 88.67
 
 [html]
 directory = relatorios_testes/html

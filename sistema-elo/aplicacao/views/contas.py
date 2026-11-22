@@ -262,9 +262,15 @@ def inicio(request):
 def meus_dados(request):
     from aplicacao.servicos import google_calendar as google
     from aplicacao.servicos.privacidade_contas import perfil_pode_encerrar_proprio
+    perfil = request.perfil_elo
+    # Acesso permanente à tela de autorização, para o responsável poder
+    # revogar ou conceder novamente depois que o aviso da página inicial some.
+    menores_vinculados = (alunos_menores_vinculados(perfil)
+                          if perfil.tipo_perfil == 'RESPONSAVEL' and documentos_aceitos(perfil) else [])
     return render(request, 'aplicacao/contas/meus-dados.html', {
         'pagina_ativa': 'meus-dados',
-        'pode_gerenciar_privacidade': perfil_pode_encerrar_proprio(request.perfil_elo),
+        'pode_gerenciar_privacidade': perfil_pode_encerrar_proprio(perfil),
+        'menores_vinculados': menores_vinculados,
         'google_configurado': google.configurado(),
     })
 

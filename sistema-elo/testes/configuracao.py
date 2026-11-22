@@ -35,3 +35,4 @@ LOGGING['loggers']['django']['level'] = 'CRITICAL'
 PASSWORD_HASHERS = ["testes.hashers.PBKDF2Rapido"]
 
 ELO_2FA_ATIVO = False
+ELO_ADMIN_PATH = 'admin'
