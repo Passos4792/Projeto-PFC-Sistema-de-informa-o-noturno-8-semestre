@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from aplicacao.servicos.acesso import alunos_com_funcao, id_seguro, pode_gerenciar_pedagogia
 from aplicacao.servicos.auditoria import detalhes_formulario, registrar
-from aplicacao.models import Aluno, Configuracao2FA, Professor
+from aplicacao.models import Aluno, Configuracao2FA, Professor, Responsavel
 
 
 def _tem_segundo_fator():
@@ -113,6 +113,23 @@ def _salvar(request, formulario_classe, titulo, pagina_ativa, rota_sucesso, inst
     )
 
 
+def _excluir_pessoa_com_acesso(pessoa):
+    """Exclusão definitiva pelo gestor: não deixa perfil nem login sem finalidade.
+
+    Cadastros com histórico continuam protegidos (ProtectedError); para manter
+    os dados sem acesso, o gestor usa a opção Ativo/Inativo.
+    """
+    perfil = pessoa.usuario
+    conta = perfil.conta
+    foto = perfil.foto_perfil.name
+    armazenamento = perfil.foto_perfil.storage if foto else None
+    perfil.delete()  # Em cascata: cadastro da pessoa e conexão com o Google Agenda.
+    if conta is not None:
+        conta.delete()  # Em cascata: configuração 2FA, navegadores confiáveis e códigos.
+    if foto:
+        transaction.on_commit(lambda: armazenamento.delete(foto))
+
+
 def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso, acesso_aee=False):
     objeto = get_object_or_404(modelo, pk=pk)
     perfil = request.perfil_elo
@@ -128,7 +145,10 @@ def _excluir(request, modelo, pk, titulo, pagina_ativa, rota_sucesso, acesso_aee
         try:
             with transaction.atomic():
                 registrar('EXCLUSAO', request=request, objeto=objeto)
-                objeto.delete()
+                if isinstance(objeto, (Aluno, Professor, Responsavel)):
+                    _excluir_pessoa_com_acesso(objeto)
+                else:
+                    objeto.delete()
             messages.success(request, "Registro excluído com sucesso.")
         except ProtectedError:
             messages.error(
